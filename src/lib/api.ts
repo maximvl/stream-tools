@@ -100,3 +100,32 @@ export async function fetchMessages({
     return data
   })
 }
+
+type ChatConnectParams = {
+  server: ChatServer
+  channel: string
+}
+
+export type ChatConnectResponse = {
+  stream_status: 'connected' | 'disconnected' | 'connecting'
+}
+
+export async function chatConnect({
+  server,
+  channel
+}: ChatConnectParams): Promise<ChatConnectResponse> {
+  const params = new URLSearchParams()
+  params.set('channel', channel)
+  params.set('platform', server)
+  const url = `${URL_PREFIX}/turnir-api/chat_connect?${params.toString()}`
+
+  if (MOCK_API) {
+    console.log(`POST ${url}`)
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+    return { stream_status: 'connected' }
+  }
+
+  return fetch(url, {
+    method: 'POST'
+  }).then((res) => res.json())
+}
