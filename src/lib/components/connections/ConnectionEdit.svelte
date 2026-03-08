@@ -1,5 +1,8 @@
 <script lang="ts">
   import type { ChatConnection } from '$lib/types'
+  import { getStore } from '$lib/context'
+  import { Button } from '$lib/components/ui/button'
+  import { Trash2 } from '@lucide/svelte'
   import Input from '../ui/input/input.svelte'
   import * as Select from '../ui/select'
 
@@ -8,6 +11,7 @@
   }
 
   let { connection = $bindable() }: Props = $props()
+  const store = getStore()
 
   const connections = [
     { value: 'twitch', label: 'twitch.tv' },
@@ -36,4 +40,12 @@
     value={connection.channel}
     onchange={(e) => (connection.channel = (e.target as HTMLInputElement).value)}
   />
+  <Button
+    variant="ghost"
+    size="icon"
+    class="text-destructive hover:bg-destructive/10 hover:text-destructive"
+    onclick={() => store.removeConnection(connection)}
+  >
+    <Trash2 />
+  </Button>
 </div>

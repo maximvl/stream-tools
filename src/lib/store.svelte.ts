@@ -130,4 +130,15 @@ export class Store {
       })
     })
   }
+
+  addConnection() {
+    this.connections.value.push({
+      server: 'twitch',
+      channel: ''
+    })
+  }
+
+  removeConnection(connection: ChatConnection) {
+    this.connections.value = this.connections.value.filter((c) => c !== connection)
+  }
 }
