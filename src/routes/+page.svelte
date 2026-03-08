@@ -10,6 +10,11 @@
   let isWordSet = $state(false)
   let isRevealed = $state(false)
 
+  const filteredMessages = $derived.by(() => {
+    if (!isWordSet || word.trim() === '') return []
+    return store.messages.filter((m) => m.message.trim().length === word.trim().length)
+  })
+
   function setWord() {
     if (word.trim() !== '') {
       isWordSet = true
@@ -61,10 +66,10 @@
       <div
         class="flex max-h-[600px] flex-col gap-3 overflow-y-auto rounded-xl border bg-card p-6 shadow-sm"
       >
-        {#if store.newMessages.length === 0}
+        {#if (isWordSet ? filteredMessages : store.newMessages).length === 0}
           <div class="py-12 text-center text-muted-foreground italic">Пока сообщений нет...</div>
         {:else}
-          {#each store.newMessages as message (message.id)}
+          {#each isWordSet ? filteredMessages : store.newMessages as message (message.id)}
             <div class="flex gap-3 text-sm leading-relaxed">
               <span class="font-bold text-primary">{message.user.username}:</span>
               <span class="text-card-foreground/90">{message.message}</span>
