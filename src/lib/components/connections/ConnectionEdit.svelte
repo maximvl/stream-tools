@@ -7,7 +7,7 @@
     connection: ChatConnection
   }
 
-  let { connection }: Props = $props()
+  let { connection = $bindable() }: Props = $props()
 
   const connections = [
     { value: 'twitch', label: 'twitch.tv' },

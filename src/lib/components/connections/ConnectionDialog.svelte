@@ -15,7 +15,7 @@
     <Dialog.Header>Подключение чатов</Dialog.Header>
     <div>
       {#each store.connections.value as connection (connection.server + connection.channel)}
-        <ConnectionEdit {connection} />
+        <ConnectionEdit bind:connection={connection} />
       {/each}
     </div>
   </Dialog.Content>
