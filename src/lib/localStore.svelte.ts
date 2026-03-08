@@ -1,11 +1,12 @@
 export class LocalStore<T> {
 	key: string;
-	defaultValue: T | null;
-	value = $state<T | null>(null);
+	defaultValue: T;
+	value = $state<T>() as T;
 
-	constructor(key: string, defaultValue?: T) {
+	constructor(key: string, defaultValue: T) {
 		this.key = key;
-		this.defaultValue = defaultValue || null;
+		this.defaultValue = defaultValue;
+		this.value = defaultValue;
 
 		this.loadValue();
 		$effect(() => {
@@ -16,9 +17,11 @@ export class LocalStore<T> {
 	loadValue() {
 		const storedValue = localStorage.getItem(this.key);
 		if (storedValue) {
-			this.value = JSON.parse(storedValue);
-		} else {
-			this.value = this.defaultValue;
+			try {
+				this.value = JSON.parse(storedValue);
+			} catch (e) {
+				console.error(`Failed to parse stored value for key ${this.key}`, e);
+			}
 		}
 	}
 }

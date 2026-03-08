@@ -13,7 +13,7 @@ function connToKey(connection: ChatConnection): ConnKey {
 type ConnectionStatus = 'connected' | 'connecting' | 'disconnected'
 
 export class Store {
-  connections: LocalStore<ChatConnection[]>
+  connections = new LocalStore<ChatConnection[]>('chatConnections', [])
   connectionsStatuses = $state<Record<ConnKey, ConnectionStatus>>({})
   disconnectedConnections = $derived.by(() => {
     return Object.keys(this.connectionsStatuses).filter(
@@ -123,15 +123,11 @@ export class Store {
   })
 
   constructor() {
-    this.connections = new LocalStore<ChatConnection[]>('chatConnections', [])
-
     $effect(() => {
       console.log('connections changed:', this.connections.value)
-      if (this.connections.value) {
-        this.connections.value.forEach((c) => {
-          this.connectionsStatuses[connToKey(c)] = 'disconnected'
-        })
-      }
+      this.connections.value.forEach((c) => {
+        this.connectionsStatuses[connToKey(c)] = 'disconnected'
+      })
     })
   }
 }
