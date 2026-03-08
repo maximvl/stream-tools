@@ -2,4 +2,4 @@
   import { Button } from '../ui/button'
 </script>
 
-<Button variant="outline" size="sm">Чаты</Button>
+<Button variant="outline" size="sm">Подключение чатов</Button>

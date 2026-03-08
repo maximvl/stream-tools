@@ -44,6 +44,7 @@
           <Input
             type="text"
             placeholder="Слово для угадывания"
+            style="-webkit-text-security: disc;"
             bind:value={word}
             onkeydown={(e) => e.key === 'Enter' && setWord()}
           />
