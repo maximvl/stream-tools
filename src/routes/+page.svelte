@@ -15,12 +15,25 @@
     return store.messages.filter((m) => m.message.trim().length === word.trim().length)
   })
 
-  const displayMessages = $derived((isWordSet ? filteredMessages : store.messages).toReversed())
-
   const winnerMessage = $derived.by(() => {
     if (!isWordSet || word.trim() === '') return null
     const target = word.trim().toLowerCase()
-    return store.messages.find((m) => m.message.trim().toLowerCase() === target) || null
+    return (
+      store.messages
+        .filter((m) => m.message.trim().toLowerCase() === target)
+        .toSorted((a, b) => a.ts - b.ts)[0] || null
+    )
+  })
+
+  const displayMessages = $derived.by(() => {
+    const messages = isWordSet ? filteredMessages : store.messages
+    if (winnerMessage) {
+      const index = messages.findIndex((m) => m.id === winnerMessage.id)
+      if (index !== -1) {
+        return messages.slice(0, index + 1).toReversed()
+      }
+    }
+    return messages.toReversed()
   })
 
   $effect(() => {
