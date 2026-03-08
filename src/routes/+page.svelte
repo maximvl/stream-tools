@@ -1,5 +1,6 @@
 <script lang="ts">
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
+  import { WordDisplay } from '$lib/components/ui/word-display'
   import { getStore } from '$lib/context'
 
   const store = getStore()
@@ -24,8 +25,11 @@
     <div class="w-[250px]"></div>
   </div>
 
-  <div class="flex w-full justify-center">
+  <div class="flex w-full flex-col items-center gap-12">
+    <WordDisplay word="GEMINI" />
+
     <div class="flex w-[500px] flex-col gap-4">
+      <h2 class="text-lg font-semibold">Догадки</h2>
       <div
         class="flex max-h-[600px] flex-col gap-3 overflow-y-auto rounded-xl border bg-card p-6 shadow-sm"
       >
