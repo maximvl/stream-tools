@@ -1,19 +1,31 @@
 <script lang="ts">
   type Props = {
     word: string
+    revealed?: boolean
   }
 
-  let { word }: Props = $props()
+  let { word, revealed = false }: Props = $props()
+  let revealedIndices = $state<Record<number, boolean>>({})
+
+  $effect(() => {
+    if (revealed) {
+      word.split('').forEach((_, i) => (revealedIndices[i] = true))
+    } else {
+      revealedIndices = {}
+    }
+  })
 </script>
 
 <div class="flex flex-wrap gap-2">
   {#each word as char, i (i)}
-    <div
+    <button
       class="flex h-12 w-12 items-center justify-center
       rounded-lg border-2 border-white bg-blue-900 text-2xl
-      font-bold text-white uppercase shadow-md"
+      font-bold text-white uppercase shadow-md transition-transform 
+      {revealedIndices[i] ? '' : 'cursor-pointer hover:scale-105 active:scale-95'}"
+      onclick={() => (revealedIndices[i] = true)}
     >
-      {char}
-    </div>
+      {revealedIndices[i] ? char : ''}
+    </button>
   {/each}
 </div>

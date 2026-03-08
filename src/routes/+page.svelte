@@ -2,8 +2,20 @@
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
   import { WordDisplay } from '$lib/components/ui/word-display'
   import { getStore } from '$lib/context'
+  import { Input } from '$lib/components/ui/input'
+  import { Button } from '$lib/components/ui/button'
 
   const store = getStore()
+  let word = $state('')
+  let isWordSet = $state(false)
+  let isRevealed = $state(false)
+
+  function setWord() {
+    if (word.trim() !== '') {
+      isWordSet = true
+      isRevealed = false
+    }
+  }
 </script>
 
 <div class="dark flex min-h-screen flex-col items-center p-8">
@@ -26,15 +38,30 @@
   </div>
 
   <div class="flex w-full flex-col items-center gap-12">
-    <WordDisplay word="GEMINI" />
+    {#if !isWordSet}
+      <div class="flex w-[400px] flex-col gap-4 text-center">
+        <div class="flex gap-2">
+          <Input
+            type="text"
+            placeholder="Слово для угадывания"
+            bind:value={word}
+            onkeydown={(e) => e.key === 'Enter' && setWord()}
+          />
+          <Button onclick={setWord}>Начать</Button>
+        </div>
+      </div>
+    {:else}
+      <div class="flex flex-col items-center gap-4">
+        <WordDisplay {word} revealed={isRevealed} />
+      </div>
+    {/if}
 
     <div class="flex w-[500px] flex-col gap-4">
-      <h2 class="text-lg font-semibold">Догадки</h2>
       <div
         class="flex max-h-[600px] flex-col gap-3 overflow-y-auto rounded-xl border bg-card p-6 shadow-sm"
       >
         {#if store.newMessages.length === 0}
-          <div class="py-12 text-center text-muted-foreground italic">No new messages yet...</div>
+          <div class="py-12 text-center text-muted-foreground italic">Пока сообщений нет...</div>
         {:else}
           {#each store.newMessages as message (message.id)}
             <div class="flex gap-3 text-sm leading-relaxed">
