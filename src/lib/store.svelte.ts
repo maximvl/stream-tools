@@ -31,7 +31,7 @@ export class Store {
   lastMessageReceivedPerConnection = $state<Record<ConnKey, ChatMessage>>({})
 
   connectionQueries = createQueries(() => {
-    console.log('creating connection queries for:', this.disconnectedConnections)
+    // console.log('creating connection queries for:', this.disconnectedConnections)
     return {
       queries: this.disconnectedConnections.map((key) => {
         const [server, channel] = key.split('/')
@@ -46,7 +46,7 @@ export class Store {
         }
       }),
       combine: (results) => {
-        console.log('combining connection queries results:', results)
+        // console.log('combining connection queries results:', results)
         results.forEach((res, idx) => {
           const key = this.disconnectedConnections[idx]
           if (!key) return
@@ -67,7 +67,7 @@ export class Store {
   })
 
   messagesResponses = createQueries(() => {
-    console.log('creating messages queries for:', this.connectedConnections)
+    // console.log('creating messages queries for:', this.connectedConnections)
     return {
       queries: this.connectedConnections.map((connKey) => {
         const ts = this.lastMessageReceivedPerConnection[connKey]?.ts || 0
@@ -88,7 +88,7 @@ export class Store {
         }
       }),
       combine: (results) => {
-        console.log('combining messages queries results:', results)
+        // console.log('combining messages queries results:', results)
         const messagesIds = new SvelteSet(this.messages.map((msg) => msg.id))
         results.forEach((res, idx) => {
           const key = this.connectedConnections[idx]
