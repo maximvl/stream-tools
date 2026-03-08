@@ -1,12 +1,12 @@
 <script lang="ts">
-  import ConnectionButton from '$lib/components/connections/ConnectionButton.svelte'
+  import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
   import { getStore } from '$lib/context'
 
   const store = getStore()
 </script>
 
-<div>
-  <ConnectionButton />
+<div class="dark">
+  <ConnectionDialog />
   <h1>Chat messages</h1>
   <div class="flex gap-10">
     <div>
