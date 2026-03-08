@@ -24,10 +24,11 @@
     <div class="w-[250px]"></div>
   </div>
 
-  <div class="flex w-full max-w-4xl flex-col justify-center">
-    <main class="flex w-full flex-col gap-4">
-      <h2 class="text-lg font-semibold">Догадки</h2>
-      <div class="flex flex-col gap-3 rounded-xl border bg-card p-6 shadow-sm">
+  <div class="flex w-full justify-center">
+    <div class="flex w-[500px] flex-col gap-4">
+      <div
+        class="flex max-h-[600px] flex-col gap-3 overflow-y-auto rounded-xl border bg-card p-6 shadow-sm"
+      >
         {#if store.newMessages.length === 0}
           <div class="py-12 text-center text-muted-foreground italic">No new messages yet...</div>
         {:else}
@@ -39,6 +40,6 @@
           {/each}
         {/if}
       </div>
-    </main>
+    </div>
   </div>
 </div>
