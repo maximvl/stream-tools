@@ -15,6 +15,20 @@
     return store.messages.filter((m) => m.message.trim().length === word.trim().length)
   })
 
+  const displayMessages = $derived((isWordSet ? filteredMessages : store.messages).toReversed())
+
+  const winnerMessage = $derived.by(() => {
+    if (!isWordSet || word.trim() === '') return null
+    const target = word.trim().toLowerCase()
+    return store.messages.find((m) => m.message.trim().toLowerCase() === target) || null
+  })
+
+  $effect(() => {
+    if (winnerMessage) {
+      isRevealed = true
+    }
+  })
+
   function setWord() {
     if (word.trim() !== '') {
       isWordSet = true
@@ -42,7 +56,7 @@
     <div class="w-[250px]"></div>
   </div>
 
-  <div class="flex w-full flex-col items-center gap-12">
+  <div class="flex w-full flex-col items-center gap-8">
     {#if !isWordSet}
       <div class="flex w-[400px] flex-col gap-4 text-center">
         <div class="flex gap-2">
@@ -57,20 +71,44 @@
         </div>
       </div>
     {:else}
-      <div class="flex flex-col items-center gap-4">
-        <WordDisplay {word} revealed={isRevealed} />
+      <div class="flex flex-col items-center gap-6">
+        <div class="flex flex-col items-center gap-4">
+          <WordDisplay {word} revealed={isRevealed} />
+        </div>
+
+        {#if winnerMessage}
+          <div
+            class="mt-10 animate-bounce rounded-2xl border-4 border-yellow-400 bg-yellow-50 p-6 text-center shadow-xl dark:bg-yellow-900/20"
+          >
+            <h3 class="mb-2 text-2xl font-black text-yellow-600 uppercase">Победитель!</h3>
+            <div class="text-lg">
+              <span class="font-bold text-primary">{winnerMessage.user.username}</span>
+              угадал слово:
+              <span class="font-black text-yellow-600 uppercase">{winnerMessage.message}</span>
+            </div>
+          </div>
+        {/if}
       </div>
     {/if}
 
     <div class="flex w-[500px] flex-col gap-4">
+      <h2 class="text-lg font-semibold">Догадки</h2>
       <div
-        class="flex max-h-[600px] flex-col gap-3 overflow-y-auto rounded-xl border bg-card p-6 shadow-sm"
+        class="flex max-h-[500px] flex-col gap-3 overflow-y-auto rounded-xl border bg-card p-6 shadow-sm"
       >
-        {#if (isWordSet ? filteredMessages : store.newMessages).length === 0}
-          <div class="py-12 text-center text-muted-foreground italic">Пока сообщений нет...</div>
+        {#if displayMessages.length === 0}
+          <div class="py-12 text-center text-muted-foreground italic">
+            {isWordSet ? 'Нет подходящих догадок...' : 'Пока сообщений нет...'}
+          </div>
         {:else}
-          {#each isWordSet ? filteredMessages : store.newMessages as message (message.id)}
-            <div class="flex gap-3 text-sm leading-relaxed">
+          {#each displayMessages as message (message.id)}
+            {@const isWinner =
+              isWordSet && message.message.trim().toLowerCase() === word.trim().toLowerCase()}
+            <div
+              class="flex gap-3 text-sm leading-relaxed transition-colors {isWinner
+                ? 'rounded-lg bg-yellow-400/20 p-2 font-bold ring-2 ring-yellow-400/50'
+                : ''}"
+            >
               <span class="font-bold text-primary">{message.user.username}:</span>
               <span class="text-card-foreground/90">{message.message}</span>
             </div>
