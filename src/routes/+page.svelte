@@ -1,16 +1,16 @@
 <script lang="ts">
-  import type { LocalStore } from '$lib/localStore.svelte'
-  import { getContext } from 'svelte'
+  import { getStore } from '$lib/utils'
 
-  const inputStore = getContext('userInput') as LocalStore<string>
+  const store = getStore()
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-
-<input
-  type="text"
-  placeholder="Type something..."
-  value={inputStore.value}
-  onchange={(e) => (inputStore.value = (e.target as HTMLInputElement).value)}
-/>
+<div>
+  <h1>Chat messages</h1>
+  <div class="flex gap-10">
+    <div>
+      {#each store.messages as message (message.id)}
+        <div>{message.message}</div>
+      {/each}
+    </div>
+  </div>
+</div>

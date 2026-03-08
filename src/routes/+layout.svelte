@@ -1,15 +1,17 @@
 <script lang="ts">
-	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
+  import './layout.css'
+  import favicon from '$lib/assets/favicon.svg'
 
-	let { children } = $props();
+  let { children } = $props()
 
-	import { setContext } from 'svelte';
-	import { LocalStore } from '$lib/localStore.svelte';
-
-	const userInput = new LocalStore<string>('userInput', 'initial');
-	setContext('userInput', userInput);
+  import { QueryClientProvider } from '@tanstack/svelte-query'
+  import { queryClient } from '$lib/utils'
+  import StoreProvider from './StoreProvider.svelte'
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-{@render children()}
+<QueryClientProvider client={queryClient}>
+  <StoreProvider>
+    {@render children()}
+  </StoreProvider>
+</QueryClientProvider>

@@ -1,5 +1,7 @@
-import { random, sample } from 'lodash'
+import lodash from 'lodash'
 import type { ChatMessage, ChatServer } from './types'
+
+const { random, sample } = lodash
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const makeBadge = () => {

@@ -2,6 +2,7 @@ import { createQueries } from '@tanstack/svelte-query'
 import { LocalStore } from './localStore.svelte'
 import type { ChatConnection, ChatMessage, ChatServer } from './types'
 import { chatConnect, fetchMessages } from './api'
+import { SvelteSet } from 'svelte/reactivity'
 
 type ConnKey = string & { readonly __brand: 'ConnKey' }
 
@@ -13,39 +14,24 @@ type ConnectionStatus = 'connected' | 'connecting' | 'disconnected'
 
 export class Store {
   connections: LocalStore<ChatConnection[]>
-  connectionsStatuses: Record<ConnKey, ConnectionStatus> = $state<
-    Record<ConnKey, ConnectionStatus>
-  >({})
+  connectionsStatuses = $state<Record<ConnKey, ConnectionStatus>>({})
   disconnectedConnections = $derived.by(() => {
     return Object.keys(this.connectionsStatuses).filter(
       (key) => this.connectionsStatuses[key as ConnKey] !== 'connected'
     ) as ConnKey[]
   })
+  connectedConnections = $derived.by(() => {
+    return Object.keys(this.connectionsStatuses).filter(
+      (key) => this.connectionsStatuses[key as ConnKey] === 'connected'
+    ) as ConnKey[]
+  })
 
   messages = $state<ChatMessage[]>([])
   newMessages = $state<ChatMessage[]>([])
-  lastMessageReceivedPerConnection: Record<ConnKey, ChatMessage>
-
-  messagesQueries = createQueries(() => ({
-    queries: (this.connections.value ?? []).map((connection) => {
-      const ts = this.lastMessageReceivedPerConnection[connToKey(connection)]?.ts || 0
-      const isConnected = this.connectionsStatuses[connToKey(connection)] === 'connected'
-      return {
-        enabled: isConnected,
-        queryKey: ['fetch-chat-messages', connection.server, connection.channel, ts],
-        queryFn: () =>
-          fetchMessages({
-            platform: connection.server,
-            channel: connection.channel,
-            ts,
-            textFilter: ''
-          }),
-        refetchInterval: 2000
-      }
-    })
-  }))
+  lastMessageReceivedPerConnection = $state<Record<ConnKey, ChatMessage>>({})
 
   connectionQueries = createQueries(() => {
+    console.log('creating connection queries for:', this.disconnectedConnections)
     return {
       queries: this.disconnectedConnections.map((key) => {
         const [server, channel] = key.split('/')
@@ -58,74 +44,94 @@ export class Store {
             }),
           refetchInterval: 3000
         }
-      })
+      }),
+      combine: (results) => {
+        console.log('combining connection queries results:', results)
+        results.forEach((res, idx) => {
+          const key = this.disconnectedConnections[idx]
+          if (!key) return
+          if (res.isFetching) {
+            this.connectionsStatuses[key] = 'connecting'
+            return
+          }
+          if (res.data?.stream_status) {
+            this.connectionsStatuses[key] = res.data.stream_status
+          } else {
+            this.connectionsStatuses[key] = 'disconnected'
+            console.log(`Failed to connect ${key}:`, res.error, res.data)
+          }
+        })
+        return results
+      }
+    }
+  })
+
+  messagesResponses = createQueries(() => {
+    console.log('creating messages queries for:', this.connectedConnections)
+    return {
+      queries: this.connectedConnections.map((connKey) => {
+        const ts = this.lastMessageReceivedPerConnection[connKey]?.ts || 0
+        const [server, channel] = connKey.split('/')
+        return {
+          queryKey: ['fetch-chat-messages', server, channel],
+          queryFn: async () => {
+            const msgs = await fetchMessages({
+              platform: server as ChatServer,
+              channel,
+              ts,
+              textFilter: ''
+            })
+            // console.log(`Fetched messages for ${connKey}:`, msgs)
+            return msgs
+          },
+          refetchInterval: 2000
+        }
+      }),
+      combine: (results) => {
+        console.log('combining messages queries results:', results)
+        const messagesIds = new SvelteSet(this.messages.map((msg) => msg.id))
+        results.forEach((res, idx) => {
+          const key = this.connectedConnections[idx]
+          if (!key) return
+
+          if (res.isError) {
+            this.connectionsStatuses[key] = 'disconnected'
+            console.log(`Failed to fetch messages for ${key}:`, res.error, res.data)
+            return
+          }
+
+          if (res.isFetching) {
+            return
+          }
+
+          const newMessages = (res.data?.chat_messages || []).filter(
+            (msg) => !messagesIds.has(msg.id)
+          )
+          this.newMessages = newMessages
+          this.messages.push(...newMessages)
+
+          const lastMsg = res.data?.chat_messages?.[res.data.chat_messages.length - 1]
+          if (this.lastMessageReceivedPerConnection[key]) {
+            if (lastMsg && lastMsg.ts > this.lastMessageReceivedPerConnection[key].ts) {
+              this.lastMessageReceivedPerConnection[key] = lastMsg
+            }
+          }
+        })
+        return results
+      }
     }
   })
 
   constructor() {
     this.connections = new LocalStore<ChatConnection[]>('chatConnections', [])
-    this.lastMessageReceivedPerConnection = {}
-    this.connectionsStatuses = {
-      ...this.connections.value?.reduce(
-        (acc, connection) => {
-          acc[connToKey(connection)] = 'disconnected'
-          return acc
-        },
-        {} as Record<ConnKey, ConnectionStatus>
-      )
-    }
 
     $effect(() => {
-      this.connectionQueries.forEach((query, idx) => {
-        const key = this.disconnectedConnections[idx]
-        if (!key) return
-
-        if (query.data?.stream_status) {
-          switch (query.data.stream_status) {
-            case 'connected':
-              this.connectionsStatuses[key] = 'connected'
-              break
-            case 'connecting':
-              this.connectionsStatuses[key] = 'connecting'
-              break
-            case 'disconnected':
-              this.connectionsStatuses[key] = 'disconnected'
-              break
-            default:
-              this.connectionsStatuses[key] = 'disconnected'
-              console.log(`Unknown stream status for ${key}:`, query.data)
-          }
-        } else {
-          this.connectionsStatuses[key] = 'disconnected'
-          console.log(`Failed to connect ${key}:`, query.error, query.data)
-        }
-      })
-    })
-
-    $effect(() => {
-      this.messagesQueries.forEach((query, idx) => {
-        const conn = this.connections.value?.[idx]
-        if (!conn) return
-        const key = connToKey(conn)
-
-        if (query.data?.chat_messages) {
-          const newMessages = query.data.chat_messages.filter(
-            (msg) => !this.messages.some((existingMsg) => existingMsg.id === msg.id)
-          )
-          if (newMessages.length > 0) {
-            this.messages = [...this.messages, ...newMessages]
-            newMessages.forEach((msg) => {
-              const lastReceived = this.lastMessageReceivedPerConnection[key]
-              if (!lastReceived || msg.ts > lastReceived.ts) {
-                this.lastMessageReceivedPerConnection[key] = msg
-              }
-            })
-          }
-        } else {
-          this.connectionsStatuses[key] = 'disconnected'
-          console.log(`Connection ${key} disconnected due to error:`, query.error, query.data)
-        }
-      })
+      console.log('connections changed:', this.connections.value)
+      if (this.connections.value) {
+        this.connections.value.forEach((c) => {
+          this.connectionsStatuses[connToKey(c)] = 'disconnected'
+        })
+      }
     })
   }
 }
