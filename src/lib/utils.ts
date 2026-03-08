@@ -1,15 +1,13 @@
-import { getContext } from 'svelte'
-import type { Store } from './store.svelte'
-import { QueryClient } from '@tanstack/svelte-query'
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
-export function getStore() {
-  return getContext('store') as Store
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }
 
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1
-    }
-  }
-})
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, 'children'> : T
+export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>
+export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null }

@@ -5,7 +5,7 @@
   let { children } = $props()
 
   import { QueryClientProvider } from '@tanstack/svelte-query'
-  import { queryClient } from '$lib/utils'
+  import { queryClient } from '$lib/context'
   import StoreProvider from './StoreProvider.svelte'
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getStore } from '$lib/utils'
+  import { getStore } from '$lib/context'
 
   const store = getStore()
 </script>
