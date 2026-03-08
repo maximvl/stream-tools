@@ -1,7 +1,7 @@
 import { createQueries } from '@tanstack/svelte-query'
 import { LocalStore } from './localStore.svelte'
-import type { ChatConnection, ChatMessage, ChatServer } from './types'
-import { chatConnect, fetchMessages } from './api'
+import type { ChatConnection, ChatMessage, ChatServer } from '../types'
+import { chatConnect, fetchMessages } from '../api'
 import { SvelteSet } from 'svelte/reactivity'
 
 type ConnKey = string & { readonly __brand: 'ConnKey' }
@@ -12,7 +12,7 @@ function connToKey(connection: ChatConnection): ConnKey {
 
 type ConnectionStatus = 'connected' | 'connecting' | 'disconnected'
 
-export class Store {
+export class ChatMessagesStore {
   connections = new LocalStore<ChatConnection[]>('chatConnections', [])
   connectionsStatuses = $state<Record<ConnKey, ConnectionStatus>>({})
   disconnectedConnections = $derived.by(() => {
