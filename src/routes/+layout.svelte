@@ -7,11 +7,14 @@
   import { QueryClientProvider } from '@tanstack/svelte-query'
   import { queryClient } from '$lib/context'
   import StoreProvider from './StoreProvider.svelte'
+  import { TooltipProvider } from '$lib/components/ui/tooltip'
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <QueryClientProvider client={queryClient}>
   <StoreProvider>
-    {@render children()}
+    <TooltipProvider>
+      {@render children()}
+    </TooltipProvider>
   </StoreProvider>
 </QueryClientProvider>
