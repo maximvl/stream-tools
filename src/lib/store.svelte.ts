@@ -123,22 +123,27 @@ export class Store {
   })
 
   constructor() {
-    $effect(() => {
-      console.log('connections changed:', this.connections.value)
-      this.connections.value.forEach((c) => {
-        this.connectionsStatuses[connToKey(c)] = 'disconnected'
-      })
+    this.connections.value.forEach((c) => {
+      this.connectionsStatuses[connToKey(c)] = 'disconnected'
     })
   }
 
   addConnection() {
-    this.connections.value.push({
+    const newConn: ChatConnection = {
       server: 'twitch',
       channel: ''
-    })
+    }
+    this.connections.value.push(newConn)
+    this.connectionsStatuses[connToKey(newConn)] = 'disconnected'
   }
 
   removeConnection(connection: ChatConnection) {
+    const key = connToKey(connection)
+    delete this.connectionsStatuses[key]
     this.connections.value = this.connections.value.filter((c) => c !== connection)
+  }
+
+  cleanupEmptyConnections() {
+    this.connections.value = this.connections.value.filter((c) => c.channel.trim() !== '')
   }
 }
