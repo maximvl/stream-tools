@@ -48,12 +48,18 @@
       isRevealed = false
     }
   }
+
+  function resetGame() {
+    word = ''
+    isWordSet = false
+    isRevealed = false
+  }
 </script>
 
 <div class="dark flex min-h-screen flex-col items-center p-8">
   <nav class="mb-8">
     <ul class="flex gap-6 text-sm font-medium opacity-60">
-      <li><a href="/" class="hover:opacity-100">Турнир</a></li>
+      <li><a href="/" class="hover:opacity-100 text-primary">Турнир</a></li>
       <li><a href="/loto" class="hover:opacity-100">Лото</a></li>
       <li><a href="/word" class="hover:opacity-100">Угадай слово</a></li>
     </ul>
@@ -66,7 +72,11 @@
     <div class="flex-1 text-center">
       <h1 class="text-4xl font-extrabold tracking-tight">Угадай слово</h1>
     </div>
-    <div class="w-[250px]"></div>
+    <div class="w-[250px] flex justify-end">
+      {#if isWordSet}
+        <Button variant="outline" onclick={resetGame}>Новое слово</Button>
+      {/if}
+    </div>
   </div>
 
   <div class="flex w-full flex-col items-center gap-8">
