@@ -37,8 +37,10 @@ export const makeMessage = (server: ChatServer, channel: string): ChatMessage =>
     '#B22222'
   ]
 
+  const randomUUID = crypto.randomUUID()
+
   return {
-    id: `${user_id}-${Math.round(new Date().getTime() / 1000)}`,
+    id: `${user_id}-${randomUUID}`,
     source: {
       server,
       channel: 'tmp'
