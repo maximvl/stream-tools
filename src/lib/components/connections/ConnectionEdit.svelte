@@ -8,9 +8,10 @@
 
   type Props = {
     connection: ChatConnection
+    onRemove?: () => void
   }
 
-  let { connection = $bindable() }: Props = $props()
+  let { connection = $bindable(), onRemove }: Props = $props()
   const store = getStore()
 
   const connections = [
@@ -44,7 +45,7 @@
     variant="ghost"
     size="icon"
     class="text-destructive hover:bg-destructive/10 hover:text-destructive"
-    onclick={() => store.removeConnection(connection)}
+    onclick={() => (onRemove ? onRemove() : store.removeConnection(connection))}
   >
     <Trash2 />
   </Button>

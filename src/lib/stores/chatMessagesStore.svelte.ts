@@ -16,14 +16,16 @@ export class ChatMessagesStore {
   connections = new LocalStore<ChatConnection[]>('chatConnections', [])
   connectionsStatuses = $state<Record<ConnKey, ConnectionStatus>>({})
   disconnectedConnections = $derived.by(() => {
-    return Object.keys(this.connectionsStatuses).filter(
-      (key) => this.connectionsStatuses[key as ConnKey] !== 'connected'
-    ) as ConnKey[]
+    return Object.keys(this.connectionsStatuses).filter((key) => {
+      const [, channel] = key.split('/')
+      return channel !== '' && this.connectionsStatuses[key as ConnKey] !== 'connected'
+    }) as ConnKey[]
   })
   connectedConnections = $derived.by(() => {
-    return Object.keys(this.connectionsStatuses).filter(
-      (key) => this.connectionsStatuses[key as ConnKey] === 'connected'
-    ) as ConnKey[]
+    return Object.keys(this.connectionsStatuses).filter((key) => {
+      const [, channel] = key.split('/')
+      return channel !== '' && this.connectionsStatuses[key as ConnKey] === 'connected'
+    }) as ConnKey[]
   })
 
   messages = $state<ChatMessage[]>([])
@@ -115,6 +117,8 @@ export class ChatMessagesStore {
             if (lastMsg && lastMsg.ts > this.lastMessageReceivedPerConnection[key].ts) {
               this.lastMessageReceivedPerConnection[key] = lastMsg
             }
+          } else if (lastMsg) {
+            this.lastMessageReceivedPerConnection[key] = lastMsg
           }
         })
         return results
@@ -126,6 +130,19 @@ export class ChatMessagesStore {
     this.connections.value.forEach((c) => {
       this.connectionsStatuses[connToKey(c)] = 'disconnected'
     })
+  }
+
+  updateConnections(connections: ChatConnection[]) {
+    console.log('updating connections', connections)
+    // Keep old statuses for existing connections
+    const newStatuses: Record<ConnKey, ConnectionStatus> = {}
+    connections.forEach((c) => {
+      const key = connToKey(c)
+      newStatuses[key] = this.connectionsStatuses[key] || 'disconnected'
+    })
+
+    this.connectionsStatuses = newStatuses
+    this.connections.value = connections
   }
 
   addConnection() {

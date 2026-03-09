@@ -1,28 +1,27 @@
 class _LocalStore<T> {
   key: string
-  defaultValue: T | null
   value = $state<T>() as T
 
   constructor(key: string, defaultValue: T | null = null) {
+    this.value = this.loadValue(key, defaultValue)
     this.key = key
-    this.defaultValue = defaultValue
-    this.value = defaultValue as T
 
-    this.loadValue()
     $effect(() => {
       localStorage.setItem(this.key, JSON.stringify(this.value))
     })
   }
 
-  loadValue() {
-    const storedValue = localStorage.getItem(this.key)
+  loadValue(key: string, defaultValue: T | null): T {
+    const storedValue = localStorage.getItem(key)
     if (storedValue !== null) {
       try {
-        this.value = JSON.parse(storedValue)
+        return JSON.parse(storedValue)
       } catch (e) {
-        console.error(`Failed to parse stored value for key ${this.key}`, e)
+        console.error(`Failed to parse stored value for key ${key}`, e)
+        return defaultValue as T
       }
     }
+    return defaultValue as T
   }
 }
 
