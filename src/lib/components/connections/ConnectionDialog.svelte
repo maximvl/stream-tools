@@ -11,14 +11,29 @@
   const store = getStore()
 
   let open = $state(false)
+  let localConnections = $state<typeof store.connections.value>(store.connections.value)
 
   $effect(() => {
-    if (!open) {
+    if (open) {
+      localConnections = store.connections.value
+    } else {
       untrack(() => {
-        store.cleanupEmptyConnections()
+        const filtered = localConnections.filter((c) => c.channel.trim() !== '')
+        store.updateConnections(filtered)
       })
     }
   })
+
+  function addLocalConnection() {
+    localConnections.push({
+      server: 'twitch',
+      channel: ''
+    })
+  }
+
+  function removeLocalConnection(index: number) {
+    localConnections = localConnections.filter((_, i) => i !== index)
+  }
 </script>
 
 <Dialog.Root bind:open>
@@ -29,12 +44,15 @@
     <Dialog.Header>Подключение чатов</Dialog.Header>
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        {#each store.connections.value as _, i (store.connections.value[i])}
-          <ConnectionEdit bind:connection={store.connections.value[i]} />
+        {#each localConnections as _, i (i)}
+          <ConnectionEdit
+            bind:connection={localConnections[i]}
+            onRemove={() => removeLocalConnection(i)}
+          />
         {/each}
       </div>
       <Separator />
-      <Button variant="outline" size="sm" onclick={() => store.addConnection()}>
+      <Button variant="outline" size="sm" onclick={addLocalConnection}>
         <Plus class="mr-2" />
         Добавить
       </Button>

@@ -13,7 +13,7 @@ function connToKey(connection: ChatConnection): ConnKey {
 type ConnectionStatus = 'connected' | 'connecting' | 'disconnected'
 
 export class ChatMessagesStore {
-  connections = new LocalStore<ChatConnection[]>('chatConnections', [])
+  connections = new LocalStore<ChatConnection[]>('chat-connections', [])
   connectionsStatuses = $state<Record<ConnKey, ConnectionStatus>>({})
   disconnectedConnections = $derived.by(() => {
     return Object.keys(this.connectionsStatuses).filter((key) => {
