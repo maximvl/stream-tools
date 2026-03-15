@@ -41,14 +41,14 @@
 <Dialog.Root bind:open>
   <Dialog.Trigger>
     <Button variant="outline" size="sm" class="flex h-auto flex-col px-3 py-1.5">
-      <span class="text-xs font-medium">Подключение чатов</span>
+      <span class="font-medium">Подключение чатов</span>
       <div class="mt-1 flex gap-1.5">
         {#each store.connections.value as conn (connToKey(conn))}
           <img
             src={ServerIcons[conn.server]}
             alt={`${conn.server}/${conn.channel}`}
             class={cn(
-              'h-3.5 w-3.5 shrink-0',
+              'h-5 w-5 shrink-0',
               !store.connectedConnections.includes(connToKey(conn)) && 'opacity-30 grayscale'
             )}
           />
