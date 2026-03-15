@@ -9,6 +9,7 @@
   import { ServerIcons } from '$lib/constants'
   import { cn } from '$lib/utils'
   import { connToKey } from '$lib/stores/chatMessagesStore.svelte'
+  import * as Tooltip from '$lib/components/ui/tooltip'
 
   const store = getStore()
 
@@ -36,6 +37,8 @@
   function removeLocalConnection(index: number) {
     localConnections = localConnections.filter((_, i) => i !== index)
   }
+
+  const activeConnections = $derived(store.connections.value.filter((c) => c.channel.trim() !== ''))
 </script>
 
 <Dialog.Root bind:open>
@@ -43,15 +46,23 @@
     <Button variant="outline" size="sm" class="flex h-auto flex-col px-3 py-1.5">
       <span class="font-medium">Подключение чатов</span>
       <div class="mt-1 flex gap-1.5">
-        {#each store.connections.value as conn (connToKey(conn))}
-          <img
-            src={ServerIcons[conn.server]}
-            alt={`${conn.server}/${conn.channel}`}
-            class={cn(
-              'h-5 w-5 shrink-0',
-              !store.connectedConnections.includes(connToKey(conn)) && 'opacity-30 grayscale'
-            )}
-          />
+        {#each activeConnections as connection (connToKey(connection))}
+          <Tooltip.Root delayDuration={0}>
+            <Tooltip.Trigger>
+              <img
+                src={ServerIcons[connection.server]}
+                alt={connection.server}
+                class={cn(
+                  'h-6 w-6 shrink-0',
+                  store.connectionsStatuses[connToKey(connection)] !== 'connected' &&
+                    'opacity-30 grayscale'
+                )}
+              />
+            </Tooltip.Trigger>
+            <Tooltip.Content>
+              <p>{connToKey(connection)}</p>
+            </Tooltip.Content>
+          </Tooltip.Root>
         {/each}
       </div>
     </Button>
