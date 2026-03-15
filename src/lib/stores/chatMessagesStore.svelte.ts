@@ -6,7 +6,7 @@ import { SvelteSet } from 'svelte/reactivity'
 
 type ConnKey = string & { readonly __brand: 'ConnKey' }
 
-function connToKey(connection: ChatConnection): ConnKey {
+export function connToKey(connection: ChatConnection): ConnKey {
   return `${connection.server}/${connection.channel}` as ConnKey
 }
 

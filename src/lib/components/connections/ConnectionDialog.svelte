@@ -2,11 +2,13 @@
   import { getStore } from '$lib/context'
   import { untrack } from 'svelte'
   import * as Dialog from '../ui/dialog'
-  import ConnectionButton from './ConnectionButton.svelte'
   import ConnectionEdit from './ConnectionEdit.svelte'
   import { Button } from '$lib/components/ui/button'
   import { Separator } from '$lib/components/ui/separator'
   import { Plus } from '@lucide/svelte'
+  import { ServerIcons } from '$lib/constants'
+  import { cn } from '$lib/utils'
+  import { connToKey } from '$lib/stores/chatMessagesStore.svelte'
 
   const store = getStore()
 
@@ -38,7 +40,21 @@
 
 <Dialog.Root bind:open>
   <Dialog.Trigger>
-    <ConnectionButton />
+    <Button variant="outline" size="sm" class="flex h-auto flex-col px-3 py-1.5">
+      <span class="text-xs font-medium">Подключение чатов</span>
+      <div class="mt-1 flex gap-1.5">
+        {#each store.connections.value as conn (connToKey(conn))}
+          <img
+            src={ServerIcons[conn.server]}
+            alt={`${conn.server}/${conn.channel}`}
+            class={cn(
+              'h-3.5 w-3.5 shrink-0',
+              !store.connectedConnections.includes(connToKey(conn)) && 'opacity-30 grayscale'
+            )}
+          />
+        {/each}
+      </div>
+    </Button>
   </Dialog.Trigger>
   <Dialog.Content>
     <Dialog.Header>Подключение чатов</Dialog.Header>
@@ -59,3 +75,10 @@
     </div>
   </Dialog.Content>
 </Dialog.Root>
+
+<style>
+  /* Optional: prevent icons from being too small on narrow screens */
+  img {
+    min-width: 0.875rem;
+  }
+</style>
