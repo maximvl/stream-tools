@@ -1,143 +1,120 @@
 <script lang="ts">
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
-  import { WordDisplay } from '$lib/components/ui/word-display'
-  import { getStore } from '$lib/context'
-  import { Input } from '$lib/components/ui/input'
-  import { Button } from '$lib/components/ui/button'
-
-  const store = getStore()
-  let word = $state('')
-  let isWordSet = $state(false)
-  let isRevealed = $state(false)
-
-  const filteredMessages = $derived.by(() => {
-    if (!isWordSet || word.trim() === '') return []
-    return store.messages.filter((m) => m.message.trim().length === word.trim().length)
-  })
-
-  const winnerMessage = $derived.by(() => {
-    if (!isWordSet || word.trim() === '') return null
-    const target = word.trim().toLowerCase()
-    return (
-      store.messages
-        .filter((m) => m.message.trim().toLowerCase() === target)
-        .toSorted((a, b) => a.ts - b.ts)[0] || null
-    )
-  })
-
-  const displayMessages = $derived.by(() => {
-    const messages = isWordSet ? filteredMessages : store.messages
-    if (winnerMessage) {
-      const index = messages.findIndex((m) => m.id === winnerMessage.id)
-      if (index !== -1) {
-        return messages.slice(0, index + 1).toReversed()
-      }
-    }
-    return messages.toReversed()
-  })
-
-  $effect(() => {
-    if (winnerMessage) {
-      isRevealed = true
-    }
-  })
-
-  function setWord() {
-    if (word.trim() !== '') {
-      isWordSet = true
-      isRevealed = false
-    }
-  }
-
-  function resetGame() {
-    word = ''
-    isWordSet = false
-    isRevealed = false
-  }
+  import Nav from '$lib/components/layout/Nav.svelte'
 </script>
 
 <div class="dark flex min-h-screen flex-col items-center p-8">
-  <nav class="mb-8">
-    <ul class="flex gap-6 text-sm font-medium opacity-60">
-      <li><a href="/" class="hover:opacity-100 text-primary">Турнир</a></li>
-      <li><a href="/loto" class="hover:opacity-100">Лото</a></li>
-      <li><a href="/word" class="hover:opacity-100">Угадай слово</a></li>
-    </ul>
-  </nav>
+  <Nav />
+
 
   <div class="mb-12 flex w-full max-w-6xl items-center">
     <div class="w-[250px]">
       <ConnectionDialog />
     </div>
     <div class="flex-1 text-center">
-      <h1 class="text-4xl font-extrabold tracking-tight">Угадай слово</h1>
+      <h1 class="text-4xl font-extrabold tracking-tight">Stream Tools</h1>
     </div>
-    <div class="w-[250px] flex justify-end">
-      {#if isWordSet}
-        <Button variant="outline" onclick={resetGame}>Новое слово</Button>
-      {/if}
-    </div>
+    <div class="w-[250px]"></div>
   </div>
 
-  <div class="flex w-full flex-col items-center gap-8">
-    {#if !isWordSet}
-      <div class="flex w-[400px] flex-col gap-4 text-center">
-        <div class="flex gap-2">
-          <Input
-            type="text"
-            placeholder="Слово для угадывания"
-            style="-webkit-text-security: disc;"
-            bind:value={word}
-            onkeydown={(e) => e.key === 'Enter' && setWord()}
-          />
-          <Button onclick={setWord}>Начать</Button>
-        </div>
-      </div>
-    {:else}
-      <div class="flex flex-col items-center gap-6">
-        <div class="flex flex-col items-center gap-4">
-          <WordDisplay {word} revealed={isRevealed} />
-        </div>
-
-        {#if winnerMessage}
-          <div
-            class="mt-10 animate-bounce rounded-2xl border-4 border-yellow-400 bg-yellow-50 p-6 text-center shadow-xl dark:bg-yellow-900/20"
-          >
-            <h3 class="mb-2 text-2xl font-black text-yellow-600 uppercase">Победитель!</h3>
-            <div class="text-lg">
-              <span class="font-bold text-primary">{winnerMessage.user.username}</span>
-              угадал слово:
-              <span class="font-black text-yellow-600 uppercase">{winnerMessage.message}</span>
-            </div>
-          </div>
-        {/if}
-      </div>
-    {/if}
-
-    <div class="flex w-[500px] flex-col gap-4">
-      <h2 class="text-lg font-semibold">Догадки</h2>
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <a
+      href="/loto"
+      class="group flex flex-col gap-4 rounded-3xl border bg-card p-8 transition-all hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10"
+    >
       <div
-        class="flex max-h-[500px] flex-col gap-3 overflow-y-auto rounded-xl border bg-card p-6 shadow-sm"
+        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"
       >
-        {#if displayMessages.length === 0}
-          <div class="py-12 text-center text-muted-foreground italic">
-            {isWordSet ? 'Нет подходящих догадок...' : 'Пока сообщений нет...'}
-          </div>
-        {:else}
-          {#each displayMessages as message (message.id)}
-            {@const isWinner =
-              isWordSet && message.message.trim().toLowerCase() === word.trim().toLowerCase()}
-            <div
-              class="flex gap-3 text-sm leading-relaxed transition-colors {isWinner
-                ? 'rounded-lg bg-yellow-400/20 p-2 font-bold ring-2 ring-yellow-400/50'
-                : ''}"
-            >
-              <span class="font-bold text-primary">{message.user.username}:</span>
-              <span class="text-card-foreground/90">{message.message}</span>
-            </div>
-          {/each}
-        {/if}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-ticket"
+        >
+          <path
+            d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"
+          />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
       </div>
-    </div>
+      <div>
+        <h2 class="text-xl font-bold">Лото</h2>
+        <p class="text-sm text-muted-foreground">Стример проводит лото для зрителей</p>
+      </div>
+    </a>
+
+    <a
+      href="/turnir"
+      class="group flex flex-col gap-4 rounded-3xl border bg-card p-8 transition-all hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10"
+    >
+      <div
+        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-trophy"
+        >
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+          <path d="M4 22h16" />
+          <path d="M10 22V18" />
+          <path d="M14 22V18" />
+          <path d="M18 4H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z" />
+          <path d="M12 11V18" />
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold">Турнир</h2>
+        <p class="text-sm text-muted-foreground">
+          Стример и зрители проводят турнир из множества вариантов где победит только один
+        </p>
+      </div>
+    </a>
+
+    <a
+      href="/word"
+      class="group flex flex-col gap-4 rounded-3xl border bg-card p-8 transition-all hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10"
+    >
+      <div
+        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-type"
+        >
+          <polyline points="4 7 4 4 20 4 20 7" />
+          <line x1="9" x2="15" y1="20" y2="20" />
+          <line x1="12" x2="12" y1="4" y2="20" />
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold">Угадай слово</h2>
+        <p class="text-sm text-muted-foreground">
+          Игра, в которой зрители должны угадать загаданное вами слово.
+        </p>
+      </div>
+    </a>
   </div>
 </div>
