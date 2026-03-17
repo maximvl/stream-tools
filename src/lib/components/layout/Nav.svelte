@@ -17,7 +17,7 @@
     <li>
       <a
         href="/turnir"
-        class="transition-opacity hover:opacity-100 {page.url.pathname === '/turnir/'
+        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/turnir/')
           ? 'text-primary'
           : 'opacity-60'}"
       >
@@ -27,7 +27,7 @@
     <li>
       <a
         href="/loto"
-        class="transition-opacity hover:opacity-100 {page.url.pathname === '/loto/'
+        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/loto/')
           ? 'text-primary'
           : 'opacity-60'}"
       >
@@ -37,7 +37,7 @@
     <li>
       <a
         href="/word"
-        class="transition-opacity hover:opacity-100 {page.url.pathname === '/word'
+        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/word')
           ? 'text-primary'
           : 'opacity-60'}"
       >
