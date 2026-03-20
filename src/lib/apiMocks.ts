@@ -1,5 +1,5 @@
 import lodash from 'lodash'
-import type { ChatMessage, ChatServer } from './types'
+import type { ChatMessage, ChatServer, UserId } from './types'
 
 const { random, sample } = lodash
 
@@ -53,7 +53,7 @@ export const makeMessage = (server: ChatServer, channel: string): ChatMessage =>
       ).getTime()
     ),
     user: {
-      id: `${user_id}`,
+      id: `${user_id}` as UserId,
       username: user_id.toString(),
       source: { server, channel },
       // vk_fields: {

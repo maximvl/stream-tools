@@ -25,7 +25,7 @@ export class TimerStore {
   remainingDays = $derived(Math.round(this.remainingHours / 24))
   remainingWeeks = $derived(Math.round(this.remainingDays / 7))
 
-  _interval: number | undefined = undefined
+  _interval: ReturnType<typeof setInterval> | undefined = undefined
 
   constructor() {
     $effect(() => {
