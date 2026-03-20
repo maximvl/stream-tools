@@ -43,8 +43,10 @@ type TwitchUserFields = {
   badges: TwitchBadge[]
 }
 
+export type UserId = string & { readonly __brand: 'UserId' }
+
 export type ChatUser = {
-  id: string
+  id: UserId
   username: string
   vk_fields?: VkUserFields
   twitch_fields?: TwitchUserFields
