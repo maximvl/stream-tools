@@ -26,7 +26,7 @@ export class LotoStore {
   openChats = $state<Set<UserId>>(new SvelteSet())
 
   constructor(config: LotoConfig) {
-    // TODO init draw pool with numbers 1 to config.maxNumber
+    this.drawPool = Array.from({ length: config.maxNumber }, (_, i) => i + 1)
   }
 
   ticketsOrdered = $derived.by(() => {
@@ -38,17 +38,45 @@ export class LotoStore {
     if (this.gameState === 'playing') {
       const allTickets = [...this.ticketsFromChat, ...this.ticketsFromPoints]
 
-      allTickets.sort()
+      const drawnSet = new SvelteSet(this.drawnNumbers)
+
+      allTickets.sort((t1, t2) => {
+        const score1 = this.getTicketMatchScore(t1, drawnSet)
+        const score2 = this.getTicketMatchScore(t2, drawnSet)
+        if (score1 !== score2) return score2 - score1
+        return t1.created_at - t2.created_at
+      })
       return allTickets
     }
   })
 
-  getTicketMatchScore(ticket: LotoTicket, drawnNumbers: number[]) {
-    // TODO return score used to compare tickets
-    // the score should be high in this order
-    // 1. amount of sequential matches in ticket
-    // 2. amount of matches separated by 1 place potentially connecting them on next draw
-    // 3. total amount of matches
-    // 4. rest by creation date
+  getTicketMatchScore(ticket: LotoTicket, drawnSet: SvelteSet<string>) {
+    const matches = ticket.value.map((n) => drawnSet.has(n))
+
+    let maxSeq = 0
+    let currentSeq = 0
+    for (const m of matches) {
+      if (m) {
+        currentSeq++
+        maxSeq = Math.max(maxSeq, currentSeq)
+      } else {
+        currentSeq = 0
+      }
+    }
+
+    let gapMatches = 0
+    for (let i = 0; i < matches.length - 2; i++) {
+      if (matches[i] && !matches[i + 1] && matches[i + 2]) {
+        gapMatches++
+      }
+    }
+
+    const totalMatches = matches.filter(Boolean).length
+
+    // Weighting:
+    // maxSeq is most important (e.g. * 1000)
+    // gapMatches is next (e.g. * 100)
+    // totalMatches is next (e.g. * 1)
+    return maxSeq * 1000 + gapMatches * 100 + totalMatches
   }
 }
