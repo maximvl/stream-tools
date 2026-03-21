@@ -63,49 +63,51 @@ export class LotoStore {
   })
 
   addTicket(msg: ChatMessage) {
-    if (msg.message.toLowerCase().includes(LOTO_MATCH)) {
-      const ticket = makeTicket({ chatMessage: msg, pool: this.drawPool, config: this.config })
-      const user: ChatUser = {
-        id: msg.user.id,
-        source: msg.source,
-        username: msg.user.username,
-        twitch_fields: msg.user.twitch_fields,
-        vk_fields: msg.user.vk_fields
-      }
+    if (!msg.message.toLowerCase().includes(LOTO_MATCH)) {
+      return
+    }
 
-      if (isMessageFromVkBot(msg)) {
-        const mention = msg.vk_fields?.mentions[0] as VkMention
-        if (mention) {
-          user.id = mention.id.toString() as UserId
-          user.username = mention.displayName
-          const existingUser = this.usersById.get(user.id)
-          if (!existingUser) {
-            user.vk_fields = undefined
-            this.usersById.set(user.id, user)
-          }
+    const ticket = makeTicket({ chatMessage: msg, pool: this.drawPool, config: this.config })
+    const user: ChatUser = {
+      id: msg.user.id,
+      source: msg.source,
+      username: msg.user.username,
+      twitch_fields: msg.user.twitch_fields,
+      vk_fields: msg.user.vk_fields
+    }
 
-          this.ticketsFromPoints = this.ticketsFromPoints.filter((t) => t.owner_id !== user.id)
-
-          ticket.type = 'points'
-          ticket.owner_id = user.id
-          ticket.owner_name = user.username
-          this.ticketsFromPoints.push(ticket)
+    if (isMessageFromVkBot(msg)) {
+      const mention = msg.vk_fields?.mentions[0] as VkMention
+      if (mention) {
+        user.id = mention.id.toString() as UserId
+        user.username = mention.displayName
+        const existingUser = this.usersById.get(user.id)
+        if (!existingUser) {
+          user.vk_fields = undefined
+          this.usersById.set(user.id, user)
         }
-        return
-      }
-      if (isMessageHighlightedOnTwitch(msg)) {
+
         this.ticketsFromPoints = this.ticketsFromPoints.filter((t) => t.owner_id !== user.id)
 
         ticket.type = 'points'
-        this.usersById.set(user.id, user)
+        ticket.owner_id = user.id
+        ticket.owner_name = user.username
         this.ticketsFromPoints.push(ticket)
-        return
       }
-      // regular ticket
-      this.ticketsFromChat = this.ticketsFromChat.filter((t) => t.owner_id !== user.id)
-      this.usersById.set(user.id, user)
-      this.ticketsFromChat.push(ticket)
+      return
     }
+    if (isMessageHighlightedOnTwitch(msg)) {
+      this.ticketsFromPoints = this.ticketsFromPoints.filter((t) => t.owner_id !== user.id)
+
+      ticket.type = 'points'
+      this.usersById.set(user.id, user)
+      this.ticketsFromPoints.push(ticket)
+      return
+    }
+    // regular ticket
+    this.ticketsFromChat = this.ticketsFromChat.filter((t) => t.owner_id !== user.id)
+    this.usersById.set(user.id, user)
+    this.ticketsFromChat.push(ticket)
   }
 }
 
