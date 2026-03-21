@@ -1,7 +1,7 @@
 import type { ChatMessage, ChatUser, LotoTicket, LotoTicketId, UserId, VkMention } from '$lib/types'
 import sampleSize from 'lodash/sampleSize'
 import uniq from 'lodash/uniq'
-import { SvelteSet } from 'svelte/reactivity'
+import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 
 type GameState = 'registration' | 'playing'
 type SuperGameResultItem = 'empty' | 'x1' | 'x2' | 'x3' | { vk_custom: string }
@@ -27,7 +27,7 @@ export class LotoStore {
   superGameGuesses = $state<number[]>([])
   superGameRevealedIds = $state<number[]>([])
 
-  usersById = $state<Record<string, ChatUser>>({})
+  usersById = $state<SvelteMap<string, ChatUser>>(new SvelteMap())
   openChats = $state<Set<UserId>>(new SvelteSet())
 
   config: LotoConfig
@@ -65,22 +65,45 @@ export class LotoStore {
   addTicket(msg: ChatMessage) {
     if (msg.message.toLowerCase().includes(LOTO_MATCH)) {
       const ticket = makeTicket({ chatMessage: msg, pool: this.drawPool, config: this.config })
+      const user: ChatUser = {
+        id: msg.user.id,
+        source: msg.source,
+        username: msg.user.username,
+        twitch_fields: msg.user.twitch_fields,
+        vk_fields: msg.user.vk_fields
+      }
+
       if (isMessageFromVkBot(msg)) {
         const mention = msg.vk_fields?.mentions[0] as VkMention
         if (mention) {
+          user.id = mention.id.toString() as UserId
+          user.username = mention.displayName
+          const existingUser = this.usersById.get(user.id)
+          if (!existingUser) {
+            user.vk_fields = undefined
+            this.usersById.set(user.id, user)
+          }
+
+          this.ticketsFromPoints = this.ticketsFromPoints.filter((t) => t.owner_id !== user.id)
+
           ticket.type = 'points'
-          ticket.owner_id = mention.id.toString() as UserId
-          ticket.owner_name = mention.displayName
+          ticket.owner_id = user.id
+          ticket.owner_name = user.username
           this.ticketsFromPoints.push(ticket)
         }
         return
       }
       if (isMessageHighlightedOnTwitch(msg)) {
+        this.ticketsFromPoints = this.ticketsFromPoints.filter((t) => t.owner_id !== user.id)
+
         ticket.type = 'points'
+        this.usersById.set(user.id, user)
         this.ticketsFromPoints.push(ticket)
         return
       }
       // regular ticket
+      this.ticketsFromChat = this.ticketsFromChat.filter((t) => t.owner_id !== user.id)
+      this.usersById.set(user.id, user)
       this.ticketsFromChat.push(ticket)
     }
   }
@@ -112,7 +135,7 @@ function getTicketMatchScore(ticket: LotoTicket, drawnSet: SvelteSet<string>) {
   // Weighting:
   // maxSeq is most important (e.g. * 1000)
   // gapMatches is next (e.g. * 100)
-  // totalMatches is nextmakeTicket (e.g. * 1)
+  // totalMatches is next (e.g. * 1)
   return maxSeq * 1000 + gapMatches * 100 + totalMatches
 }
 
