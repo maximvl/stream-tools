@@ -43,7 +43,9 @@ export class LotoStore {
       allTickets.sort((t1, t2) => {
         const score1 = this.getTicketMatchScore(t1, drawnSet)
         const score2 = this.getTicketMatchScore(t2, drawnSet)
-        if (score1 !== score2) return score2 - score1
+        if (score1 !== score2) {
+          return score2 - score1
+        }
         return t1.created_at - t2.created_at
       })
       return allTickets
