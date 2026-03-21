@@ -41,6 +41,7 @@ type TwitchBadge = {
 type TwitchUserFields = {
   color?: string
   badges: TwitchBadge[]
+  highlighted?: boolean
 }
 
 export type UserId = string & { readonly __brand: 'UserId' }
@@ -75,7 +76,7 @@ export type LotoTicketId = string & { readonly brand: unique symbol }
 
 export type LotoTicket = {
   id: LotoTicketId
-  owner_id: string
+  owner_id: UserId
   owner_name: string
   value: string[]
   color: string

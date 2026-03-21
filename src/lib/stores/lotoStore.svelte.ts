@@ -1,4 +1,4 @@
-import type { ChatMessage, ChatUser, LotoTicket, LotoTicketId, UserId } from '$lib/types'
+import type { ChatMessage, ChatUser, LotoTicket, LotoTicketId, UserId, VkMention } from '$lib/types'
 import sampleSize from 'lodash/sampleSize'
 import uniq from 'lodash/uniq'
 import { SvelteSet } from 'svelte/reactivity'
@@ -64,9 +64,24 @@ export class LotoStore {
 
   addTicket(msg: ChatMessage) {
     if (msg.message.toLowerCase().includes(LOTO_MATCH)) {
-      this.ticketsFromChat.push(
-        makeTicket({ chatMessage: msg, pool: this.drawPool, config: this.config })
-      )
+      const ticket = makeTicket({ chatMessage: msg, pool: this.drawPool, config: this.config })
+      if (isMessageFromVkBot(msg)) {
+        const mention = msg.vk_fields?.mentions[0] as VkMention
+        if (mention) {
+          ticket.type = 'points'
+          ticket.owner_id = mention.id.toString() as UserId
+          ticket.owner_name = mention.displayName
+          this.ticketsFromPoints.push(ticket)
+        }
+        return
+      }
+      if (isMessageHighlightedOnTwitch(msg)) {
+        ticket.type = 'points'
+        this.ticketsFromPoints.push(ticket)
+        return
+      }
+      // regular ticket
+      this.ticketsFromChat.push(ticket)
     }
   }
 }
@@ -97,7 +112,7 @@ function getTicketMatchScore(ticket: LotoTicket, drawnSet: SvelteSet<string>) {
   // Weighting:
   // maxSeq is most important (e.g. * 1000)
   // gapMatches is next (e.g. * 100)
-  // totalMatches is next (e.g. * 1)
+  // totalMatches is nextmakeTicket (e.g. * 1)
   return maxSeq * 1000 + gapMatches * 100 + totalMatches
 }
 
@@ -151,4 +166,14 @@ function genTicketNumber(params: { text: string; pool: string[]; config: LotoCon
   }
 
   return ticketNumber.slice(0, config.ticketSize)
+}
+
+const VK_CHAT_BOT_NAME = 'ChatBot'
+
+function isMessageFromVkBot(msg: ChatMessage) {
+  return msg.source.server === 'vkvideo' && msg.user.username === VK_CHAT_BOT_NAME
+}
+
+function isMessageHighlightedOnTwitch(msg: ChatMessage) {
+  return msg.source.server === 'twitch' && Boolean(msg.user.twitch_fields?.highlighted)
 }
