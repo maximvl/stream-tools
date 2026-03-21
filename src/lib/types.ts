@@ -70,3 +70,18 @@ export type ChatMessage = {
   vk_fields?: VkChatFields
   source: ChatConnection
 }
+
+export type LotoTicketId = string & { readonly brand: unique symbol }
+
+export type LotoTicket = {
+  id: LotoTicketId
+  owner_id: string
+  owner_name: string
+  value: string[]
+  color: string
+  variant: number
+  type: 'chat' | 'points'
+  source: ChatConnection
+  created_at: number
+  isLatecomer: boolean
+}
