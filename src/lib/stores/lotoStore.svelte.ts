@@ -41,8 +41,8 @@ export class LotoStore {
       const drawnSet = new SvelteSet(this.drawnNumbers)
 
       allTickets.sort((t1, t2) => {
-        const score1 = this.getTicketMatchScore(t1, drawnSet)
-        const score2 = this.getTicketMatchScore(t2, drawnSet)
+        const score1 = getTicketMatchScore(t1, drawnSet)
+        const score2 = getTicketMatchScore(t2, drawnSet)
         if (score1 !== score2) {
           return score2 - score1
         }
@@ -51,34 +51,34 @@ export class LotoStore {
       return allTickets
     }
   })
+}
 
-  getTicketMatchScore(ticket: LotoTicket, drawnSet: SvelteSet<string>) {
-    const matches = ticket.value.map((n) => drawnSet.has(n))
+function getTicketMatchScore(ticket: LotoTicket, drawnSet: SvelteSet<string>) {
+  const matches = ticket.value.map((n) => drawnSet.has(n))
 
-    let maxSeq = 0
-    let currentSeq = 0
-    for (const m of matches) {
-      if (m) {
-        currentSeq++
-        maxSeq = Math.max(maxSeq, currentSeq)
-      } else {
-        currentSeq = 0
-      }
+  let maxSeq = 0
+  let currentSeq = 0
+  for (const m of matches) {
+    if (m) {
+      currentSeq++
+      maxSeq = Math.max(maxSeq, currentSeq)
+    } else {
+      currentSeq = 0
     }
-
-    let gapMatches = 0
-    for (let i = 0; i < matches.length - 2; i++) {
-      if (matches[i] && !matches[i + 1] && matches[i + 2]) {
-        gapMatches++
-      }
-    }
-
-    const totalMatches = matches.filter(Boolean).length
-
-    // Weighting:
-    // maxSeq is most important (e.g. * 1000)
-    // gapMatches is next (e.g. * 100)
-    // totalMatches is next (e.g. * 1)
-    return maxSeq * 1000 + gapMatches * 100 + totalMatches
   }
+
+  let gapMatches = 0
+  for (let i = 0; i < matches.length - 2; i++) {
+    if (matches[i] && !matches[i + 1] && matches[i + 2]) {
+      gapMatches++
+    }
+  }
+
+  const totalMatches = matches.filter(Boolean).length
+
+  // Weighting:
+  // maxSeq is most important (e.g. * 1000)
+  // gapMatches is next (e.g. * 100)
+  // totalMatches is next (e.g. * 1)
+  return maxSeq * 1000 + gapMatches * 100 + totalMatches
 }
