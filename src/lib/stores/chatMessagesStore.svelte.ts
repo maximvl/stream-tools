@@ -3,6 +3,7 @@ import { LocalStore } from './localStore.svelte'
 import type { ChatConnection, ChatMessage, ChatServer } from '../types'
 import { chatConnect, fetchMessages } from '../api'
 import { SvelteSet } from 'svelte/reactivity'
+import { untrack } from 'svelte'
 
 type ConnKey = string & { readonly __brand: 'ConnKey' }
 
@@ -72,7 +73,7 @@ export class ChatMessagesStore {
     // console.log('creating messages queries for:', this.connectedConnections)
     return {
       queries: this.connectedConnections.map((connKey) => {
-        const ts = this.lastMessageReceivedPerConnection[connKey]?.ts || 0
+        const ts = untrack(() => this.lastMessageReceivedPerConnection[connKey]?.ts || 0)
         const [server, channel] = connKey.split('/')
         return {
           queryKey: ['fetch-chat-messages', server, channel],
