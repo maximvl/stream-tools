@@ -28,7 +28,7 @@ export class LotoStore {
   superGameRevealedIds = $state<number[]>([])
 
   usersById = $state<SvelteMap<string, ChatUser>>(new SvelteMap())
-  openChats = $state<Set<UserId>>(new SvelteSet())
+  openedChats = $state<Set<UserId>>(new SvelteSet())
 
   config: LotoConfig
 
@@ -60,9 +60,10 @@ export class LotoStore {
       })
       return allTickets
     }
+    return []
   })
 
-  addTicket(msg: ChatMessage) {
+  addTicket = (msg: ChatMessage) => {
     if (!msg.message.toLowerCase().includes(LOTO_MATCH)) {
       return
     }

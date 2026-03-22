@@ -109,8 +109,10 @@ export class ChatMessagesStore {
           const newMessages = (res.data?.chat_messages || []).filter(
             (msg) => !messagesIds.has(msg.id)
           )
-          this.newMessages = newMessages
-          this.messages.push(...newMessages)
+          if (newMessages.length > 0) {
+            this.newMessages = newMessages
+            this.messages.push(...newMessages)
+          }
 
           const lastMsg = res.data?.chat_messages?.[res.data.chat_messages.length - 1]
           if (this.lastMessageReceivedPerConnection[key]) {
