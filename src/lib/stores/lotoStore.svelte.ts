@@ -110,6 +110,17 @@ export class LotoStore {
     this.usersById.set(user.id, user)
     this.ticketsFromChat.push(ticket)
   }
+
+  rollNextNumber = () => {
+    if (this.drawPool.length === 0) return
+
+    const randomIndex = Math.floor(Math.random() * this.drawPool.length)
+    const rolledNumber = this.drawPool[randomIndex]
+
+    this.nextNumber = rolledNumber
+    this.drawnNumbers.push(rolledNumber)
+    this.drawPool = this.drawPool.filter((_, i) => i !== randomIndex)
+  }
 }
 
 function getTicketMatchScore(ticket: LotoTicket, drawnSet: SvelteSet<string>) {
