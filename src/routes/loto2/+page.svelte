@@ -5,6 +5,8 @@
 
   import { untrack } from 'svelte'
 
+  import LotoTicket from '$lib/components/loto/LotoTicket.svelte'
+
   const lotoStore = new LotoStore({
     maxNumber: 99,
     ticketSize: 8
@@ -20,15 +22,15 @@
   })
 </script>
 
-<div>
-  <ConnectionDialog />
-  <div>Tickets</div>
-  <div>
+<div class="flex flex-col gap-6 p-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-black tracking-tighter uppercase italic">Loto</h1>
+    <ConnectionDialog />
+  </div>
+
+  <div class="flex flex-wrap gap-4">
     {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
-      <div>
-        <div>{ticket.owner_name}</div>
-        <div>{ticket.value}</div>
-      </div>
+      <LotoTicket {ticket} matchedNumbers={lotoStore.drawnNumbers} />
     {/each}
   </div>
 </div>
