@@ -6,6 +6,8 @@
   import { untrack } from 'svelte'
 
   import LotoTicket from '$lib/components/loto/LotoTicket.svelte'
+  import { flip } from 'svelte/animate'
+  import { fade } from 'svelte/transition'
 
   const lotoStore = new LotoStore({
     maxNumber: 99,
@@ -30,7 +32,9 @@
 
   <div class="flex flex-wrap gap-4">
     {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
-      <LotoTicket {ticket} matchedNumbers={lotoStore.drawnNumbers} />
+      <div animate:flip={{ duration: 400 }} in:fade>
+        <LotoTicket {ticket} matchedNumbers={lotoStore.drawnNumbers} />
+      </div>
     {/each}
   </div>
 </div>
