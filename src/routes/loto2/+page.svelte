@@ -25,61 +25,76 @@
   })
 </script>
 
-<div class="flex flex-col gap-6 p-6">
+<div class="flex min-h-screen flex-col gap-8 p-6">
   <div class="flex items-center justify-between">
     <h1 class="text-3xl font-black tracking-tighter text-primary uppercase italic">Loto</h1>
-    <div class="flex items-center gap-4">
-      {#if lotoStore.gameState === 'registration'}
-        <Button
-          class="h-auto rounded-xl bg-green-600 px-8 py-3.5 font-black uppercase tracking-tighter shadow-xl transition-all hover:scale-[1.02] hover:bg-green-500 active:scale-95"
-          onclick={() => lotoStore.start()}
-        >
-          Start Loto
-        </Button>
-      {:else}
-        <div
-          class="flex items-center gap-3 rounded-xl border bg-card p-2 px-4 shadow-sm ring-1 ring-border/50"
-        >
-          <span class="text-xs font-bold tracking-widest text-muted-foreground uppercase"
-            >Last:</span
-          >
-          <span class="min-w-[3rem] text-center text-3xl font-black text-primary">
-            {lotoStore.nextNumber || '--'}
-          </span>
-        </div>
-        <Button
-          class="h-auto rounded-xl px-8 py-3.5 font-black uppercase tracking-tighter shadow-xl transition-all hover:scale-[1.02] active:scale-95"
-          onclick={() => lotoStore.rollNextNumber()}
-          disabled={lotoStore.drawPool.length === 0}
-        >
-          Roll Number
-        </Button>
-      {/if}
-      <ConnectionDialog />
-    </div>
+    <ConnectionDialog />
   </div>
 
-  {#if lotoStore.drawnNumbers.length > 0}
-    <div class="flex flex-col gap-3 rounded-2xl border border-border/50 bg-muted/30 p-4">
-      <div class="flex items-center justify-between px-1">
-        <h2 class="text-xs font-black tracking-[0.2em] text-muted-foreground uppercase">
-          Drawn Numbers ({lotoStore.drawnNumbers.length})
-        </h2>
+  <div class="flex flex-col items-center justify-center gap-8 py-8">
+    {#if lotoStore.gameState === 'registration'}
+      <div class="flex flex-col items-center gap-4">
+        <Button
+          class="h-auto rounded-xl bg-green-600 px-12 py-6 text-xl font-black uppercase tracking-tighter shadow-xl transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
+          onclick={() => lotoStore.start()}
+        >
+          Start Loto Game
+        </Button>
+        <div
+          class="animate-pulse text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase"
+        >
+          Waiting for players to join...
+        </div>
       </div>
-      <div class="flex flex-wrap gap-2">
-        {#each lotoStore.drawnNumbers as num (num)}
+    {:else}
+      <div class="flex flex-col items-center gap-6">
+        <div class="flex flex-col items-center gap-4 md:flex-row">
           <div
-            class="flex h-10 w-10 items-center justify-center rounded-lg border border-primary/20 bg-background text-base font-black text-primary shadow-sm"
-            in:fade={{ duration: 300 }}
+            class="flex min-w-[7rem] flex-col items-center justify-center rounded-2xl border-2 border-primary/20 bg-card p-4 shadow-lg ring-1 ring-primary/5"
           >
-            {num}
+            <span class="mb-1 text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase"
+              >Last</span
+            >
+            <span class="text-center text-5xl font-black leading-none text-primary">
+              {lotoStore.nextNumber || '--'}
+            </span>
           </div>
-        {/each}
-      </div>
-    </div>
-  {/if}
 
-  <div class="flex flex-wrap gap-4">
+          <Button
+            class="h-auto rounded-2xl px-8 py-8 text-xl font-black uppercase tracking-tighter shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
+            onclick={() => lotoStore.rollNextNumber()}
+            disabled={lotoStore.drawPool.length === 0}
+          >
+            Roll Next
+          </Button>
+        </div>
+
+        {#if lotoStore.drawnNumbers.length > 0}
+          <div
+            class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/50 bg-muted/20 p-4 shadow-inner"
+          >
+            <div class="flex items-center justify-center px-2">
+              <h2 class="text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase">
+                History ({lotoStore.drawnNumbers.length})
+              </h2>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2">
+              {#each lotoStore.drawnNumbers as num (num)}
+                <div
+                  class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/10 bg-background text-sm font-black text-primary shadow-sm"
+                  in:fade={{ duration: 300 }}
+                >
+                  {num}
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+      </div>
+    {/if}
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-4">
     {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
       <div animate:flip={{ duration: 400 }} in:fade>
         <LotoTicket {ticket} matchedNumbers={lotoStore.drawnNumbers} />
