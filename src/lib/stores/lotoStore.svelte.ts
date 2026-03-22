@@ -111,6 +111,10 @@ export class LotoStore {
     this.ticketsFromChat.push(ticket)
   }
 
+  start = () => {
+    this.gameState = 'playing'
+  }
+
   rollNextNumber = () => {
     if (this.drawPool.length === 0) return
 

@@ -6,6 +6,7 @@
   import { untrack } from 'svelte'
 
   import LotoTicket from '$lib/components/loto/LotoTicket.svelte'
+  import { Button } from '$lib/components/ui/button'
   import { flip } from 'svelte/animate'
   import { fade } from 'svelte/transition'
 
@@ -26,29 +27,42 @@
 
 <div class="flex flex-col gap-6 p-6">
   <div class="flex items-center justify-between">
-    <h1 class="text-3xl font-black uppercase italic tracking-tighter text-primary">Loto</h1>
+    <h1 class="text-3xl font-black tracking-tighter text-primary uppercase italic">Loto</h1>
     <div class="flex items-center gap-4">
-      <div class="flex items-center gap-3 rounded-xl border bg-card p-2 px-4 shadow-sm ring-1 ring-border/50">
-        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">Last:</span>
-        <span class="text-3xl font-black text-primary min-w-[3rem] text-center">
-          {lotoStore.nextNumber || '--'}
-        </span>
-      </div>
-      <button
-        class="rounded-xl bg-primary px-8 py-3.5 font-black text-primary-foreground shadow-xl transition-all hover:scale-[1.02] hover:brightness-110 active:scale-95 disabled:pointer-events-none disabled:opacity-30 uppercase tracking-tighter"
-        onclick={() => lotoStore.rollNextNumber()}
-        disabled={lotoStore.drawPool.length === 0}
-      >
-        Roll Number
-      </button>
+      {#if lotoStore.gameState === 'registration'}
+        <Button
+          class="h-auto rounded-xl bg-green-600 px-8 py-3.5 font-black uppercase tracking-tighter shadow-xl transition-all hover:scale-[1.02] hover:bg-green-500 active:scale-95"
+          onclick={() => lotoStore.start()}
+        >
+          Start Loto
+        </Button>
+      {:else}
+        <div
+          class="flex items-center gap-3 rounded-xl border bg-card p-2 px-4 shadow-sm ring-1 ring-border/50"
+        >
+          <span class="text-xs font-bold tracking-widest text-muted-foreground uppercase"
+            >Last:</span
+          >
+          <span class="min-w-[3rem] text-center text-3xl font-black text-primary">
+            {lotoStore.nextNumber || '--'}
+          </span>
+        </div>
+        <Button
+          class="h-auto rounded-xl px-8 py-3.5 font-black uppercase tracking-tighter shadow-xl transition-all hover:scale-[1.02] active:scale-95"
+          onclick={() => lotoStore.rollNextNumber()}
+          disabled={lotoStore.drawPool.length === 0}
+        >
+          Roll Number
+        </Button>
+      {/if}
       <ConnectionDialog />
     </div>
   </div>
 
   {#if lotoStore.drawnNumbers.length > 0}
-    <div class="flex flex-col gap-3 rounded-2xl bg-muted/30 p-4 border border-border/50">
+    <div class="flex flex-col gap-3 rounded-2xl border border-border/50 bg-muted/30 p-4">
       <div class="flex items-center justify-between px-1">
-        <h2 class="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">
+        <h2 class="text-xs font-black tracking-[0.2em] text-muted-foreground uppercase">
           Drawn Numbers ({lotoStore.drawnNumbers.length})
         </h2>
       </div>
