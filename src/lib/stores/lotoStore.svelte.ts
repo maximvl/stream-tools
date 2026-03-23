@@ -115,12 +115,22 @@ export class LotoStore {
     this.gameState = 'playing'
   }
 
-  rollNextNumber = () => {
-    if (this.drawPool.length === 0) return
+  displayNextNumber = $state<string>('')
+  isRolling = $state(false)
+
+  rollNextNumber = async () => {
+    if (this.drawPool.length === 0 || this.isRolling) return
 
     const randomIndex = Math.floor(Math.random() * this.drawPool.length)
     const rolledNumber = this.drawPool[randomIndex]
 
+    this.isRolling = true
+    this.displayNextNumber = rolledNumber
+
+    // Wait for the animation to complete
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    this.isRolling = false
     this.nextNumber = rolledNumber
     this.drawnNumbers.push(rolledNumber)
     this.drawPool = this.drawPool.filter((_, i) => i !== randomIndex)

@@ -6,6 +6,7 @@
   import { untrack } from 'svelte'
 
   import LotoTicket from '$lib/components/loto/LotoTicket.svelte'
+  import SlotDigit from '$lib/components/loto/SlotDigit.svelte'
   import { Button } from '$lib/components/ui/button'
   import { flip } from 'svelte/animate'
   import { fade } from 'svelte/transition'
@@ -35,7 +36,7 @@
     {#if lotoStore.gameState === 'registration'}
       <div class="flex flex-col items-center gap-4">
         <Button
-          class="h-auto rounded-xl bg-green-600 px-12 py-6 text-xl font-black uppercase tracking-tighter shadow-xl transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
+          class="h-auto rounded-xl bg-green-600 px-12 py-6 text-xl font-black tracking-tighter uppercase shadow-xl transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
           onclick={() => lotoStore.start()}
         >
           Start Loto Game
@@ -47,23 +48,35 @@
         </div>
       </div>
     {:else}
+      {@const numStr = lotoStore.displayNextNumber || '00'}
       <div class="flex flex-col items-center gap-6">
         <div class="flex flex-col items-center gap-4 md:flex-row">
           <div
-            class="flex min-w-[7rem] flex-col items-center justify-center rounded-2xl border-2 border-primary/20 bg-card p-4 shadow-lg ring-1 ring-primary/5"
+            class="flex flex-col items-center justify-center rounded-2xl border-2 border-primary/20 bg-card p-4 shadow-lg ring-1 ring-primary/5"
           >
-            <span class="mb-1 text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase"
+            <span class="mb-2 text-[10px] font-black tracking-[0.3em] text-muted-foreground uppercase"
               >Last</span
             >
-            <span class="text-center text-5xl font-black leading-none text-primary">
-              {lotoStore.nextNumber || '--'}
-            </span>
+            <div class="flex gap-1">
+              <SlotDigit
+                target={numStr[0]}
+                animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
+                direction="up"
+                class="h-16 w-10 border-none shadow-none"
+              />
+              <SlotDigit
+                target={numStr[1]}
+                animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
+                direction="down"
+                class="h-16 w-10 border-none shadow-none"
+              />
+            </div>
           </div>
 
           <Button
             class="h-auto rounded-2xl px-8 py-8 text-xl font-black uppercase tracking-tighter shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
             onclick={() => lotoStore.rollNextNumber()}
-            disabled={lotoStore.drawPool.length === 0}
+            disabled={lotoStore.drawPool.length === 0 || lotoStore.isRolling}
           >
             Roll Next
           </Button>
