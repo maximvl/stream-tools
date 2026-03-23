@@ -71,7 +71,6 @@
 
   $effect(() => {
     if (animationKey) {
-      // displayTarget = target
       runAnimation()
     }
   })

@@ -13,7 +13,8 @@
 
   const lotoStore = new LotoStore({
     maxNumber: 99,
-    ticketSize: 8
+    ticketSize: 8,
+    rollAnimationTime: 1500
   })
 
   const store = getStore()
@@ -54,18 +55,21 @@
           <div
             class="flex flex-col items-center justify-center rounded-2xl border-2 border-primary/20 bg-card p-4 shadow-lg ring-1 ring-primary/5"
           >
-            <span class="mb-2 text-[10px] font-black tracking-[0.3em] text-muted-foreground uppercase"
+            <span
+              class="mb-2 text-[10px] font-black tracking-[0.3em] text-muted-foreground uppercase"
               >Last</span
             >
             <div class="flex gap-1">
               <SlotDigit
                 target={numStr[0]}
+                duration={lotoStore.config.rollAnimationTime}
                 animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
                 direction="up"
                 class="h-16 w-10 border-none shadow-none"
               />
               <SlotDigit
                 target={numStr[1]}
+                duration={lotoStore.config.rollAnimationTime}
                 animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
                 direction="down"
                 class="h-16 w-10 border-none shadow-none"
@@ -74,7 +78,7 @@
           </div>
 
           <Button
-            class="h-auto rounded-2xl px-8 py-8 text-xl font-black uppercase tracking-tighter shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
+            class="h-auto rounded-2xl px-8 py-8 text-xl font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
             onclick={() => lotoStore.rollNextNumber()}
             disabled={lotoStore.drawPool.length === 0 || lotoStore.isRolling}
           >

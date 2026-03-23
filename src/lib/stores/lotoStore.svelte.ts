@@ -11,6 +11,7 @@ const LOTO_MATCH = 'лото'
 export type LotoConfig = {
   ticketSize: number
   maxNumber: number
+  rollAnimationTime: number
 }
 
 export class LotoStore {
@@ -18,7 +19,9 @@ export class LotoStore {
   drawnNumbers = $state<string[]>([])
   gameState = $state<GameState>('registration')
   nextNumber = $state<string>('')
-  rollAnimationState = $state<'idle' | 'roll_start' | 'rolling'>('idle')
+
+  displayNextNumber = $state<string>('')
+  isRolling = $state(false)
 
   ticketsFromChat = $state<LotoTicket[]>([])
   ticketsFromPoints = $state<LotoTicket[]>([])
@@ -115,9 +118,6 @@ export class LotoStore {
     this.gameState = 'playing'
   }
 
-  displayNextNumber = $state<string>('')
-  isRolling = $state(false)
-
   rollNextNumber = async () => {
     if (this.drawPool.length === 0 || this.isRolling) return
 
@@ -128,7 +128,7 @@ export class LotoStore {
     this.displayNextNumber = rolledNumber
 
     // Wait for the animation to complete
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, this.config.rollAnimationTime))
 
     this.isRolling = false
     this.nextNumber = rolledNumber
