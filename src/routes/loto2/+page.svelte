@@ -40,12 +40,12 @@
           class="h-auto rounded-xl bg-green-600 px-12 py-6 text-xl font-black tracking-tighter uppercase shadow-xl transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
           onclick={() => lotoStore.start()}
         >
-          Start Loto Game
+          Начать
         </Button>
         <div
           class="animate-pulse text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase"
         >
-          Waiting for players to join...
+          Раздача билетов
         </div>
       </div>
     {:else}
@@ -55,10 +55,6 @@
           <div
             class="flex flex-col items-center justify-center rounded-2xl border-2 border-primary/20 bg-card p-4 shadow-lg ring-1 ring-primary/5"
           >
-            <span
-              class="mb-2 text-[10px] font-black tracking-[0.3em] text-muted-foreground uppercase"
-              >Last</span
-            >
             <div class="flex gap-1">
               <SlotDigit
                 target={numStr[0]}
@@ -82,7 +78,7 @@
             onclick={() => lotoStore.rollNextNumber()}
             disabled={lotoStore.drawPool.length === 0 || lotoStore.isRolling}
           >
-            Roll Next
+            Ролл
           </Button>
         </div>
 
@@ -92,7 +88,7 @@
           >
             <div class="flex items-center justify-center px-2">
               <h2 class="text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase">
-                History ({lotoStore.drawnNumbers.length})
+                Открыты ({lotoStore.drawnNumbers.length})
               </h2>
             </div>
             <div class="flex flex-wrap justify-center gap-2">
