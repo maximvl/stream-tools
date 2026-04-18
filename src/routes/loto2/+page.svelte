@@ -12,9 +12,9 @@
   import { fade } from 'svelte/transition'
 
   const lotoStore = new LotoStore({
-    maxNumber: 99,
-    ticketSize: 8,
-    rollAnimationTime: 1500
+    max_number: 99,
+    ticket_size: 8,
+    roll_animation_time: 1500
   })
 
   const store = getStore()
@@ -58,14 +58,14 @@
             <div class="flex gap-1">
               <SlotDigit
                 target={numStr[0]}
-                duration={lotoStore.config.rollAnimationTime}
+                duration={lotoStore.config.roll_animation_time}
                 animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
                 direction="up"
                 class="h-16 w-10 border-none shadow-none"
               />
               <SlotDigit
                 target={numStr[1]}
-                duration={lotoStore.config.rollAnimationTime}
+                duration={lotoStore.config.roll_animation_time}
                 animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
                 direction="down"
                 class="h-16 w-10 border-none shadow-none"

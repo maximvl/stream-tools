@@ -9,9 +9,9 @@ type SuperGameResultItem = 'empty' | 'x1' | 'x2' | 'x3' | { vk_custom: string }
 const LOTO_MATCH = 'лото'
 
 export type LotoConfig = {
-  ticketSize: number
-  maxNumber: number
-  rollAnimationTime: number
+  ticket_size: number
+  max_number: number
+  roll_animation_time: number
 }
 
 export class LotoStore {
@@ -37,7 +37,7 @@ export class LotoStore {
 
   constructor(config: LotoConfig) {
     this.config = config
-    this.drawPool = Array.from({ length: config.maxNumber }, (_, i) =>
+    this.drawPool = Array.from({ length: config.max_number }, (_, i) =>
       (i + 1).toString().padStart(2, '0')
     )
   }
@@ -128,7 +128,7 @@ export class LotoStore {
     this.displayNextNumber = rolledNumber
 
     // Wait for the animation to complete
-    await new Promise((resolve) => setTimeout(resolve, this.config.rollAnimationTime))
+    await new Promise((resolve) => setTimeout(resolve, this.config.roll_animation_time))
 
     this.isRolling = false
     this.nextNumber = rolledNumber
@@ -198,25 +198,25 @@ function genTicketNumber(params: { text: string; pool: string[]; config: LotoCon
 
   const text = params.text.trim()
   if (text.length === 0) {
-    return sampleSize(pool, config.ticketSize)
+    return sampleSize(pool, config.ticket_size)
   }
 
   const ticketNumber = uniq(
     text
       .split(' ')
       .map((n) => parseInt(n))
-      .filter((n) => n > 0 && n < config.maxNumber)
+      .filter((n) => n > 0 && n < config.max_number)
       .map((n) => n.toString().padStart(2, '0'))
       .filter((n) => pool.includes(n))
   )
 
-  if (ticketNumber.length < config.ticketSize) {
+  if (ticketNumber.length < config.ticket_size) {
     const sampleOptions = sampleSize(pool, 10)
     const validOptions = sampleOptions.filter((o) => !ticketNumber.includes(o))
-    ticketNumber.push(...sampleSize(validOptions, config.ticketSize - ticketNumber.length))
+    ticketNumber.push(...sampleSize(validOptions, config.ticket_size - ticketNumber.length))
   }
 
-  return ticketNumber.slice(0, config.ticketSize)
+  return ticketNumber.slice(0, config.ticket_size)
 }
 
 const VK_CHAT_BOT_NAME = 'ChatBot'
