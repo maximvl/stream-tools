@@ -45,7 +45,7 @@
         <div
           class="animate-pulse text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase"
         >
-          Раздача билетов
+          Раздача билетов {lotoStore.ticketsOrdered.length}
         </div>
       </div>
     {:else}
