@@ -5,12 +5,14 @@
   type Props = {
     ticket: LotoTicket
     matchedNumbers?: string[]
+    lastRolledNumber?: string
     class?: string
   }
 
-  let { ticket, matchedNumbers = [], class: className }: Props = $props()
+  let { ticket, matchedNumbers = [], lastRolledNumber, class: className }: Props = $props()
 
   const isMatched = (num: string) => matchedNumbers.includes(num)
+  const isLastRolledMatch = (num: string) => num === lastRolledNumber
 </script>
 
 <div
@@ -38,9 +40,11 @@
       <div
         class={cn(
           'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 text-sm font-black transition-all duration-300',
-          isMatched(num)
-            ? 'scale-105 border-yellow-400 bg-yellow-400 text-yellow-950 shadow-[0_0_10px_rgba(250,204,21,0.5)]'
-            : 'border-muted bg-muted/30 text-muted-foreground',
+          isLastRolledMatch(num)
+            ? 'scale-110 border-orange-500 bg-orange-500 text-orange-950 shadow-[0_0_15px_rgba(249,115,22,0.7)]'
+            : isMatched(num)
+              ? 'scale-105 border-yellow-400 bg-yellow-400 text-yellow-950 shadow-[0_0_10px_rgba(250,204,21,0.5)]'
+              : 'border-muted bg-muted/30 text-muted-foreground',
         )}
       >
         {num}

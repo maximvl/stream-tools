@@ -115,7 +115,11 @@
   <div class="flex flex-wrap justify-center gap-4">
     {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
       <div animate:flip={{ duration: 400 }} in:fade>
-        <LotoTicket {ticket} matchedNumbers={lotoStore.drawnNumbers} />
+        <LotoTicket
+          {ticket}
+          matchedNumbers={lotoStore.drawnNumbers}
+          lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
+        />
       </div>
     {/each}
   </div>
