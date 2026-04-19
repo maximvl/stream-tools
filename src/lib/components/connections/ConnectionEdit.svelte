@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ChatConnection } from '$lib/types'
-  import { getStore } from '$lib/context'
+  import { getChatStore } from '$lib/context'
   import { Button } from '$lib/components/ui/button'
   import { Trash2 } from '@lucide/svelte'
   import Input from '../ui/input/input.svelte'
@@ -12,7 +12,7 @@
   }
 
   let { connection = $bindable(), onRemove }: Props = $props()
-  const store = getStore()
+  const store = getChatStore()
 
   const connections = [
     { value: 'twitch', label: 'twitch.tv' },

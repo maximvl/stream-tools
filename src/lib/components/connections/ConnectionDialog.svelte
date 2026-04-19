@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getStore } from '$lib/context'
+  import { getChatStore } from '$lib/context'
   import { untrack } from 'svelte'
   import * as Dialog from '../ui/dialog'
   import ConnectionEdit from './ConnectionEdit.svelte'
@@ -11,7 +11,7 @@
   import { connToKey } from '$lib/stores/chatMessagesStore.svelte'
   import * as Tooltip from '$lib/components/ui/tooltip'
 
-  const store = getStore()
+  const store = getChatStore()
 
   let open = $state(false)
   let localConnections = $state<typeof store.connections.value>(store.connections.value)

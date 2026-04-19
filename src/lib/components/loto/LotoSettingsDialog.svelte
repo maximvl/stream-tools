@@ -3,32 +3,11 @@
   import { Button } from '$lib/components/ui/button'
   import { Input } from '$lib/components/ui/input'
   import { Label } from '$lib/components/ui/label'
-  import type { LotoConfig } from '$lib/stores/lotoStore.svelte'
+  import { getLotoConfigStore } from '$lib/stores/lotoStore.svelte'
 
-  let { config, onSave }: { config: LotoConfig; onSave: (config: LotoConfig) => void } = $props()
+  const lotoConfig = getLotoConfigStore()
 
   let open = $state(false)
-  let localConfig = $state<LotoConfig>({
-    ticket_size: 8,
-    max_number: 99,
-    roll_animation_time: 1500,
-  })
-
-  $effect(() => {
-    if (open) {
-      localConfig = { ...config }
-    }
-  })
-
-  function handleSave() {
-    onSave(localConfig)
-    open = false
-  }
-
-  function handleCancel() {
-    localConfig = { ...config }
-    open = false
-  }
 </script>
 
 <Dialog.Root bind:open>
@@ -43,7 +22,7 @@
         <Input
           id="ticket-size"
           type="number"
-          bind:value={localConfig.ticket_size}
+          bind:value={lotoConfig.value.ticket_size}
           min="1"
           max="20"
         />
@@ -53,7 +32,7 @@
         <Input
           id="max-number"
           type="number"
-          bind:value={localConfig.max_number}
+          bind:value={lotoConfig.value.max_number}
           min="10"
           max="999"
         />
@@ -63,16 +42,13 @@
         <Input
           id="roll-animation-time"
           type="number"
-          bind:value={localConfig.roll_animation_time}
+          bind:value={lotoConfig.value.roll_animation_time}
           min="100"
           max="5000"
           step="100"
         />
       </div>
     </div>
-    <Dialog.Footer>
-      <Button variant="outline" onclick={handleCancel}>Отмена</Button>
-      <Button onclick={handleSave}>Сохранить</Button>
-    </Dialog.Footer>
+    <Dialog.Footer></Dialog.Footer>
   </Dialog.Content>
 </Dialog.Root>

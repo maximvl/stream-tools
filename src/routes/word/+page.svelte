@@ -1,12 +1,12 @@
 <script lang="ts">
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
   import { WordDisplay } from '$lib/components/ui/word-display'
-  import { getStore } from '$lib/context'
+  import { getChatStore } from '$lib/context'
   import { Input } from '$lib/components/ui/input'
   import { Button } from '$lib/components/ui/button'
   import Nav from '$lib/components/layout/Nav.svelte'
 
-  const store = getStore()
+  const store = getChatStore()
   let word = $state('')
   let isWordSet = $state(false)
   let isRevealed = $state(false)

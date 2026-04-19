@@ -6,7 +6,7 @@
 
   // Now this runs safely because it's a child of QueryClientProvider
   const store = new ChatMessagesStore()
-  setContext('store', store)
+  setContext('chat-store', store)
 </script>
 
 {@render children()}

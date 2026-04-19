@@ -1,8 +1,8 @@
 <script lang="ts">
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
   import LotoSettingsDialog from '$lib/components/loto/LotoSettingsDialog.svelte'
-  import { getStore } from '$lib/context'
-  import { DefaultConfig, LotoStore } from '$lib/stores/lotoStore.svelte'
+  import { getChatStore } from '$lib/context'
+  import { getLotoConfigStore, LotoStore } from '$lib/stores/lotoStore.svelte'
 
   import { untrack } from 'svelte'
 
@@ -11,17 +11,10 @@
   import { Button } from '$lib/components/ui/button'
   import { flip } from 'svelte/animate'
   import { fade } from 'svelte/transition'
-  import { LocalStore } from '$lib/stores/localStore.svelte'
 
-  const config = new LocalStore('loto-config', DefaultConfig)
-
-  const lotoStore = new LotoStore(config.value)
-
-  $effect(() => {
-    lotoStore.config = config.value
-  })
-
-  const store = getStore()
+  const lotoConfig = getLotoConfigStore()
+  const lotoStore = new LotoStore(lotoConfig)
+  const store = getChatStore()
 
   $effect(() => {
     const messages = store.newMessages
@@ -29,17 +22,13 @@
       messages.forEach(lotoStore.addTicket)
     })
   })
-
-  function handleSaveConfig(newConfig: typeof config.value) {
-    config.value = newConfig
-  }
 </script>
 
 <div class="flex min-h-screen flex-col gap-8 p-6">
   <div class="flex items-center justify-between">
     <h1 class="text-3xl font-black tracking-tighter text-primary uppercase italic">Loto</h1>
     <div class="flex gap-2">
-      <LotoSettingsDialog config={config.value} onSave={handleSaveConfig} />
+      <LotoSettingsDialog />
       <ConnectionDialog />
     </div>
   </div>
@@ -69,14 +58,14 @@
             <div class="flex gap-1">
               <SlotDigit
                 target={numStr[0]}
-                duration={lotoStore.config.roll_animation_time}
+                duration={lotoConfig.value.roll_animation_time}
                 animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
                 direction="up"
                 class="h-16 w-10 border-none shadow-none"
               />
               <SlotDigit
                 target={numStr[1]}
-                duration={lotoStore.config.roll_animation_time}
+                duration={lotoConfig.value.roll_animation_time}
                 animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
                 direction="down"
                 class="h-16 w-10 border-none shadow-none"

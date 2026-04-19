@@ -2,6 +2,7 @@ import type { ChatMessage, ChatUser, LotoTicket, LotoTicketId, UserId, VkMention
 import sampleSize from 'lodash/sampleSize'
 import uniq from 'lodash/uniq'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
+import { LocalStore } from './localStore.svelte'
 
 type GameState = 'registration' | 'playing'
 type SuperGameResultItem = 'empty' | 'x1' | 'x2' | 'x3' | { vk_custom: string }
@@ -14,13 +15,15 @@ export type LotoConfig = {
   roll_animation_time: number
 }
 
-export const DefaultConfig = {
+const DefaultConfig: LotoConfig = {
   ticket_size: 8,
   max_number: 99,
   roll_animation_time: 1500,
 }
 
 export class LotoStore {
+  config: LocalStore<LotoConfig>
+
   drawPool = $state<string[]>([])
   drawnNumbers = $state<string[]>([])
   gameState = $state<GameState>('registration')
@@ -39,11 +42,9 @@ export class LotoStore {
   usersById = $state<SvelteMap<string, ChatUser>>(new SvelteMap())
   openedChats = $state<Set<UserId>>(new SvelteSet())
 
-  config: LotoConfig
-
-  constructor(config: LotoConfig) {
+  constructor(config: LocalStore<LotoConfig>) {
     this.config = config
-    this.drawPool = Array.from({ length: config.max_number }, (_, i) =>
+    this.drawPool = Array.from({ length: this.config.value.max_number }, (_, i) =>
       (i + 1).toString().padStart(2, '0'),
     )
   }
@@ -77,7 +78,7 @@ export class LotoStore {
       return
     }
 
-    const ticket = makeTicket({ chatMessage: msg, pool: this.drawPool, config: this.config })
+    const ticket = makeTicket({ chatMessage: msg, pool: this.drawPool, config: this.config.value })
     const user: ChatUser = {
       id: msg.user.id,
       source: msg.source,
@@ -134,7 +135,7 @@ export class LotoStore {
     this.displayNextNumber = rolledNumber
 
     // Wait for the animation to complete
-    await new Promise((resolve) => setTimeout(resolve, this.config.roll_animation_time))
+    await new Promise((resolve) => setTimeout(resolve, this.config.value.roll_animation_time))
 
     this.isRolling = false
     this.nextNumber = rolledNumber
@@ -233,4 +234,8 @@ function isMessageFromVkBot(msg: ChatMessage) {
 
 function isMessageHighlightedOnTwitch(msg: ChatMessage) {
   return msg.source.server === 'twitch' && Boolean(msg.user.twitch_fields?.highlighted)
+}
+
+export function getLotoConfigStore() {
+  return new LocalStore('loto-config', DefaultConfig)
 }
