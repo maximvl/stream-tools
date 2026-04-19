@@ -3,6 +3,7 @@
   import LotoSettingsDialog from '$lib/components/loto/LotoSettingsDialog.svelte'
   import { getChatStore } from '$lib/context'
   import { getLotoConfigStore, LotoStore } from '$lib/stores/lotoStore.svelte'
+  import { TimerStore } from '$lib/stores/timerStore.svelte'
 
   import { untrack } from 'svelte'
 
@@ -17,6 +18,10 @@
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
   const store = getChatStore()
+  const countdownTimer = new TimerStore()
+
+  countdownTimer.limitMs = 2 * 60000
+  countdownTimer.start()
 
   $effect(() => {
     const messages = store.newMessages
@@ -42,12 +47,23 @@
   <div class="flex flex-1 flex-col items-center justify-center gap-8 pt-16">
     {#if lotoStore.gameState === 'registration'}
       <div class="flex flex-col items-center gap-4">
-        <Button
-          class="h-auto rounded-xl bg-green-600 px-12 py-6 text-xl font-black tracking-tighter uppercase shadow-xl transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
-          onclick={() => lotoStore.start()}
-        >
-          Начать
-        </Button>
+        <div class="flex items-center gap-6">
+          <Button
+            class="h-auto rounded-xl bg-green-600 px-12 py-6 text-xl font-black tracking-tighter uppercase shadow-xl transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
+            onclick={() => lotoStore.start()}
+          >
+            Начать
+          </Button>
+          <div
+            class="flex h-16 items-center justify-center rounded-2xl border-2 border-primary/20 bg-card px-6 shadow-lg ring-1 ring-primary/5"
+          >
+            <div class="flex items-center gap-2">
+              <div class="text-3xl font-black text-primary">
+                {Math.max(0, countdownTimer.remainingSeconds).toString().padStart(2, '0')}
+              </div>
+            </div>
+          </div>
+        </div>
         <div
           class="animate-pulse text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase"
         >
