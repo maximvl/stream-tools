@@ -11,6 +11,7 @@
   import { Button } from '$lib/components/ui/button'
   import { flip } from 'svelte/animate'
   import { fade } from 'svelte/transition'
+  import Nav from '$lib/components/layout/Nav.svelte'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -24,7 +25,11 @@
   })
 </script>
 
-<div class="flex min-h-screen flex-col gap-8 p-6">
+<div class="dark flex flex-col items-center p-8">
+  <Nav />
+</div>
+
+<div class="flex min-h-screen flex-col gap-8 px-6 pb-6">
   <div class="flex items-center justify-between">
     <h1 class="text-3xl font-black tracking-tighter text-primary uppercase italic">Loto</h1>
     <div class="flex gap-2">
