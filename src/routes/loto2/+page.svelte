@@ -20,8 +20,12 @@
   const store = getChatStore()
   const countdownTimer = new TimerStore()
 
-  countdownTimer.limitMs = 2 * 60000
-  countdownTimer.start()
+  function addTime(seconds: number) {
+    countdownTimer.limitMs += seconds * 1000
+    if (countdownTimer.state === 'paused') {
+      countdownTimer.start()
+    }
+  }
 
   $effect(() => {
     const messages = store.newMessages
@@ -38,6 +42,20 @@
   <div class="fixed top-6 left-6 z-50 flex flex-col gap-6">
     <ConnectionDialog />
     <LotoSettingsDialog />
+    <div class="flex flex-col gap-2">
+      <Button
+        class="h-auto rounded-xl bg-blue-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-blue-500 active:scale-95"
+        onclick={() => addTime(60)}
+      >
+        +1 мин
+      </Button>
+      <Button
+        class="h-auto rounded-xl bg-purple-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-purple-500 active:scale-95"
+        onclick={() => addTime(30)}
+      >
+        +30 сек
+      </Button>
+    </div>
   </div>
 
   <div class="fixed top-6 right-8 z-50">
@@ -54,15 +72,17 @@
           >
             Начать
           </Button>
-          <div
-            class="flex h-16 items-center justify-center rounded-2xl border-2 border-primary/20 bg-card px-6 shadow-lg ring-1 ring-primary/5"
-          >
-            <div class="flex items-center gap-2">
-              <div class="text-3xl font-black text-primary">
-                {Math.max(0, countdownTimer.remainingSeconds).toString().padStart(2, '0')}
+          {#if countdownTimer.limitMs > 0}
+            <div
+              class="flex h-16 items-center justify-center rounded-2xl border-2 border-primary/20 bg-card px-6 shadow-lg ring-1 ring-primary/5"
+            >
+              <div class="flex items-center gap-2">
+                <div class="text-3xl font-black text-primary">
+                  {Math.max(0, countdownTimer.remainingSeconds).toString().padStart(2, '0')}
+                </div>
               </div>
             </div>
-          </div>
+          {/if}
         </div>
         <div
           class="animate-pulse text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase"

@@ -18,7 +18,7 @@ export class TimerStore {
   currentMs = $derived(this.startMs + this.passedMs + this.startTs)
   currentDate = $derived(new SvelteDate(this.currentMs))
 
-  limitMs = 0
+  limitMs = $state(0)
   remainingMs = $derived(this.limitMs - this.passedMs)
   remainingSeconds = $derived(Math.round(this.remainingMs / 1000))
   remainingMinutes = $derived(Math.round(this.remainingSeconds / 60))
