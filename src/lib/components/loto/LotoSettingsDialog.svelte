@@ -12,7 +12,7 @@
 
 <Dialog.Root bind:open>
   <Dialog.Trigger>
-    <Button variant="outline" size="sm">Настройки</Button>
+    <Button variant="outline" size="sm" class="w-full">Настройки</Button>
   </Dialog.Trigger>
   <Dialog.Content>
     <Dialog.Header>Настройки лото</Dialog.Header>
