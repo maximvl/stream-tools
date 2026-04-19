@@ -7,6 +7,7 @@
   import { untrack } from 'svelte'
 
   import LotoTicket from '$lib/components/loto/LotoTicket.svelte'
+  import LotoLogo from '$lib/components/loto/LotoLogo.svelte'
   import SlotDigit from '$lib/components/loto/SlotDigit.svelte'
   import { Button } from '$lib/components/ui/button'
   import { flip } from 'svelte/animate'
@@ -34,8 +35,8 @@
     <LotoSettingsDialog />
   </div>
 
-  <div class="fixed top-6 right-6 z-50">
-    <h1 class="text-3xl font-black tracking-tighter text-primary uppercase italic">Loto</h1>
+  <div class="fixed top-6 right-8 z-50">
+    <LotoLogo />
   </div>
 
   <div class="flex flex-1 flex-col items-center justify-center gap-8 pt-16">
