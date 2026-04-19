@@ -1,6 +1,6 @@
 import type { ChatServer } from './types'
 
-export const ServerIcons: { [k in ChatServer]: string } = {
+export const ServerIcons: Record<ChatServer, string> = {
   twitch: 'https://cdn-icons-png.flaticon.com/512/3992/3992643.png',
   vkvideo: 'https://vkvideo.ru/images/icons/favicons/fav_vk_video_2x.ico?8',
   kick: 'https://kick.com/favicon.ico',

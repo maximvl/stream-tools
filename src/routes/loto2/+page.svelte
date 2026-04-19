@@ -9,6 +9,7 @@
 
   import LotoTicket from '$lib/components/loto/LotoTicket.svelte'
   import LotoLogo from '$lib/components/loto/LotoLogo.svelte'
+  import PlatformTicketCounts from '$lib/components/loto/PlatformTicketCounts.svelte'
   import SlotDigit from '$lib/components/loto/SlotDigit.svelte'
   import { Button } from '$lib/components/ui/button'
   import { flip } from 'svelte/animate'
@@ -38,17 +39,33 @@
 <div class="dark flex flex-col items-center p-8">
   <Nav />
 </div>
-<div class="dark flex min-h-screen flex-col p-6 relative overflow-hidden">
+<div class="dark relative flex min-h-screen flex-col overflow-hidden p-6">
   <div class="fixed inset-0 -z-10">
-    <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900"></div>
-    <div class="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-    <div class="absolute top-1/4 right-1/4 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
-    <div class="absolute bottom-1/4 left-1/3 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
-    <div class="absolute bottom-0 right-1/3 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 3s;"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 rounded-full blur-3xl animate-spin" style="animation-duration: 20s;"></div>
+    <div
+      class="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900"
+    ></div>
+    <div
+      class="absolute top-0 left-1/4 h-96 w-96 animate-pulse rounded-full bg-purple-500/20 blur-3xl"
+    ></div>
+    <div
+      class="absolute top-1/4 right-1/4 h-80 w-80 animate-pulse rounded-full bg-pink-500/20 blur-3xl"
+      style="animation-delay: 1s;"
+    ></div>
+    <div
+      class="absolute bottom-1/4 left-1/3 h-72 w-72 animate-pulse rounded-full bg-blue-500/20 blur-3xl"
+      style="animation-delay: 2s;"
+    ></div>
+    <div
+      class="absolute right-1/3 bottom-0 h-64 w-64 animate-pulse rounded-full bg-orange-500/20 blur-3xl"
+      style="animation-delay: 3s;"
+    ></div>
+    <div
+      class="absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 blur-3xl"
+      style="animation-duration: 20s;"
+    ></div>
   </div>
 
-  <div class="fixed top-6 left-6 z-50 flex flex-col gap-6">
+  <div class="fixed top-6 left-6 z-50 flex flex-col gap-4">
     <ConnectionDialog />
     <LotoSettingsDialog />
     {#if lotoStore.gameState === 'registration'}
@@ -85,11 +102,16 @@
           </Button>
           {#if countdownTimer.limitMs > 0}
             <div
-              class="flex h-16 items-center justify-center rounded-2xl border-2 px-6 shadow-lg ring-1 transition-all {countdownTimer.remainingSeconds <= 30 ? 'border-red-500/50 bg-red-500/10 ring-red-500/20 animate-pulse' : 'border-primary/20 bg-card ring-primary/5'}"
+              class="flex h-16 items-center justify-center rounded-2xl border-2 px-6 shadow-lg ring-1 transition-all {countdownTimer.remainingSeconds <=
+              30
+                ? 'animate-pulse border-red-500/50 bg-red-500/10 ring-red-500/20'
+                : 'border-primary/20 bg-card ring-primary/5'}"
             >
               <div class="flex items-center gap-2">
                 <div
-                  class="text-3xl font-black {countdownTimer.remainingSeconds <= 30 ? 'text-red-500' : 'text-primary'}"
+                  class="text-3xl font-black {countdownTimer.remainingSeconds <= 30
+                    ? 'text-red-500'
+                    : 'text-primary'}"
                 >
                   {Math.max(0, countdownTimer.remainingSeconds).toString().padStart(2, '0')}
                 </div>
@@ -98,10 +120,11 @@
           {/if}
         </div>
         <div
-          class="animate-pulse text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase"
+          class="hidden animate-pulse text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase"
         >
           Раздача билетов {lotoStore.ticketsOrdered.length}
         </div>
+        <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
       </div>
     {:else}
       {@const numStr = lotoStore.displayNextNumber || '00'}
