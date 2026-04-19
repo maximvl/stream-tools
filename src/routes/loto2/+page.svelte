@@ -74,10 +74,12 @@
           </Button>
           {#if countdownTimer.limitMs > 0}
             <div
-              class="flex h-16 items-center justify-center rounded-2xl border-2 border-primary/20 bg-card px-6 shadow-lg ring-1 ring-primary/5"
+              class="flex h-16 items-center justify-center rounded-2xl border-2 px-6 shadow-lg ring-1 transition-all {countdownTimer.remainingSeconds <= 30 ? 'border-red-500/50 bg-red-500/10 ring-red-500/20 animate-pulse' : 'border-primary/20 bg-card ring-primary/5'}"
             >
               <div class="flex items-center gap-2">
-                <div class="text-3xl font-black text-primary">
+                <div
+                  class="text-3xl font-black {countdownTimer.remainingSeconds <= 30 ? 'text-red-500' : 'text-primary'}"
+                >
                   {Math.max(0, countdownTimer.remainingSeconds).toString().padStart(2, '0')}
                 </div>
               </div>
