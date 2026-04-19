@@ -86,3 +86,9 @@ export type LotoTicket = {
   created_at: number
   isLatecomer: boolean
 }
+
+export type VkRewards = {
+  x1: number
+  x2: number
+  x3: number
+}

@@ -1,4 +1,12 @@
-import type { ChatMessage, ChatUser, LotoTicket, LotoTicketId, UserId, VkMention } from '$lib/types'
+import type {
+  ChatMessage,
+  ChatUser,
+  LotoTicket,
+  LotoTicketId,
+  UserId,
+  VkMention,
+  VkRewards,
+} from '$lib/types'
 import sampleSize from 'lodash/sampleSize'
 import uniq from 'lodash/uniq'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
@@ -13,12 +21,40 @@ export type LotoConfig = {
   ticket_size: number
   max_number: number
   roll_animation_time: number
+  enable_chat_tickets: boolean
+  enable_points_tickets: boolean
+  only_subscribers: boolean
+  win_matches_amount: number
+  manual_draw_enabled: boolean
+  // limit_to_90: boolean
+  allow_mods_to_input_numbers: boolean
+  super_game_options_amount: number
+  super_game_guesses_amount: number
+  super_game_1_pointers: number
+  super_game_2_pointers: number
+  super_game_3_pointers: number
+  super_game_bonus_guesses_enabled: boolean
+  super_game_vk_rewards?: VkRewards
 }
 
 const DefaultConfig: LotoConfig = {
   ticket_size: 8,
   max_number: 99,
   roll_animation_time: 1500,
+  enable_chat_tickets: true,
+  enable_points_tickets: true,
+  only_subscribers: false,
+  win_matches_amount: 3,
+  manual_draw_enabled: false,
+  // limit_to_90: false,
+  allow_mods_to_input_numbers: false,
+  super_game_options_amount: 5,
+  super_game_guesses_amount: 3,
+  super_game_1_pointers: 1,
+  super_game_2_pointers: 2,
+  super_game_3_pointers: 3,
+  super_game_bonus_guesses_enabled: false,
+  super_game_vk_rewards: undefined,
 }
 
 export class LotoStore {
