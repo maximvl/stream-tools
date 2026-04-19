@@ -38,24 +38,35 @@
 <div class="dark flex flex-col items-center p-8">
   <Nav />
 </div>
-<div class="dark flex min-h-screen flex-col p-6">
+<div class="dark flex min-h-screen flex-col p-6 relative overflow-hidden">
+  <div class="fixed inset-0 -z-10">
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900"></div>
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute top-1/4 right-1/4 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+    <div class="absolute bottom-1/4 left-1/3 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute bottom-0 right-1/3 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 3s;"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 rounded-full blur-3xl animate-spin" style="animation-duration: 20s;"></div>
+  </div>
+
   <div class="fixed top-6 left-6 z-50 flex flex-col gap-6">
     <ConnectionDialog />
     <LotoSettingsDialog />
-    <div class="flex flex-col gap-2">
-      <Button
-        class="h-auto rounded-xl bg-blue-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-blue-500 active:scale-95"
-        onclick={() => addTime(60)}
-      >
-        +1 мин
-      </Button>
-      <Button
-        class="h-auto rounded-xl bg-purple-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-purple-500 active:scale-95"
-        onclick={() => addTime(30)}
-      >
-        +30 сек
-      </Button>
-    </div>
+    {#if lotoStore.gameState === 'registration'}
+      <div class="flex flex-col gap-2">
+        <Button
+          class="h-auto rounded-xl bg-blue-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-blue-500 active:scale-95"
+          onclick={() => addTime(60)}
+        >
+          +1 мин
+        </Button>
+        <Button
+          class="h-auto rounded-xl bg-purple-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-purple-500 active:scale-95"
+          onclick={() => addTime(30)}
+        >
+          +30 сек
+        </Button>
+      </div>
+    {/if}
   </div>
 
   <div class="fixed top-6 right-8 z-50">
