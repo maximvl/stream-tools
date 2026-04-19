@@ -83,6 +83,8 @@
           +30 сек
         </Button>
       </div>
+    {:else}
+      <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
     {/if}
   </div>
 
