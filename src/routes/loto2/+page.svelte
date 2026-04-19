@@ -22,8 +22,11 @@
   const countdownTimer = new TimerStore()
 
   function addTime(seconds: number) {
+    if (countdownTimer.state === 'finished') {
+      countdownTimer.limitMs = 0
+    }
     countdownTimer.limitMs += seconds * 1000
-    if (countdownTimer.state === 'paused') {
+    if (countdownTimer.state !== 'active') {
       countdownTimer.start()
     }
   }
@@ -97,7 +100,9 @@
       <div class="flex flex-col items-center gap-4">
         <div class="flex items-center gap-6">
           <Button
-            class="h-auto rounded-xl bg-green-600 px-12 py-6 text-xl font-black tracking-tighter uppercase shadow-xl transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
+            class="{countdownTimer.state !== 'active'
+              ? 'button-animate'
+              : ''} h-auto rounded-xl bg-green-600 px-12 py-6 text-xl font-black tracking-tighter uppercase shadow-xl transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
             onclick={() => lotoStore.start()}
           >
             Начать
@@ -188,7 +193,7 @@
 
     <div class="flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
-        <div animate:flip={{ duration: 400 }} in:fade>
+        <div animate:flip={{ duration: 700 }} in:fade>
           <LotoTicket
             {ticket}
             matchedNumbers={lotoStore.drawnNumbers}
@@ -199,3 +204,19 @@
     </div>
   </div>
 </div>
+
+<style>
+  @keyframes pulse-size {
+    0%,
+    100% {
+      scale: 1;
+    }
+    50% {
+      scale: 1.1;
+    }
+  }
+
+  :global(.button-animate) {
+    animation: pulse-size 1s ease-in-out infinite;
+  }
+</style>

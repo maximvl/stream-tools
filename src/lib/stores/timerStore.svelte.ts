@@ -1,6 +1,6 @@
 import { SvelteDate } from 'svelte/reactivity'
 
-type CountState = 'paused' | 'active'
+type CountState = 'paused' | 'active' | 'finished'
 
 export class TimerStore {
   state = $state<CountState>('paused')
@@ -36,8 +36,8 @@ export class TimerStore {
 
   constructor() {
     $effect(() => {
-      if (this.passedMs >= this.limitMs) {
-        this.pause()
+      if (this.passedMs >= this.limitMs && this.state !== 'paused') {
+        this.state = 'finished'
       }
     })
   }
