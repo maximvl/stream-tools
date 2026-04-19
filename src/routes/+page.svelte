@@ -6,7 +6,6 @@
 <div class="dark flex min-h-screen flex-col items-center p-8">
   <Nav />
 
-
   <div class="mb-12 flex w-full max-w-6xl items-center">
     <div class="w-[250px]">
       <ConnectionDialog />

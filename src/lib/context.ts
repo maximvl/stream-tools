@@ -9,7 +9,7 @@ export function getStore() {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 0
-    }
-  }
+      retry: 0,
+    },
+  },
 })

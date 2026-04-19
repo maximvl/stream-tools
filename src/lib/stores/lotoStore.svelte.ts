@@ -38,7 +38,7 @@ export class LotoStore {
   constructor(config: LotoConfig) {
     this.config = config
     this.drawPool = Array.from({ length: config.max_number }, (_, i) =>
-      (i + 1).toString().padStart(2, '0')
+      (i + 1).toString().padStart(2, '0'),
     )
   }
 
@@ -77,7 +77,7 @@ export class LotoStore {
       source: msg.source,
       username: msg.user.username,
       twitch_fields: msg.user.twitch_fields,
-      vk_fields: msg.user.vk_fields
+      vk_fields: msg.user.vk_fields,
     }
 
     if (isMessageFromVkBot(msg)) {
@@ -177,7 +177,7 @@ function makeTicket(params: {
   const ticketNumber = genTicketNumber({
     text: chatMessage.message,
     pool,
-    config
+    config,
   })
   return {
     id: `${chatMessage.user.id}-${chatMessage.id}` as LotoTicketId,
@@ -189,7 +189,7 @@ function makeTicket(params: {
     type: 'chat',
     source: chatMessage.source,
     created_at: chatMessage.ts,
-    isLatecomer: false
+    isLatecomer: false,
   }
 }
 
@@ -207,7 +207,7 @@ function genTicketNumber(params: { text: string; pool: string[]; config: LotoCon
       .map((n) => parseInt(n))
       .filter((n) => n > 0 && n < config.max_number)
       .map((n) => n.toString().padStart(2, '0'))
-      .filter((n) => pool.includes(n))
+      .filter((n) => pool.includes(n)),
   )
 
   if (ticketNumber.length < config.ticket_size) {

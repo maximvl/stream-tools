@@ -16,7 +16,7 @@
     direction = 'up',
     duration = 2000,
     animationKey,
-    class: className
+    class: className,
   }: Props = $props()
 
   let strip: HTMLElement | undefined = $state()
@@ -37,7 +37,7 @@
     remove(strip)
     animate(strip, {
       translateY: finalY,
-      duration: 0
+      duration: 0,
     })
   }
 
@@ -61,7 +61,7 @@
     animate(strip, {
       translateY: [startY, finalY],
       duration: duration,
-      ease: 'outQuart'
+      ease: 'outQuart',
     })
   }
 
@@ -80,7 +80,7 @@
   bind:this={container}
   class={cn(
     'relative h-16 w-10 overflow-hidden rounded-lg border border-primary/20 bg-background shadow-inner',
-    className
+    className,
   )}
 >
   <div bind:this={strip} class="absolute top-0 left-0 flex w-full flex-col">

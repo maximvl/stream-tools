@@ -30,7 +30,7 @@
   function addLocalConnection() {
     localConnections.push({
       server: 'twitch',
-      channel: ''
+      channel: '',
     })
   }
 
@@ -55,7 +55,7 @@
                 class={cn(
                   'h-6 w-6 shrink-0',
                   store.connectionsStatuses[connToKey(connection)] !== 'connected' &&
-                    'opacity-30 grayscale'
+                    'opacity-30 grayscale',
                 )}
               />
             </Tooltip.Trigger>

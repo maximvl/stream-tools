@@ -43,9 +43,9 @@ export class ChatMessagesStore {
           queryFn: async () =>
             chatConnect({
               server: server as ChatServer,
-              channel
+              channel,
             }),
-          refetchInterval: 3000
+          refetchInterval: 3000,
         }
       }),
       combine: (results) => {
@@ -65,7 +65,7 @@ export class ChatMessagesStore {
           }
         })
         return results
-      }
+      },
     }
   })
 
@@ -82,12 +82,12 @@ export class ChatMessagesStore {
               platform: server as ChatServer,
               channel,
               ts,
-              textFilter: ''
+              textFilter: '',
             })
             // console.log(`Fetched messages for ${connKey}:`, msgs)
             return msgs
           },
-          refetchInterval: 2000
+          refetchInterval: 2000,
         }
       }),
       combine: (results) => {
@@ -108,7 +108,7 @@ export class ChatMessagesStore {
           }
 
           const newMessages = (res.data?.chat_messages || []).filter(
-            (msg) => !messagesIds.has(msg.id)
+            (msg) => !messagesIds.has(msg.id),
           )
           if (newMessages.length > 0) {
             this.newMessages = newMessages
@@ -125,7 +125,7 @@ export class ChatMessagesStore {
           }
         })
         return results
-      }
+      },
     }
   })
 
@@ -151,7 +151,7 @@ export class ChatMessagesStore {
   addConnection() {
     const newConn: ChatConnection = {
       server: 'twitch',
-      channel: ''
+      channel: '',
     }
     this.connections.value.push(newConn)
     this.connectionsStatuses[connToKey(newConn)] = 'disconnected'

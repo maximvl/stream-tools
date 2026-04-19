@@ -1,7 +1,8 @@
 <script lang="ts">
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
+  import LotoSettingsDialog from '$lib/components/loto/LotoSettingsDialog.svelte'
   import { getStore } from '$lib/context'
-  import { LotoStore } from '$lib/stores/lotoStore.svelte'
+  import { DefaultConfig, LotoStore } from '$lib/stores/lotoStore.svelte'
 
   import { untrack } from 'svelte'
 
@@ -10,11 +11,14 @@
   import { Button } from '$lib/components/ui/button'
   import { flip } from 'svelte/animate'
   import { fade } from 'svelte/transition'
+  import { LocalStore } from '$lib/stores/localStore.svelte'
 
-  const lotoStore = new LotoStore({
-    max_number: 99,
-    ticket_size: 8,
-    roll_animation_time: 1500
+  const config = new LocalStore('loto-config', DefaultConfig)
+
+  const lotoStore = new LotoStore(config.value)
+
+  $effect(() => {
+    lotoStore.config = config.value
   })
 
   const store = getStore()
@@ -25,12 +29,19 @@
       messages.forEach(lotoStore.addTicket)
     })
   })
+
+  function handleSaveConfig(newConfig: typeof config.value) {
+    config.value = newConfig
+  }
 </script>
 
 <div class="flex min-h-screen flex-col gap-8 p-6">
   <div class="flex items-center justify-between">
     <h1 class="text-3xl font-black tracking-tighter text-primary uppercase italic">Loto</h1>
-    <ConnectionDialog />
+    <div class="flex gap-2">
+      <LotoSettingsDialog config={config.value} onSave={handleSaveConfig} />
+      <ConnectionDialog />
+    </div>
   </div>
 
   <div class="flex flex-col items-center justify-center gap-8 py-8">

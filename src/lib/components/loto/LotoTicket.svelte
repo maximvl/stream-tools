@@ -17,7 +17,7 @@
   class={cn(
     'flex w-fit flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm transition-all hover:shadow-md',
     ticket.type === 'points' && 'border-yellow-500/30 bg-yellow-500/5',
-    className
+    className,
   )}
 >
   <div class="flex items-center justify-between gap-4">
@@ -40,7 +40,7 @@
           'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 text-sm font-black transition-all duration-300',
           isMatched(num)
             ? 'scale-105 border-yellow-400 bg-yellow-400 text-yellow-950 shadow-[0_0_10px_rgba(250,204,21,0.5)]'
-            : 'border-muted bg-muted/30 text-muted-foreground'
+            : 'border-muted bg-muted/30 text-muted-foreground',
         )}
       >
         {num}

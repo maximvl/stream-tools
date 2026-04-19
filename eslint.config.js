@@ -28,8 +28,8 @@ export default defineConfig(
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_'
-        }
+          caughtErrorsIgnorePattern: '^_',
+        },
       ],
       'svelte/no-navigation-without-resolve': [
         'error',
@@ -37,10 +37,10 @@ export default defineConfig(
           ignoreGoto: false,
           ignoreLinks: true,
           ignorePushState: false,
-          ignoreReplaceState: false
-        }
-      ]
-    }
+          ignoreReplaceState: false,
+        },
+      ],
+    },
   },
   {
     files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
@@ -49,8 +49,8 @@ export default defineConfig(
         projectService: true,
         extraFileExtensions: ['.svelte'],
         parser: ts.parser,
-        svelteConfig
-      }
-    }
-  }
+        svelteConfig,
+      },
+    },
+  },
 )

@@ -17,11 +17,11 @@
   const connections = [
     { value: 'twitch', label: 'twitch.tv' },
     { value: 'kick', label: 'kick.com' },
-    { value: 'vkvideo', label: 'vkvideo.ru' }
+    { value: 'vkvideo', label: 'vkvideo.ru' },
   ]
 
   const triggerContent = $derived(
-    connections.find((f) => f.value === connection.server)?.label ?? 'Сервер'
+    connections.find((f) => f.value === connection.server)?.label ?? 'Сервер',
   )
 </script>
 

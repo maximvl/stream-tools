@@ -67,7 +67,7 @@
     <div class="flex-1 text-center">
       <h1 class="text-4xl font-extrabold tracking-tight">Угадай слово</h1>
     </div>
-    <div class="w-[250px] flex justify-end">
+    <div class="flex w-[250px] justify-end">
       {#if isWordSet}
         <Button variant="outline" onclick={resetGame}>Новое слово</Button>
       {/if}
