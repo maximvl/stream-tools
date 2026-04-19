@@ -23,7 +23,7 @@
     <h1
       class="bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-6xl font-black tracking-tighter text-transparent uppercase italic"
     >
-      Loto&nbsp;
+      Лото&nbsp;
     </h1>
     <div class="flex gap-2">
       <div class="h-2 w-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></div>
