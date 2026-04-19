@@ -93,7 +93,7 @@
           >
             <div class="flex items-center justify-center px-2">
               <h2 class="text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase">
-                Открыты ({lotoStore.drawnNumbers.length})
+                Открыто ({lotoStore.drawnNumbers.length})
               </h2>
             </div>
             <div class="flex flex-wrap justify-center gap-2">
