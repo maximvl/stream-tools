@@ -14,6 +14,12 @@ export type LotoConfig = {
   roll_animation_time: number
 }
 
+export const DefaultConfig = {
+  ticket_size: 8,
+  max_number: 99,
+  roll_animation_time: 1500,
+}
+
 export class LotoStore {
   drawPool = $state<string[]>([])
   drawnNumbers = $state<string[]>([])
