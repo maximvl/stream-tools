@@ -28,17 +28,17 @@
 <div class="dark flex flex-col items-center p-8">
   <Nav />
 </div>
-
-<div class="flex min-h-screen flex-col gap-8 px-6 pb-6">
-  <div class="flex items-center justify-between">
-    <h1 class="text-3xl font-black tracking-tighter text-primary uppercase italic">Loto</h1>
-    <div class="flex gap-2">
-      <LotoSettingsDialog />
-      <ConnectionDialog />
-    </div>
+<div class="dark flex min-h-screen flex-col p-6">
+  <div class="fixed top-6 left-6 z-50 flex flex-col gap-6">
+    <ConnectionDialog />
+    <LotoSettingsDialog />
   </div>
 
-  <div class="flex flex-col items-center justify-center gap-8 py-8">
+  <div class="fixed top-6 right-6 z-50">
+    <h1 class="text-3xl font-black tracking-tighter text-primary uppercase italic">Loto</h1>
+  </div>
+
+  <div class="flex flex-1 flex-col items-center justify-center gap-8 pt-16">
     {#if lotoStore.gameState === 'registration'}
       <div class="flex flex-col items-center gap-4">
         <Button
@@ -110,17 +110,17 @@
         {/if}
       </div>
     {/if}
-  </div>
 
-  <div class="flex flex-wrap justify-center gap-4">
-    {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
-      <div animate:flip={{ duration: 400 }} in:fade>
-        <LotoTicket
-          {ticket}
-          matchedNumbers={lotoStore.drawnNumbers}
-          lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
-        />
-      </div>
-    {/each}
+    <div class="flex flex-wrap justify-center gap-4">
+      {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
+        <div animate:flip={{ duration: 400 }} in:fade>
+          <LotoTicket
+            {ticket}
+            matchedNumbers={lotoStore.drawnNumbers}
+            lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
+          />
+        </div>
+      {/each}
+    </div>
   </div>
 </div>
