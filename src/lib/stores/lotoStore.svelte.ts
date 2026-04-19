@@ -53,7 +53,7 @@ const DefaultConfig: LotoConfig = {
   super_game_1_pointers: 1,
   super_game_2_pointers: 2,
   super_game_3_pointers: 3,
-  super_game_bonus_guesses_enabled: false,
+  super_game_bonus_guesses_enabled: true,
   super_game_vk_rewards: undefined,
 }
 

@@ -16,18 +16,65 @@
   </Dialog.Trigger>
   <Dialog.Content>
     <Dialog.Header>Настройки лото</Dialog.Header>
-    <div class="flex flex-col gap-6">
+    <div class="flex max-h-[70vh] flex-col gap-8 overflow-y-auto pr-2">
       <div class="flex flex-col gap-4">
-        <h3 class="text-sm font-semibold text-muted-foreground">Основные настройки</h3>
+        <h3 class="font-semibold text-muted-foreground">Основные настройки</h3>
         <div class="flex flex-col gap-2">
-          <Label for="ticket-size">Размер билета</Label>
+          <Label for="win-matches-amount">Количество совпадений для победы</Label>
           <Input
-            id="ticket-size"
+            id="win-matches-amount"
             type="number"
-            bind:value={configStore.value.ticket_size}
+            bind:value={configStore.value.win_matches_amount}
             min="1"
             max="10"
           />
+        </div>
+        <div class="flex flex-col gap-2">
+          <Label for="ticket-size">Размер билета: {configStore.value.ticket_size}</Label>
+          <Input
+            id="ticket-size"
+            type="range"
+            bind:value={configStore.value.ticket_size}
+            min="1"
+            max="10"
+            step="1"
+          />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <h3 class="font-semibold text-muted-foreground">Билеты</h3>
+        <div class="flex items-center gap-2">
+          <Checkbox id="enable-chat-tickets" bind:checked={configStore.value.enable_chat_tickets} />
+          <Label for="enable-chat-tickets" class="cursor-pointer">Билеты из чата</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Checkbox
+            id="enable-points-tickets"
+            bind:checked={configStore.value.enable_points_tickets}
+          />
+          <Label for="enable-points-tickets" class="cursor-pointer">Билеты за поинты</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Checkbox id="only-subscribers" bind:checked={configStore.value.only_subscribers} />
+          <Label for="only-subscribers" class="cursor-pointer">Только подписчики</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Checkbox
+            id="allow-mods-to-input-numbers"
+            bind:checked={configStore.value.allow_mods_to_input_numbers}
+          />
+          <Label for="allow-mods-to-input-numbers" class="cursor-pointer">
+            Модераторы могут вводить числа
+          </Label>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <h3 class="font-semibold text-muted-foreground">Игра</h3>
+        <div class="flex items-center gap-2">
+          <Checkbox id="manual-draw-enabled" bind:checked={configStore.value.manual_draw_enabled} />
+          <Label for="manual-draw-enabled" class="cursor-pointer">Ручной ввод</Label>
         </div>
         <div class="flex flex-col gap-2">
           <Label for="max-number">Максимальное число</Label>
@@ -53,53 +100,16 @@
       </div>
 
       <div class="flex flex-col gap-4">
-        <h3 class="text-sm font-semibold text-muted-foreground">Билеты</h3>
-        <div class="flex items-center gap-2">
-          <Checkbox id="enable-chat-tickets" bind:checked={configStore.value.enable_chat_tickets} />
-          <Label for="enable-chat-tickets" class="cursor-pointer">Билеты из чата</Label>
-        </div>
+        <h3 class="font-semibold text-muted-foreground">Супер игра</h3>
         <div class="flex items-center gap-2">
           <Checkbox
-            id="enable-points-tickets"
-            bind:checked={configStore.value.enable_points_tickets}
+            id="super-game-bonus-guesses-enabled"
+            bind:checked={configStore.value.super_game_bonus_guesses_enabled}
           />
-          <Label for="enable-points-tickets" class="cursor-pointer">Билеты за поинты</Label>
-        </div>
-        <div class="flex items-center gap-2">
-          <Checkbox id="only-subscribers" bind:checked={configStore.value.only_subscribers} />
-          <Label for="only-subscribers" class="cursor-pointer">Только подписчики</Label>
-        </div>
-        <div class="flex items-center gap-2">
-          <Checkbox
-            id="allow-mods-to-input-numbers"
-            bind:checked={configStore.value.allow_mods_to_input_numbers}
-          />
-          <Label for="allow-mods-to-input-numbers" class="cursor-pointer">
-            Модераторы могут вводить числа
+          <Label for="super-game-bonus-guesses-enabled" class="cursor-pointer">
+            Бонусные догадки
           </Label>
         </div>
-        <div class="flex flex-col gap-2">
-          <Label for="win-matches-amount">Количество совпадений для победы</Label>
-          <Input
-            id="win-matches-amount"
-            type="number"
-            bind:value={configStore.value.win_matches_amount}
-            min="1"
-            max="10"
-          />
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-4">
-        <h3 class="text-sm font-semibold text-muted-foreground">Игра</h3>
-        <div class="flex items-center gap-2">
-          <Checkbox id="manual-draw-enabled" bind:checked={configStore.value.manual_draw_enabled} />
-          <Label for="manual-draw-enabled" class="cursor-pointer">Ручной розыгрыш</Label>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-4">
-        <h3 class="text-sm font-semibold text-muted-foreground">Супер игра</h3>
         <div class="flex flex-col gap-2">
           <Label for="super-game-options-amount">Количество опций</Label>
           <Input
@@ -111,7 +121,7 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-guesses-amount">Количество догадок</Label>
+          <Label for="super-game-guesses-amount">Количество попыток</Label>
           <Input
             id="super-game-guesses-amount"
             type="number"
@@ -131,7 +141,7 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-2-pointers">2 поинтера</Label>
+          <Label for="super-game-2-pointers">2 поинтеры</Label>
           <Input
             id="super-game-2-pointers"
             type="number"
@@ -141,7 +151,7 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-3-pointers">3 поинтера</Label>
+          <Label for="super-game-3-pointers">3 поинтеры</Label>
           <Input
             id="super-game-3-pointers"
             type="number"
@@ -149,15 +159,6 @@
             min="0"
             max="10"
           />
-        </div>
-        <div class="flex items-center gap-2">
-          <Checkbox
-            id="super-game-bonus-guesses-enabled"
-            bind:checked={configStore.value.super_game_bonus_guesses_enabled}
-          />
-          <Label for="super-game-bonus-guesses-enabled" class="cursor-pointer">
-            Бонусные догадки
-          </Label>
         </div>
       </div>
     </div>
