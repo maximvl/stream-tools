@@ -18,13 +18,14 @@
     <Dialog.Header>Настройки лото</Dialog.Header>
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <Label for="ticket-size">Размер билета</Label>
+        <Label for="ticket-size">Размер билета: {lotoConfig.value.ticket_size}</Label>
         <Input
           id="ticket-size"
-          type="number"
+          type="range"
           bind:value={lotoConfig.value.ticket_size}
           min="1"
-          max="20"
+          max="10"
+          step="1"
         />
       </div>
       <div class="flex flex-col gap-2">
