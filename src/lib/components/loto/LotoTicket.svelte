@@ -1,16 +1,25 @@
 <script lang="ts">
-  import type { LotoTicket } from '$lib/types'
+  import type { LotoTicket, ChatUser } from '$lib/types'
   import { cn } from '$lib/utils'
+  import PlayerName from './PlayerName.svelte'
 
   type Props = {
     ticket: LotoTicket
+    user?: ChatUser
     matchedNumbers?: string[]
     lastRolledNumber?: string
     winnerMatchedNumbers?: string[]
     class?: string
   }
 
-  let { ticket, matchedNumbers = [], lastRolledNumber, winnerMatchedNumbers = [], class: className }: Props = $props()
+  let {
+    ticket,
+    user,
+    matchedNumbers = [],
+    lastRolledNumber,
+    winnerMatchedNumbers = [],
+    class: className,
+  }: Props = $props()
 
   const isMatched = (num: string) => matchedNumbers.includes(num)
   const isLastRolledMatch = (num: string) => num === lastRolledNumber
@@ -25,9 +34,7 @@
   )}
 >
   <div class="flex items-center justify-between gap-4">
-    <span class="truncate font-bold text-primary">
-      {ticket.owner_name}
-    </span>
+    <PlayerName {user} name={ticket.owner_name} class="truncate" />
     {#if ticket.type === 'points'}
       <span
         class="shrink-0 rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-black tracking-wider text-yellow-600 uppercase"

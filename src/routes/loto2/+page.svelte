@@ -148,7 +148,8 @@
       </div>
     {:else}
       {#if lotoStore.winner}
-        <LotoWinnerBanner ticket={lotoStore.ticketsOrdered[0]} />
+        {@const winnerUser = lotoStore.usersById.get(lotoStore.winner.owner_id)}
+        <LotoWinnerBanner ticket={lotoStore.ticketsOrdered[0]} user={winnerUser} />
       {:else}
         {@const numStr = lotoStore.displayNextNumber || '00'}
         <div class="flex flex-col items-center gap-6">
@@ -213,6 +214,7 @@
 
     <div class="flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
+        {@const user = lotoStore.usersById.get(ticket.owner_id)}
         <div class="flex flex-col gap-2" animate:flip={{ duration: 700 }} in:fade>
           <button
             class="cursor-pointer transition-transform hover:scale-105"
@@ -226,9 +228,12 @@
           >
             <LotoTicket
               {ticket}
+              {user}
               matchedNumbers={lotoStore.drawnNumbers}
               lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
-              winnerMatchedNumbers={lotoStore.winner?.id === ticket.id ? lotoStore.winnerMatchedNumbers : []}
+              winnerMatchedNumbers={lotoStore.winner?.id === ticket.id
+                ? lotoStore.winnerMatchedNumbers
+                : []}
             />
           </button>
           {#if selectedTicketIds.has(ticket.id)}

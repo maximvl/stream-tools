@@ -1,12 +1,14 @@
 <script lang="ts">
-  import type { LotoTicket } from '$lib/types'
+  import type { LotoTicket, ChatUser } from '$lib/types'
   import { scale, fly } from 'svelte/transition'
+  import PlayerName from './PlayerName.svelte'
 
   type Props = {
     ticket: LotoTicket
+    user?: ChatUser
   }
 
-  let { ticket }: Props = $props()
+  let { ticket, user }: Props = $props()
 
   const confettiColors = [
     '#FFD700',
@@ -72,9 +74,7 @@
     >
       <div class="mb-4 animate-bounce text-6xl" style="animation-duration: 1s;">🎉</div>
       <h1 class="mb-4 animate-pulse text-4xl font-black text-yellow-400">ПОБЕДИТЕЛЬ!</h1>
-      <div class="text-2xl font-bold text-white">
-        {ticket.owner_name}
-      </div>
+      <PlayerName {user} name={ticket.owner_name} class="text-2xl" />
     </div>
   </div>
 </div>
