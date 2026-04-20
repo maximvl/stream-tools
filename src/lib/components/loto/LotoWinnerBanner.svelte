@@ -20,7 +20,7 @@
 
   let confettiPieces = $state(
     Array.from({ length: 50 }, (_, i) => ({
-      id: i,
+      id: `${Date.now()}-${i}`,
       color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
       left: Math.random() * 100,
       top: Math.random() * 100,
@@ -32,7 +32,7 @@
   $effect(() => {
     const interval = setInterval(() => {
       confettiPieces = Array.from({ length: 50 }, (_, i) => ({
-        id: i,
+        id: `${Date.now()}-${i}`,
         color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
         left: Math.random() * 100,
         top: Math.random() * 100,
@@ -46,19 +46,21 @@
 </script>
 
 <div class="relative flex flex-col items-center gap-6">
-  {#each confettiPieces as piece (piece.id)}
-    <div
-      class="confetti absolute"
-      style="
-        background-color: {piece.color};
-        left: {piece.left}%;
-        top: {piece.top}%;
-        width: {piece.size}px;
-        height: {piece.size}px;
-        transform: rotate({piece.rotation}deg);
-      "
-    ></div>
-  {/each}
+  <div class="absolute inset-0">
+    {#each confettiPieces as piece (piece.id)}
+      <div
+        class="confetti absolute"
+        style="
+          background-color: {piece.color};
+          left: {piece.left}%;
+          top: {piece.top}%;
+          width: {piece.size}px;
+          height: {piece.size}px;
+          transform: rotate({piece.rotation}deg);
+        "
+      ></div>
+    {/each}
+  </div>
 
   <div
     class="relative z-10 flex flex-col items-center justify-center rounded-3xl border-2 border-yellow-500/50 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 p-8 shadow-2xl ring-4 ring-yellow-500/30"
@@ -94,7 +96,7 @@
 
   :global(.confetti) {
     position: absolute;
-    animation: confetti 5s ease-out infinite;
+    animation: confetti 5s ease-out forwards;
     border-radius: 2px;
   }
 </style>
