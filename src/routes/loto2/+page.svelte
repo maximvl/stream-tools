@@ -170,28 +170,28 @@
               Ролл
             </Button>
           </div>
+        </div>
+      {/if}
 
-          {#if lotoStore.drawnNumbers.length > 0}
-            <div
-              class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/50 bg-muted/20 p-4 shadow-inner"
-            >
-              <div class="flex items-center justify-center px-2">
-                <h2 class="text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase">
-                  Открыто ({lotoStore.drawnNumbers.length})
-                </h2>
+      {#if lotoStore.drawnNumbers.length > 0}
+        <div
+          class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/50 bg-muted/20 p-4 shadow-inner"
+        >
+          <div class="flex items-center justify-center px-2">
+            <h2 class="text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase">
+              Открыто ({lotoStore.drawnNumbers.length})
+            </h2>
+          </div>
+          <div class="flex flex-wrap justify-center gap-2">
+            {#each lotoStore.drawnNumbers as num (num)}
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/10 bg-background text-sm font-black text-primary shadow-sm"
+                in:fade={{ duration: 300 }}
+              >
+                {num}
               </div>
-              <div class="flex flex-wrap justify-center gap-2">
-                {#each lotoStore.drawnNumbers as num (num)}
-                  <div
-                    class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/10 bg-background text-sm font-black text-primary shadow-sm"
-                    in:fade={{ duration: 300 }}
-                  >
-                    {num}
-                  </div>
-                {/each}
-              </div>
-            </div>
-          {/if}
+            {/each}
+          </div>
         </div>
       {/if}
     {/if}
