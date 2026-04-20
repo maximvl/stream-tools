@@ -16,11 +16,14 @@
   import { flip } from 'svelte/animate'
   import { fade } from 'svelte/transition'
   import Nav from '$lib/components/layout/Nav.svelte'
+  import { SvelteSet } from 'svelte/reactivity'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
   const store = getChatStore()
   const countdownTimer = new TimerStore()
+
+  let selectedTicketIds = new SvelteSet<string>()
 
   function addTime(seconds: number) {
     if (countdownTimer.state === 'finished') {
@@ -209,12 +212,42 @@
 
     <div class="flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
-        <div animate:flip={{ duration: 700 }} in:fade>
-          <LotoTicket
-            {ticket}
-            matchedNumbers={lotoStore.drawnNumbers}
-            lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
-          />
+        <div class="flex flex-col gap-2" animate:flip={{ duration: 700 }} in:fade>
+          <button
+            class="cursor-pointer transition-transform hover:scale-105"
+            onclick={() => {
+              if (selectedTicketIds.has(ticket.id)) {
+                selectedTicketIds.delete(ticket.id)
+              } else {
+                selectedTicketIds.add(ticket.id)
+              }
+            }}
+          >
+            <LotoTicket
+              {ticket}
+              matchedNumbers={lotoStore.drawnNumbers}
+              lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
+            />
+          </button>
+          {#if selectedTicketIds.has(ticket.id)}
+            {@const userMessages = store.messagesByUser.get(ticket.owner_id) || []}
+            <div
+              class="w-full overflow-y-auto rounded-xl border border-border/50 bg-card p-3 shadow-inner"
+            >
+              <div class="flex flex-col gap-2 text-left">
+                {#each userMessages.slice(-10).reverse() as msg (msg.id)}
+                  <div class="text-xs whitespace-nowrap">
+                    {new Date(msg.ts * 1000).toLocaleTimeString('ru-RU', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                    })}
+                    {msg.user.username}: {msg.message}
+                  </div>
+                {/each}
+              </div>
+            </div>
+          {/if}
         </div>
       {/each}
     </div>

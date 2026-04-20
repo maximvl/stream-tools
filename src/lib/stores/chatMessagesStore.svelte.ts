@@ -1,8 +1,8 @@
 import { createQueries } from '@tanstack/svelte-query'
 import { LocalStore } from './localStore.svelte'
-import type { ChatConnection, ChatMessage, ChatServer } from '../types'
+import type { ChatConnection, ChatMessage, ChatServer, UserId } from '../types'
 import { chatConnect, fetchMessages } from '../api'
-import { SvelteSet } from 'svelte/reactivity'
+import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 import { untrack } from 'svelte'
 
 type ConnKey = string & { readonly __brand: 'ConnKey' }
@@ -32,6 +32,18 @@ export class ChatMessagesStore {
   messages = $state<ChatMessage[]>([])
   newMessages = $state<ChatMessage[]>([])
   lastMessageReceivedPerConnection = $state<Record<ConnKey, ChatMessage>>({})
+
+  messagesByUser = $derived.by(() => {
+    const byUser = new SvelteMap<UserId, ChatMessage[]>()
+    this.messages.forEach((msg) => {
+      const userId = msg.user.id
+      if (!byUser.has(userId)) {
+        byUser.set(userId, [])
+      }
+      byUser.get(userId)!.push(msg)
+    })
+    return byUser
+  })
 
   connectionQueries = createQueries(() => {
     // console.log('creating connection queries for:', this.disconnectedConnections)
