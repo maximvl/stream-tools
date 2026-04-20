@@ -96,9 +96,17 @@
     <LotoLogo />
   </div>
 
-  <div class="flex flex-1 flex-col items-center justify-center gap-8 pt-16">
+  <div class="flex flex-1 flex-col items-center justify-start gap-8 pt-4">
     {#if lotoStore.gameState === 'registration'}
       <div class="flex flex-col items-center gap-4">
+        <div
+          class="rounded-xl border border-primary/20 bg-card px-6 py-3 shadow-lg ring-1 ring-primary/5"
+        >
+          <p class="text-sm font-medium text-primary">
+            +лото в чат чтобы зарегаться
+            <br />можно писать свои числа после +лото
+          </p>
+        </div>
         <div class="flex items-center gap-6">
           <Button
             class="{countdownTimer.state !== 'active'
