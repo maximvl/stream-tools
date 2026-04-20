@@ -9,6 +9,7 @@
 
   import LotoTicket from '$lib/components/loto/LotoTicket.svelte'
   import LotoLogo from '$lib/components/loto/LotoLogo.svelte'
+  import LotoWinnerBanner from '$lib/components/loto/LotoWinnerBanner.svelte'
   import PlatformTicketCounts from '$lib/components/loto/PlatformTicketCounts.svelte'
   import SlotDigit from '$lib/components/loto/SlotDigit.svelte'
   import { Button } from '$lib/components/ui/button'
@@ -134,61 +135,65 @@
         <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
       </div>
     {:else}
-      {@const numStr = lotoStore.displayNextNumber || '00'}
-      <div class="flex flex-col items-center gap-6">
-        <div class="flex flex-col items-center gap-4 md:flex-row">
-          <div
-            class="flex flex-col items-center justify-center rounded-2xl border-2 border-primary/20 bg-card p-4 shadow-lg ring-1 ring-primary/5"
-          >
-            <div class="flex gap-1">
-              <SlotDigit
-                target={numStr[0]}
-                duration={lotoConfig.value.roll_animation_time}
-                animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
-                direction="up"
-                class="h-16 w-10 border-none shadow-none"
-              />
-              <SlotDigit
-                target={numStr[1]}
-                duration={lotoConfig.value.roll_animation_time}
-                animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
-                direction="down"
-                class="h-16 w-10 border-none shadow-none"
-              />
+      {#if lotoStore.winner}
+        <LotoWinnerBanner ticket={lotoStore.ticketsOrdered[0]} />
+      {:else}
+        {@const numStr = lotoStore.displayNextNumber || '00'}
+        <div class="flex flex-col items-center gap-6">
+          <div class="flex flex-col items-center gap-4 md:flex-row">
+            <div
+              class="flex flex-col items-center justify-center rounded-2xl border-2 border-primary/20 bg-card p-4 shadow-lg ring-1 ring-primary/5"
+            >
+              <div class="flex gap-1">
+                <SlotDigit
+                  target={numStr[0]}
+                  duration={lotoConfig.value.roll_animation_time}
+                  animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
+                  direction="up"
+                  class="h-16 w-10 border-none shadow-none"
+                />
+                <SlotDigit
+                  target={numStr[1]}
+                  duration={lotoConfig.value.roll_animation_time}
+                  animationKey={lotoStore.isRolling ? lotoStore.displayNextNumber : null}
+                  direction="down"
+                  class="h-16 w-10 border-none shadow-none"
+                />
+              </div>
             </div>
+
+            <Button
+              class="h-auto rounded-2xl px-8 py-8 text-xl font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
+              onclick={() => lotoStore.rollNextNumber()}
+              disabled={lotoStore.drawPool.length === 0 || lotoStore.isRolling}
+            >
+              Ролл
+            </Button>
           </div>
 
-          <Button
-            class="h-auto rounded-2xl px-8 py-8 text-xl font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
-            onclick={() => lotoStore.rollNextNumber()}
-            disabled={lotoStore.drawPool.length === 0 || lotoStore.isRolling}
-          >
-            Ролл
-          </Button>
+          {#if lotoStore.drawnNumbers.length > 0}
+            <div
+              class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/50 bg-muted/20 p-4 shadow-inner"
+            >
+              <div class="flex items-center justify-center px-2">
+                <h2 class="text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase">
+                  Открыто ({lotoStore.drawnNumbers.length})
+                </h2>
+              </div>
+              <div class="flex flex-wrap justify-center gap-2">
+                {#each lotoStore.drawnNumbers as num (num)}
+                  <div
+                    class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/10 bg-background text-sm font-black text-primary shadow-sm"
+                    in:fade={{ duration: 300 }}
+                  >
+                    {num}
+                  </div>
+                {/each}
+              </div>
+            </div>
+          {/if}
         </div>
-
-        {#if lotoStore.drawnNumbers.length > 0}
-          <div
-            class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/50 bg-muted/20 p-4 shadow-inner"
-          >
-            <div class="flex items-center justify-center px-2">
-              <h2 class="text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase">
-                Открыто ({lotoStore.drawnNumbers.length})
-              </h2>
-            </div>
-            <div class="flex flex-wrap justify-center gap-2">
-              {#each lotoStore.drawnNumbers as num (num)}
-                <div
-                  class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/10 bg-background text-sm font-black text-primary shadow-sm"
-                  in:fade={{ duration: 300 }}
-                >
-                  {num}
-                </div>
-              {/each}
-            </div>
-          </div>
-        {/if}
-      </div>
+      {/if}
     {/if}
 
     <div class="flex flex-wrap justify-center gap-4">
