@@ -28,6 +28,7 @@ export type LotoConfig = {
   manual_draw_enabled: boolean
   // limit_to_90: boolean
   allow_mods_to_input_numbers: boolean
+  allow_tickets_after_start: boolean
   super_game_options_amount: number
   super_game_guesses_amount: number
   super_game_1_pointers: number
@@ -48,6 +49,7 @@ const DefaultConfig: LotoConfig = {
   manual_draw_enabled: false,
   // limit_to_90: false,
   allow_mods_to_input_numbers: false,
+  allow_tickets_after_start: true,
   super_game_options_amount: 99,
   super_game_guesses_amount: 7,
   super_game_1_pointers: 3,
@@ -124,6 +126,10 @@ export class LotoStore {
 
   addTicket = (msg: ChatMessage) => {
     if (!msg.message.toLowerCase().includes(LOTO_MATCH)) {
+      return
+    }
+
+    if (this.gameState !== 'registration' && !this.config.value.allow_tickets_after_start) {
       return
     }
 
@@ -291,5 +297,12 @@ function isMessageHighlightedOnTwitch(msg: ChatMessage) {
 }
 
 export function getLotoConfigStore() {
-  return new LocalStore('loto-config', DefaultConfig)
+  const store = new LocalStore('loto-config', DefaultConfig)
+  for (const key in DefaultConfig) {
+    const typedKey = key as keyof LotoConfig
+    if (store.value[typedKey] === undefined) {
+      store.value = { ...store.value, [typedKey]: DefaultConfig[typedKey] }
+    }
+  }
+  return store
 }

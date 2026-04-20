@@ -76,6 +76,15 @@
             Модераторы могут вводить числа
           </Label>
         </div>
+        <div class="flex items-center gap-2">
+          <Checkbox
+            id="allow-tickets-after-start"
+            bind:checked={configStore.value.allow_tickets_after_start}
+          />
+          <Label for="allow-tickets-after-start" class="cursor-pointer">
+            Добавлять билеты после старта
+          </Label>
+        </div>
         <div class="flex flex-col gap-2">
           <Label for="max-number">Максимальное число</Label>
           <Input

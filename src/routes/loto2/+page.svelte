@@ -96,7 +96,7 @@
     <LotoLogo />
   </div>
 
-  <div class="flex flex-1 flex-col items-center justify-start gap-8 pt-4">
+  <div class="flex flex-1 flex-col items-center justify-start gap-8">
     {#if lotoStore.gameState === 'registration'}
       <div class="flex flex-col items-center gap-4">
         <div
