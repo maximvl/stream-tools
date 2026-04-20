@@ -228,6 +228,7 @@
               {ticket}
               matchedNumbers={lotoStore.drawnNumbers}
               lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
+              winnerMatchedNumbers={lotoStore.winner?.id === ticket.id ? lotoStore.winnerMatchedNumbers : []}
             />
           </button>
           {#if selectedTicketIds.has(ticket.id)}
