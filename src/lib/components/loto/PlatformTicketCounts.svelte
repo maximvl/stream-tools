@@ -26,7 +26,7 @@
   {#each platforms as platform (platform)}
     <div class="flex items-center gap-2 rounded-lg bg-muted/30 px-3 py-1.5">
       <img src={ServerIcons[platform]} alt={platform} class="h-4 w-4" />
-      <span class="text-sm font-bold text-muted-foreground">
+      <span class="text-base font-bold text-muted-foreground">
         {ticketsByPlatform[platform]}
       </span>
     </div>

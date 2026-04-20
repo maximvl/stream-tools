@@ -208,6 +208,11 @@ export class LotoStore {
     this.gameState = 'playing'
   }
 
+  deleteTicket = (ticketId: LotoTicketId) => {
+    this.ticketsFromChat = this.ticketsFromChat.filter((t) => t.id !== ticketId)
+    this.ticketsFromPoints = this.ticketsFromPoints.filter((t) => t.id !== ticketId)
+  }
+
   rollNextNumber = async () => {
     if (this.drawPool.length === 0 || this.isRolling) return
 

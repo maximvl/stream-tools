@@ -17,6 +17,7 @@
   import { fade } from 'svelte/transition'
   import Nav from '$lib/components/layout/Nav.svelte'
   import { SvelteSet } from 'svelte/reactivity'
+  import * as Tooltip from '$lib/components/ui/tooltip'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -105,7 +106,7 @@
         <div
           class="rounded-xl border border-primary/20 bg-card px-6 py-3 shadow-lg ring-1 ring-primary/5"
         >
-          <p class="text-sm font-medium text-primary">
+          <p class="text-base font-medium text-primary">
             +лото в чат чтобы зарегаться
             <br />можно писать свои числа после +лото
           </p>
@@ -189,7 +190,7 @@
           class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/50 bg-muted/20 p-4 shadow-inner"
         >
           <div class="flex items-center justify-center px-2">
-            <h2 class="text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase">
+            <h2 class="text-xs font-black tracking-[0.3em] text-muted-foreground uppercase">
               Открыто ({lotoStore.drawnNumbers.length})
             </h2>
           </div>
@@ -236,7 +237,7 @@
             >
               <div class="flex flex-col gap-2 text-left">
                 {#each userMessages.slice(-10).reverse() as msg (msg.id)}
-                  <div class="text-xs whitespace-nowrap">
+                  <div class="text-sm whitespace-nowrap">
                     {new Date(msg.ts * 1000).toLocaleTimeString('ru-RU', {
                       hour: '2-digit',
                       minute: '2-digit',
@@ -245,6 +246,26 @@
                     {msg.user.username}: {msg.message}
                   </div>
                 {/each}
+              </div>
+              <div class="mt-2 flex justify-end">
+                <Tooltip.Root>
+                  <Tooltip.Trigger>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      class="text-xs"
+                      onclick={() => {
+                        lotoStore.deleteTicket(ticket.id)
+                        selectedTicketIds.delete(ticket.id)
+                      }}
+                    >
+                      Удалить билет
+                    </Button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    <p>Лото продолжится без этого билета</p>
+                  </Tooltip.Content>
+                </Tooltip.Root>
               </div>
             </div>
           {/if}

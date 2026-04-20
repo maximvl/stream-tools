@@ -13,7 +13,7 @@
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <QueryClientProvider client={queryClient}>
   <StoreProvider>
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       {@render children()}
     </TooltipProvider>
   </StoreProvider>
