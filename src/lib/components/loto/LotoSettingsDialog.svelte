@@ -59,6 +59,14 @@
           <Checkbox id="only-subscribers" bind:checked={configStore.value.only_subscribers} />
           <Label for="only-subscribers" class="cursor-pointer">Только подписчики</Label>
         </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <h3 class="font-semibold text-muted-foreground">Игра</h3>
+        <div class="flex items-center gap-2">
+          <Checkbox id="manual-draw-enabled" bind:checked={configStore.value.manual_draw_enabled} />
+          <Label for="manual-draw-enabled" class="cursor-pointer">Ручной ввод</Label>
+        </div>
         <div class="flex items-center gap-2">
           <Checkbox
             id="allow-mods-to-input-numbers"
@@ -67,14 +75,6 @@
           <Label for="allow-mods-to-input-numbers" class="cursor-pointer">
             Модераторы могут вводить числа
           </Label>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-4">
-        <h3 class="font-semibold text-muted-foreground">Игра</h3>
-        <div class="flex items-center gap-2">
-          <Checkbox id="manual-draw-enabled" bind:checked={configStore.value.manual_draw_enabled} />
-          <Label for="manual-draw-enabled" class="cursor-pointer">Ручной ввод</Label>
         </div>
         <div class="flex flex-col gap-2">
           <Label for="max-number">Максимальное число</Label>
@@ -107,11 +107,11 @@
             bind:checked={configStore.value.super_game_bonus_guesses_enabled}
           />
           <Label for="super-game-bonus-guesses-enabled" class="cursor-pointer">
-            Бонусные догадки
+            Бонусные попытки за открытия
           </Label>
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-options-amount">Количество опций</Label>
+          <Label for="super-game-options-amount">Количество ячеек</Label>
           <Input
             id="super-game-options-amount"
             type="number"
@@ -131,7 +131,7 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-1-pointers">1 поинтеры</Label>
+          <Label for="super-game-1-pointers">Ячеек за 1 очко</Label>
           <Input
             id="super-game-1-pointers"
             type="number"
@@ -141,7 +141,7 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-2-pointers">2 поинтеры</Label>
+          <Label for="super-game-2-pointers">Ячеек за 2 очка</Label>
           <Input
             id="super-game-2-pointers"
             type="number"
@@ -151,7 +151,7 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-3-pointers">3 поинтеры</Label>
+          <Label for="super-game-3-pointers">Ячеек за 3 очка</Label>
           <Input
             id="super-game-3-pointers"
             type="number"
