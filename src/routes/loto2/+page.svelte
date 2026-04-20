@@ -192,8 +192,11 @@
           </div>
           <div class="flex flex-wrap justify-center gap-2">
             {#each lotoStore.drawnNumbers as num (num)}
+              {@const isWinnerMatch = lotoStore.winnerMatchedNumbers.includes(num)}
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/10 bg-background text-sm font-black text-primary shadow-sm"
+                class="flex h-8 w-8 items-center justify-center rounded-lg border {isWinnerMatch
+                  ? 'border-green-500/50 bg-green-500/20 text-green-500 shadow-lg shadow-green-500/20'
+                  : 'border-primary/10 bg-background text-primary'} text-sm font-black shadow-sm"
                 in:fade={{ duration: 300 }}
               >
                 {num}

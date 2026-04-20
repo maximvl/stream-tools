@@ -124,6 +124,34 @@ export class LotoStore {
     return null
   })
 
+  winnerMatchedNumbers = $derived.by(() => {
+    if (!this.winner) return []
+    const drawnSet = new SvelteSet(this.drawnNumbers)
+    const matches = this.winner.value.map((n) => drawnSet.has(n))
+    
+    let maxSeq = 0
+    let maxSeqStartIndex = 0
+    let currentSeq = 0
+    let currentSeqStartIndex = 0
+    
+    for (let i = 0; i < matches.length; i++) {
+      if (matches[i]) {
+        if (currentSeq === 0) {
+          currentSeqStartIndex = i
+        }
+        currentSeq++
+        if (currentSeq > maxSeq) {
+          maxSeq = currentSeq
+          maxSeqStartIndex = currentSeqStartIndex
+        }
+      } else {
+        currentSeq = 0
+      }
+    }
+    
+    return this.winner.value.slice(maxSeqStartIndex, maxSeqStartIndex + maxSeq)
+  })
+
   addTicket = (msg: ChatMessage) => {
     if (!msg.message.toLowerCase().includes(LOTO_MATCH)) {
       return
