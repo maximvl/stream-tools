@@ -2,6 +2,8 @@
   import type { LotoTicket, ChatUser } from '$lib/types'
   import { cn } from '$lib/utils'
   import PlayerName from './PlayerName.svelte'
+  import { ServerIcons } from '$lib/constants'
+  import * as Tooltip from '$lib/components/ui/tooltip'
 
   type Props = {
     ticket: LotoTicket
@@ -24,6 +26,8 @@
   const isMatched = (num: string) => matchedNumbers.includes(num)
   const isLastRolledMatch = (num: string) => num === lastRolledNumber
   const isWinnerMatch = (num: string) => winnerMatchedNumbers.includes(num)
+
+  const ticketSource = $derived(`${ticket.source.server}/${ticket.source.channel}`)
 </script>
 
 <div
@@ -35,13 +39,27 @@
 >
   <div class="flex items-center justify-between gap-4">
     <PlayerName {user} name={ticket.owner_name} class="truncate" />
-    {#if ticket.type === 'points'}
-      <span
-        class="shrink-0 rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-black tracking-wider text-yellow-600 uppercase"
-      >
-        Бонус
-      </span>
-    {/if}
+    <div class="flex items-center gap-2">
+      {#if ticket.type === 'points'}
+        <span
+          class="shrink-0 rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-black tracking-wider text-yellow-600 uppercase"
+        >
+          Бонус
+        </span>
+      {/if}
+      <Tooltip.Root>
+        <Tooltip.Trigger>
+          <img
+            src={ServerIcons[ticket.source.server]}
+            alt={ticket.source.server}
+            class="h-4 w-4 shrink-0 opacity-70 transition-opacity hover:opacity-100"
+          />
+        </Tooltip.Trigger>
+        <Tooltip.Content>
+          <p>{ticketSource}</p>
+        </Tooltip.Content>
+      </Tooltip.Root>
+    </div>
   </div>
 
   <div class="flex flex-nowrap gap-1.5">
