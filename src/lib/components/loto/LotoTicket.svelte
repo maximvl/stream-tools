@@ -2,12 +2,13 @@
   import type { LotoTicket, ChatUser } from '$lib/types'
   import { cn } from '$lib/utils'
   import PlayerName from './PlayerName.svelte'
+  import UserBadges from './UserBadges.svelte'
   import { ServerIcons } from '$lib/constants'
   import * as Tooltip from '$lib/components/ui/tooltip'
 
   type Props = {
     ticket: LotoTicket
-    user?: ChatUser
+    user: ChatUser
     matchedNumbers?: string[]
     lastRolledNumber?: string
     winnerMatchedNumbers?: string[]
@@ -38,7 +39,10 @@
   )}
 >
   <div class="flex items-center justify-between gap-4">
-    <PlayerName {user} name={ticket.owner_name} class="truncate" />
+    <div class="flex items-center gap-2">
+      <UserBadges {user} />
+      <PlayerName {user} name={ticket.owner_name} class="truncate" />
+    </div>
     <div class="flex items-center gap-2">
       {#if ticket.type === 'points'}
         <span

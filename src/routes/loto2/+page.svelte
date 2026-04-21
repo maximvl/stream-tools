@@ -214,7 +214,7 @@
 
     <div class="flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
-        {@const user = lotoStore.usersById.get(ticket.owner_id)}
+        {@const user = lotoStore.usersById.get(ticket.owner_id)!}
         <div class="flex flex-col gap-2" animate:flip={{ duration: 700 }} in:fade>
           <button
             class="cursor-pointer transition-transform hover:scale-105"
