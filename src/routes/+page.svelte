@@ -1,6 +1,7 @@
 <script lang="ts">
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
   import Nav from '$lib/components/layout/Nav.svelte'
+    import { HourglassIcon } from '@lucide/svelte'
 </script>
 
 <div class="dark flex min-h-screen flex-col items-center p-8">
@@ -111,7 +112,23 @@
       <div>
         <h2 class="text-xl font-bold">Угадай слово</h2>
         <p class="text-sm text-muted-foreground">
-          Игра, в которой зрители должны угадать загаданное вами слово.
+          Игра, в которой зрители должны угадать загаданное вами слово
+        </p>
+      </div>
+    </a>
+    <a
+      href="/whenis"
+      class="group flex flex-col gap-4 rounded-3xl border bg-card p-8 transition-all hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10"
+    >
+      <div
+        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"
+      >
+        <HourglassIcon />
+      </div>
+      <div>
+        <h2 class="text-xl font-bold">Таймеры ивентов</h2>
+        <p class="text-sm text-muted-foreground">
+          Таймеры предстоящих событий и релизов
         </p>
       </div>
     </a>
