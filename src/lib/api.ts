@@ -5,7 +5,7 @@ const URL_PREFIX = '/v2'
 // const URL_PREFIX = 'http://localhost:8088/v2'
 
 // const MOCK_API = import.meta.env.MODE === 'development' && !URL_PREFIX.includes('127.0.0.1')
-const MOCK_API = false
+const MOCK_API = true
 
 console.log('MOCK_API', MOCK_API)
 
@@ -23,7 +23,7 @@ export class ApiError extends Error {
     status: number,
     body: {
       error: string
-    }
+    },
   ) {
     super(`API Error: ${status}`)
     this.status = status
@@ -46,7 +46,7 @@ export async function fetchMessages({
   channel,
   ts,
   textFilter,
-  platform
+  platform,
 }: FetchMessagesParams): Promise<ChatMessagesResponse> {
   const params = new URLSearchParams()
   params.set('platform', platform)
@@ -64,7 +64,7 @@ export async function fetchMessages({
       // Simulate an API error
       console.log('throwing api error')
       throw new ApiError(400, {
-        error: 'channel not found'
+        error: 'channel not found',
       })
     }
 
@@ -78,7 +78,7 @@ export async function fetchMessages({
 
     // const gameMessages = [makeGameMessage(), makeGameMessage()]
     // return { chat_messages: [makeSuperGameMessage()] }
-    const mocksPerRequest = 10
+    const mocksPerRequest = 1
     const mocksLeft = mockedMessagesAmount - mocksPerRequest
 
     // console.log({ mocksLeft, mockedMessagesAmount, mocksPerRequest })
@@ -116,7 +116,7 @@ export type ChatConnectResponse = {
 
 export async function chatConnect({
   server,
-  channel
+  channel,
 }: ChatConnectParams): Promise<ChatConnectResponse> {
   const params = new URLSearchParams()
   params.set('channel', channel)
@@ -130,6 +130,6 @@ export async function chatConnect({
   }
 
   return fetch(url, {
-    method: 'POST'
+    method: 'POST',
   }).then((res) => res.json())
 }

@@ -12,8 +12,8 @@ const makeBadge = () => {
       'https://images.live.vkplay.ru/badge/232c3913-274a-4c02-8d23-6576f7d48e98/icon/size/large?change_time=1691761874',
     achievement: {
       name: 'Топ 1',
-      type: 's'
-    }
+      type: 's',
+    },
   }
 }
 
@@ -34,7 +34,7 @@ export const makeMessage = (server: ChatServer, channel: string): ChatMessage =>
     '#2E8B57',
     '#D2691E',
     '#8A2BE2',
-    '#B22222'
+    '#B22222',
   ]
 
   const randomUUID = crypto.randomUUID()
@@ -43,15 +43,14 @@ export const makeMessage = (server: ChatServer, channel: string): ChatMessage =>
     id: `${user_id}-${randomUUID}`,
     source: {
       server,
-      channel: 'tmp'
+      channel: 'tmp',
     },
     message: sample(['+лото']),
-    ts: Math.round(
-      new Date(
-        // fixed date based on user id for testing
-        user_id % 2 === 0 ? '2024-10-01T12:00:00Z' : '2024-10-02T12:00:00Z'
-      ).getTime()
-    ),
+    ts: new Date().getTime(),
+    // Math.round(
+    // new Date().getTime()
+    // fixed date based on user id for testing
+    //user_id % 2 === 0 ? '2024-10-01T12:00:00Z' : '2024-10-02T12:00:00Z'
     user: {
       id: `${user_id}` as UserId,
       username: user_id.toString(),
@@ -65,9 +64,10 @@ export const makeMessage = (server: ChatServer, channel: string): ChatMessage =>
       // },
       twitch_fields: {
         color: sample(colors),
-        badges: []
-      }
-    }
+        badges: [],
+        highlighted: true,
+      },
+    },
   }
 }
 
@@ -80,11 +80,11 @@ const makeBotMessage = () => {
     ts: Math.round(new Date().getTime() / 1000),
     user: {
       id: 0,
-      username: 'ChatBot'
+      username: 'ChatBot',
     },
     vk_fields: {
-      mentions: [{ id: 5, displayName: user_id.toString() }]
-    }
+      mentions: [{ id: 5, displayName: user_id.toString() }],
+    },
   }
 }
 
@@ -97,8 +97,8 @@ const makeGameMessage = () => {
     ts: Math.round(new Date().getTime()),
     user: {
       id: user_id,
-      username: `Player-${user_id}`
-    }
+      username: `Player-${user_id}`,
+    },
   }
 }
 
@@ -111,7 +111,7 @@ const makeSuperGameMessage = () => {
     ts: Math.round(new Date().getTime() / 1000),
     user: {
       id: `${user_id}`,
-      username: `Player-${user_id}`
-    }
+      username: `Player-${user_id}`,
+    },
   }
 }

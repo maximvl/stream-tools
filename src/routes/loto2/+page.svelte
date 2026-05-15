@@ -77,6 +77,7 @@
     <ConnectionDialog />
     <LotoSettingsDialog />
     {#if lotoStore.gameState === 'registration'}
+      <div class="text-center">Таймер</div>
       <div class="flex flex-col gap-2">
         <Button
           class="h-auto rounded-xl bg-blue-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-blue-500 active:scale-95"
