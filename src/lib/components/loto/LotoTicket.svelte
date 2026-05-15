@@ -29,12 +29,88 @@
   const isWinnerMatch = (num: string) => winnerMatchedNumbers.includes(num)
 
   const ticketSource = $derived(`${ticket.source.server}/${ticket.source.channel}`)
+
+  // Hash function to convert username to a number
+  function hashString(str: string): number {
+    let hash = 0
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i)
+      hash = (hash << 5) - hash + char
+      hash = hash & hash // Convert to 32bit integer
+    }
+    return Math.abs(hash)
+  }
+
+  // Ticket style options
+  const ticketStyles = [
+    {
+      // Style 0: Purple gradient
+      border: 'border-purple-500/30',
+      bg: 'bg-gradient-to-br from-purple-500/10 to-purple-900/10',
+      shadow: 'shadow-purple-500/20',
+      glow: 'hover:shadow-purple-500/30',
+    },
+    {
+      // Style 1: Blue gradient
+      border: 'border-blue-500/30',
+      bg: 'bg-gradient-to-br from-blue-500/10 to-blue-900/10',
+      shadow: 'shadow-blue-500/20',
+      glow: 'hover:shadow-blue-500/30',
+    },
+    {
+      // Style 2: Pink gradient
+      border: 'border-pink-500/30',
+      bg: 'bg-gradient-to-br from-pink-500/10 to-pink-900/10',
+      shadow: 'shadow-pink-500/20',
+      glow: 'hover:shadow-pink-500/30',
+    },
+    {
+      // Style 3: Green gradient
+      border: 'border-green-500/30',
+      bg: 'bg-gradient-to-br from-green-500/10 to-green-900/10',
+      shadow: 'shadow-green-500/20',
+      glow: 'hover:shadow-green-500/30',
+    },
+    {
+      // Style 4: Orange gradient
+      border: 'border-orange-500/30',
+      bg: 'bg-gradient-to-br from-orange-500/10 to-orange-900/10',
+      shadow: 'shadow-orange-500/20',
+      glow: 'hover:shadow-orange-500/30',
+    },
+    {
+      // Style 5: Cyan gradient
+      border: 'border-cyan-500/30',
+      bg: 'bg-gradient-to-br from-cyan-500/10 to-cyan-900/10',
+      shadow: 'shadow-cyan-500/20',
+      glow: 'hover:shadow-cyan-500/30',
+    },
+    {
+      // Style 6: Rose gradient
+      border: 'border-rose-500/30',
+      bg: 'bg-gradient-to-br from-rose-500/10 to-rose-900/10',
+      shadow: 'shadow-rose-500/20',
+      glow: 'hover:shadow-rose-500/30',
+    },
+    {
+      // Style 7: Indigo gradient
+      border: 'border-indigo-500/30',
+      bg: 'bg-gradient-to-br from-indigo-500/10 to-indigo-900/10',
+      shadow: 'shadow-indigo-500/20',
+      glow: 'hover:shadow-indigo-500/30',
+    },
+  ]
+
+  // Select style based on username
+  const selectedStyle = $derived(
+    ticketStyles[hashString(user.username) % ticketStyles.length]
+  )
 </script>
 
 <div
   class={cn(
-    'flex w-fit flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm transition-all hover:shadow-md',
-    ticket.type === 'points' && 'border-yellow-500/30 bg-yellow-500/5',
+    'flex w-fit flex-col gap-3 rounded-xl border p-4 shadow-sm transition-all',
+    cn(selectedStyle.border, selectedStyle.bg, selectedStyle.shadow, selectedStyle.glow),
     className,
   )}
 >
