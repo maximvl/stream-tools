@@ -45,59 +45,59 @@
   const ticketStyles = [
     {
       // Style 0: Purple gradient
-      border: 'border-purple-500/30',
-      bg: 'bg-gradient-to-br from-purple-500/10 to-purple-900/10',
-      shadow: 'shadow-purple-500/20',
-      glow: 'hover:shadow-purple-500/30',
+      border: 'border-purple-500/50',
+      bg: 'bg-gradient-to-br from-purple-500/25 to-purple-900/25',
+      shadow: 'shadow-purple-500/40',
+      glow: 'hover:shadow-purple-500/50',
     },
     {
       // Style 1: Blue gradient
-      border: 'border-blue-500/30',
-      bg: 'bg-gradient-to-br from-blue-500/10 to-blue-900/10',
-      shadow: 'shadow-blue-500/20',
-      glow: 'hover:shadow-blue-500/30',
+      border: 'border-blue-500/50',
+      bg: 'bg-gradient-to-br from-blue-500/25 to-blue-900/25',
+      shadow: 'shadow-blue-500/40',
+      glow: 'hover:shadow-blue-500/50',
     },
     {
       // Style 2: Pink gradient
-      border: 'border-pink-500/30',
-      bg: 'bg-gradient-to-br from-pink-500/10 to-pink-900/10',
-      shadow: 'shadow-pink-500/20',
-      glow: 'hover:shadow-pink-500/30',
+      border: 'border-pink-500/50',
+      bg: 'bg-gradient-to-br from-pink-500/25 to-pink-900/25',
+      shadow: 'shadow-pink-500/40',
+      glow: 'hover:shadow-pink-500/50',
     },
     {
       // Style 3: Green gradient
-      border: 'border-green-500/30',
-      bg: 'bg-gradient-to-br from-green-500/10 to-green-900/10',
-      shadow: 'shadow-green-500/20',
-      glow: 'hover:shadow-green-500/30',
+      border: 'border-green-500/50',
+      bg: 'bg-gradient-to-br from-green-500/25 to-green-900/25',
+      shadow: 'shadow-green-500/40',
+      glow: 'hover:shadow-green-500/50',
     },
     {
       // Style 4: Orange gradient
-      border: 'border-orange-500/30',
-      bg: 'bg-gradient-to-br from-orange-500/10 to-orange-900/10',
-      shadow: 'shadow-orange-500/20',
-      glow: 'hover:shadow-orange-500/30',
+      border: 'border-orange-500/50',
+      bg: 'bg-gradient-to-br from-orange-500/25 to-orange-900/25',
+      shadow: 'shadow-orange-500/40',
+      glow: 'hover:shadow-orange-500/50',
     },
     {
       // Style 5: Cyan gradient
-      border: 'border-cyan-500/30',
-      bg: 'bg-gradient-to-br from-cyan-500/10 to-cyan-900/10',
-      shadow: 'shadow-cyan-500/20',
-      glow: 'hover:shadow-cyan-500/30',
+      border: 'border-cyan-500/50',
+      bg: 'bg-gradient-to-br from-cyan-500/25 to-cyan-900/25',
+      shadow: 'shadow-cyan-500/40',
+      glow: 'hover:shadow-cyan-500/50',
     },
     {
       // Style 6: Rose gradient
-      border: 'border-rose-500/30',
-      bg: 'bg-gradient-to-br from-rose-500/10 to-rose-900/10',
-      shadow: 'shadow-rose-500/20',
-      glow: 'hover:shadow-rose-500/30',
+      border: 'border-rose-500/50',
+      bg: 'bg-gradient-to-br from-rose-500/25 to-rose-900/25',
+      shadow: 'shadow-rose-500/40',
+      glow: 'hover:shadow-rose-500/50',
     },
     {
       // Style 7: Indigo gradient
-      border: 'border-indigo-500/30',
-      bg: 'bg-gradient-to-br from-indigo-500/10 to-indigo-900/10',
-      shadow: 'shadow-indigo-500/20',
-      glow: 'hover:shadow-indigo-500/30',
+      border: 'border-indigo-500/50',
+      bg: 'bg-gradient-to-br from-indigo-500/25 to-indigo-900/25',
+      shadow: 'shadow-indigo-500/40',
+      glow: 'hover:shadow-indigo-500/50',
     },
   ]
 
@@ -153,7 +153,7 @@
               ? 'scale-110 border-orange-500 bg-orange-500 text-orange-950 shadow-[0_0_15px_rgba(249,115,22,0.7)]'
               : isMatched(num)
                 ? 'scale-105 border-yellow-400 bg-yellow-400 text-yellow-950 shadow-[0_0_10px_rgba(250,204,21,0.5)]'
-                : 'border-muted bg-muted/30 text-muted-foreground',
+                : 'border-white/40 bg-white/10 text-white/90',
         )}
       >
         {num}
