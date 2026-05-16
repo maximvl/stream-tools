@@ -5,11 +5,12 @@
   import type { SuperGameReward } from '../types'
 
   type Props = {
+    class?: string
     reward: SuperGameReward
     vkRoles: VkRole[]
   }
 
-  const { reward, vkRoles }: Props = $props()
+  const { reward, vkRoles, class: className = '' }: Props = $props()
 
   const vkRole = $derived.by(() => {
     for (const role of vkRoles) {
@@ -22,12 +23,12 @@
 </script>
 
 {#if reward === 'empty'}
-  <div></div>
+  <div class="{className}"></div>
 {:else if vkRole}
   <Tooltip>
     <TooltipTrigger>
-      <div class="flex items-center justify-center">
-        <img src={vkRole.largeUrl} width="30px" height="30px" alt={vkRole.name} />
+      <div class="flex items-center justify-center {className}">
+        <img src={vkRole.largeUrl} class="w-full h-full" alt={vkRole.name} />
       </div>
     </TooltipTrigger>
     <TooltipContent>
@@ -37,11 +38,10 @@
 {:else if reward === 'x1'}
   <Tooltip>
     <TooltipTrigger>
-      <div class="flex items-center justify-center">
+      <div class="flex items-center justify-center p-2 {className}">
         <img
           src="https://images.live.vkvideo.ru/smile/2ec232fd-bb31-4122-b3d1-4c8e7b721561/icon/size/medium"
-          width="30px"
-          height="30px"
+          class="w-full h-full"
           alt="x1"
         />
       </div>
@@ -53,11 +53,10 @@
 {:else if reward === 'x2'}
   <Tooltip>
     <TooltipTrigger>
-      <div class="flex items-center justify-center">
+      <div class="flex items-center justify-center p-2 {className}">
         <img
           src="https://images.live.vkvideo.ru/smile/c78b5408-e42c-4aeb-b6f5-9ca21d73c0f1/icon/size/medium"
-          width="30px"
-          height="30px"
+          class="w-full h-full"
           alt="x2"
         />
       </div>
@@ -69,8 +68,8 @@
 {:else if reward === 'x3'}
   <Tooltip>
     <TooltipTrigger>
-      <div class="flex items-center justify-center">
-        <img src={POG_IMG} width="30px" height="30px" alt="x3" />
+      <div class="flex items-center justify-center {className}">
+        <img src={POG_IMG} class="w-full h-full" alt="x3" />
       </div>
     </TooltipTrigger>
     <TooltipContent>
@@ -78,5 +77,5 @@
     </TooltipContent>
   </Tooltip>
 {:else}
-  <div class="h-16 w-16 bg-green-500">{reward}</div>
+  <div class="bg-green-500 {className}">{reward}</div>
 {/if}
