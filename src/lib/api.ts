@@ -1,5 +1,5 @@
 import { makeMessage } from './apiMocks'
-import type { ChatMessage, ChatServer } from './types'
+import type { ChatMessage, ChatServer, VkRole, VkRoleId } from './types'
 
 const URL_PREFIX = '/v2'
 // const URL_PREFIX = 'http://localhost:8088/v2'
@@ -132,4 +132,51 @@ export async function chatConnect({
   return fetch(url, {
     method: 'POST',
   }).then((res) => res.json())
+}
+
+type VkRolesResponse = {
+  roles: {
+    data: {
+      rewards: VkRole[]
+    }
+  }
+}
+
+export async function fetchVkRoles(
+  server: ChatServer,
+  channel: string
+): Promise<VkRolesResponse> {
+  const params = new URLSearchParams()
+  params.set('platform', server)
+  params.set('channel', channel)
+  const url = `${URL_PREFIX}/turnir-api/stream_info?${params.toString()}`
+
+  if (MOCK_API) {
+    console.log(`GET ${url}`)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    return {
+      roles: {
+        data: {
+          rewards: [
+            {
+              id: '1' as VkRoleId,
+              name: 'Role 1',
+              largeUrl: '',
+              description: '',
+              bgColor: 0,
+              price: 0,
+            },
+          ],
+        },
+      },
+    }
+  }
+
+  return fetch(url).then(async (res) => {
+    const data = await res.json()
+    if (!res.ok) {
+      throw new ApiError(res.status, data)
+    }
+    return data
+  })
 }

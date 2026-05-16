@@ -2,7 +2,7 @@
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
   import LotoSettingsDialog from '$lib/components/loto/LotoSettingsDialog.svelte'
   import { getChatStore } from '$lib/context'
-  import { getLotoConfigStore, LotoStore } from '$lib/stores/lotoStore.svelte'
+  import { getLotoConfigStore, LotoStore, setLotoStore } from '$lib/stores/lotoStore.svelte'
   import { TimerStore } from '$lib/stores/timerStore.svelte'
 
   import { untrack } from 'svelte'
@@ -18,9 +18,11 @@
   import Nav from '$lib/components/layout/Nav.svelte'
   import { SvelteSet } from 'svelte/reactivity'
   import * as Tooltip from '$lib/components/ui/tooltip'
+    import SuperGameBox from '$lib/components/loto/supergame/SuperGameBox.svelte'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
+  setLotoStore(lotoStore)
   const store = getChatStore()
   const countdownTimer = new TimerStore()
 
@@ -212,6 +214,8 @@
         </div>
       {/if}
     {/if}
+
+    <SuperGameBox />
 
     <div class="flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}

@@ -1,7 +1,8 @@
 <script lang="ts">
-  import type { LotoTicket, ChatUser } from '$lib/types'
+  import type { ChatUser } from '$lib/types'
   import { scale, fly } from 'svelte/transition'
   import PlayerName from './PlayerName.svelte'
+  import type { LotoTicket } from './types'
 
   type Props = {
     ticket: LotoTicket

@@ -1,19 +1,19 @@
 import type {
   ChatMessage,
   ChatUser,
-  LotoTicket,
-  LotoTicketId,
   UserId,
   VkMention,
-  VkRewards,
+  VkRoleId,
 } from '$lib/types'
 import sampleSize from 'lodash/sampleSize'
 import uniq from 'lodash/uniq'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 import { LocalStore } from './localStore.svelte'
+import type { LotoTicket, LotoTicketId, SuperGameReward, VkRewards } from '$lib/components/loto/types'
+import { createContext } from 'svelte'
+
 
 type GameState = 'registration' | 'playing'
-type SuperGameResultItem = 'empty' | 'x1' | 'x2' | 'x3' | { vk_custom: string }
 
 const LOTO_MATCH = 'лото'
 
@@ -73,7 +73,7 @@ export class LotoStore {
   ticketsFromChat = $state<LotoTicket[]>([])
   ticketsFromPoints = $state<LotoTicket[]>([])
 
-  superGameValues = $state<SuperGameResultItem[]>([])
+  superGameValues = $state<SuperGameReward[]>([])
   superGameGuesses = $state<number[]>([])
   superGameRevealedIds = $state<number[]>([])
 
@@ -85,6 +85,10 @@ export class LotoStore {
     this.drawPool = Array.from({ length: this.config.value.max_number }, (_, i) =>
       (i + 1).toString().padStart(2, '0'),
     )
+    $effect(() => {
+      void this.winner
+      this.superGameValues = generateSuperGameValues(this.config.value)
+    })
   }
 
   ticketsOrdered = $derived.by(() => {
@@ -232,6 +236,8 @@ export class LotoStore {
   }
 }
 
+export const [getLotoStore, setLotoStore] = createContext<LotoStore>()
+
 function getMaxSequentialMatches(matches: boolean[]) {
   let maxSeq = 0
   let currentSeq = 0
@@ -338,4 +344,36 @@ export function getLotoConfigStore() {
     }
   }
   return store
+}
+
+function generateSuperGameValues(config: LotoConfig): SuperGameReward[] {
+  const values: SuperGameReward[] = []
+
+  for (let i = 0; i < config.super_game_1_pointers; i++) {
+    values.push('x1')
+  }
+
+  for (let i = 0; i < config.super_game_2_pointers; i++) {
+    values.push('x2')
+  }
+
+  for (let i = 0; i < config.super_game_3_pointers; i++) {
+    values.push('x3')
+  }
+
+  if (config.super_game_vk_rewards) {
+    for (const roles of Object.values(config.super_game_vk_rewards)) {
+      for (const [roleId, amount] of Object.entries(roles)) {
+        for (let i = 0; i < amount; i++) {
+          values.push({ vk_custom: roleId as VkRoleId })
+        }
+      }
+    }
+  }
+
+  for (let i = values.length; i < config.super_game_options_amount; i++) {
+    values.push('empty')
+  }
+
+  return values
 }

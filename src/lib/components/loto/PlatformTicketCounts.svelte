@@ -1,7 +1,8 @@
 <script lang="ts">
-  import type { ChatServer, LotoTicket } from '$lib/types'
+  import type { ChatServer } from '$lib/types'
   import { ServerIcons } from '$lib/constants'
   import { cn } from '$lib/utils'
+  import type { LotoTicket } from './types'
 
   type Props = {
     tickets: LotoTicket[]

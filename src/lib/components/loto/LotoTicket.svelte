@@ -1,10 +1,11 @@
 <script lang="ts">
-  import type { LotoTicket, ChatUser } from '$lib/types'
+  import type { ChatUser } from '$lib/types'
   import { cn } from '$lib/utils'
   import PlayerName from './PlayerName.svelte'
   import UserBadges from './UserBadges.svelte'
   import { ServerIcons } from '$lib/constants'
   import * as Tooltip from '$lib/components/ui/tooltip'
+  import type { LotoTicket } from './types'
 
   type Props = {
     ticket: LotoTicket
