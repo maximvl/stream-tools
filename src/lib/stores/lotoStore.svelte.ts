@@ -37,6 +37,7 @@ export type LotoConfig = {
   super_game_bonus_guesses_enabled: boolean
   super_game_vk_rewards?: VkRewards
   super_game_win_score: number
+  super_game_bombs: number
 }
 
 export const DefaultConfig: LotoConfig = {
@@ -59,6 +60,7 @@ export const DefaultConfig: LotoConfig = {
   super_game_bonus_guesses_enabled: true,
   super_game_vk_rewards: undefined,
   super_game_win_score: 1,
+  super_game_bombs: 1,
 }
 
 

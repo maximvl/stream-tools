@@ -184,6 +184,16 @@
             max="10"
           />
         </div>
+        <div class="flex flex-col gap-2">
+          <Label for="super-game-bombs">Количество бомб</Label>
+          <Input
+            id="super-game-bombs"
+            type="number"
+            bind:value={configStore.value.super_game_bombs}
+            min="0"
+            max="10"
+          />
+        </div>
         <div class="mb-10"></div>
       </div>
     </div>
