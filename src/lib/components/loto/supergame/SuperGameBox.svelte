@@ -105,28 +105,7 @@
     inset: 0;
 
     border-radius: 9999px;
-
     background: rgba(255, 215, 0, 0.12);
-
-    animation: cell-pulse 1.5s ease-in-out infinite;
-
     pointer-events: none;
-  }
-
-  @keyframes cell-pulse {
-    0% {
-      opacity: 0.5;
-      transform: scale(0.96);
-    }
-
-    50% {
-      opacity: 1;
-      transform: scale(1.04);
-    }
-
-    100% {
-      opacity: 0.5;
-      transform: scale(0.96);
-    }
   }
 </style>

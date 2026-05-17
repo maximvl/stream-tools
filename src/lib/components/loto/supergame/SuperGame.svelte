@@ -1,11 +1,12 @@
 <script lang="ts">
   import { getLotoStore } from '$lib/stores/lotoStore.svelte'
+    import { cn } from '$lib/utils'
   import PlayerName from '../PlayerName.svelte'
   import SuperGameBox from './SuperGameBox.svelte'
 
   const lotoStore = getLotoStore()
   const user = $derived(
-    lotoStore.winner ? lotoStore.usersById.get(lotoStore.winner.owner_id) : undefined
+    lotoStore.winner ? lotoStore.usersById.get(lotoStore.winner.owner_id) : undefined,
   )
 </script>
 
@@ -16,36 +17,69 @@
         class="rounded-xl border border-primary/20 bg-card px-6 py-3 shadow-lg ring-1 ring-primary/5"
       >
         <p class="text-base font-medium text-primary">
-          для участия в супер-игре пиши в чат
-          свои числа
+          для участия в супер-игре пиши в чат свои числа
         </p>
       </div>
     {:else}
-      <div class="text-4xl font-bold">
-        Супер-игра с <PlayerName {user} name={lotoStore.winner.owner_name} />
-      </div>
-      <div class="flex flex-col gap-2 rounded-lg bg-card p-4">
-        <div class="text-center text-xl">
-          <span>Очки&nbsp;</span>
-          {lotoStore.superGameScore}/{lotoStore.config.value.super_game_win_score}
+      <div class="flex flex-col gap-4">
+        <div
+          class="text-center text-4xl font-black tracking-wide text-white"
+        >
+          Супер-игра с
+          <PlayerName {user} name={lotoStore.winner.owner_name} />
         </div>
-        <div class="flex items-center gap-2">
-          {#each Array.from({ length: lotoStore.superGameTotalGuessesAmount }, (_, i) => i) as id (id)}
-            {@const guess = lotoStore.superGameGuesses[id]}
-            {@const status = guess
-              ? lotoStore.superGameRevealedIds.includes(guess - 1)
-                ? lotoStore.superGameValues[guess - 1].kind === 'empty'
-                  ? 'empty'
-                  : 'score'
-                : 'hidden'
-              : 'hidden'}
+
+        <div
+          class="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/3 p-5 backdrop-blur-sm"
+        >
+          <!-- SCORE -->
+          <div
+            class="flex items-center justify-center gap-2 text-center text-2xl font-bold text-white"
+          >
+            <span class="opacity-80">Очки</span>
+
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 font-mono text-lg data-[status=empty]:bg-red-700 data-[status=score]:bg-green-800"
-              data-status={status}
+              class={cn("rounded-full border border-yellow-300/20 bg-yellow-300/10 px-4 py-1", {
+                "bg-green-500/30": lotoStore.superGameScore >= lotoStore.config.value.super_game_win_score
+              })}
             >
-              {(guess ?? '__').toString().padStart(2, '0')}
+              <span>
+                {lotoStore.superGameScore}
+              </span>
+
+              <span class="mx-1 opacity-50">/</span>
+
+              <span class="opacity-70">
+                {lotoStore.config.value.super_game_win_score}
+              </span>
             </div>
-          {/each}
+          </div>
+
+          <!-- GUESSES -->
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            {#each Array.from({ length: lotoStore.superGameTotalGuessesAmount }, (_, i) => i) as id (id)}
+              {@const guess = lotoStore.superGameGuesses[id]}
+
+              {@const status = guess
+                ? lotoStore.superGameRevealedIds.includes(guess - 1)
+                  ? lotoStore.superGameValues[guess - 1].kind === 'empty'
+                    ? 'empty'
+                    : 'score'
+                  : 'hidden'
+                : 'hidden'}
+
+              <div
+                class={cn(
+                  'relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/10 font-mono text-lg  text-white transition-all duration-500',
+                  status === 'hidden' && 'bg-white/5',
+                  status === 'score' && 'bg-green-500/30',
+                  status === 'empty' && 'bg-red-500/30'
+                )}
+              >
+                {(guess ?? '__').toString().padStart(2, '0')}
+              </div>
+            {/each}
+          </div>
         </div>
       </div>
     {/if}
