@@ -1,25 +1,21 @@
-import type {
-  ChatMessage,
-  ChatUser,
-  UserId,
-  VkMention,
-  VkRoleId,
-} from '$lib/types'
+import type { ChatMessage, ChatUser, UserId, VkMention, VkRoleId } from '$lib/types'
 import sampleSize from 'lodash/sampleSize'
 import uniq from 'lodash/uniq'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 import { LocalStore } from './localStore.svelte'
-import type { LotoTicket, LotoTicketId, SuperGameReward, VkRewards } from '$lib/components/loto/types'
+import type {
+  LotoTicket,
+  LotoTicketId,
+  SuperGameReward,
+  VkRewards,
+} from '$lib/components/loto/types'
 import { createContext } from 'svelte'
 import shuffle from 'lodash/shuffle'
-
 
 type GameState = 'registration' | 'playing'
 type SuperGameState = 'not_started' | 'in_progress' | 'finished'
 
 const LOTO_MATCH = 'лото'
-
-
 
 export type LotoConfig = {
   ticket_size: number
@@ -62,7 +58,7 @@ const DefaultConfig: LotoConfig = {
   super_game_3_pointers: 1,
   super_game_bonus_guesses_enabled: true,
   super_game_vk_rewards: undefined,
-  super_game_win_score: 1
+  super_game_win_score: 1,
 }
 
 export class LotoStore {
@@ -86,7 +82,9 @@ export class LotoStore {
   superGameTotalGuessesAmount = $derived.by(() => {
     const base = this.config.value.super_game_guesses_amount
     if (this.config.value.super_game_bonus_guesses_enabled) {
-      const revealedNonEmpty = this.superGameRevealedIds.filter((id) => this.superGameValues[id].kind !== 'empty')
+      const revealedNonEmpty = this.superGameRevealedIds.filter(
+        (id) => this.superGameValues[id].kind !== 'empty',
+      )
       return base + revealedNonEmpty.length
     }
     return base
@@ -95,11 +93,16 @@ export class LotoStore {
     if (this.superGameGuesses.length === 0) {
       return 'not_started'
     }
-    return this.superGameRevealedIds.length === this.superGameTotalGuessesAmount ? 'finished' : 'in_progress'
+    return this.superGameRevealedIds.length === this.superGameTotalGuessesAmount
+      ? 'finished'
+      : 'in_progress'
   })
 
   superGameScore = $derived.by(() => {
-    const sum = this.superGameRevealedIds.reduce((acc, id) => acc + getSuperGameRewardScore(this.superGameValues[id]), 0)
+    const sum = this.superGameRevealedIds.reduce(
+      (acc, id) => acc + getSuperGameRewardScore(this.superGameValues[id]),
+      0,
+    )
     return sum
   })
 
@@ -114,7 +117,7 @@ export class LotoStore {
   })
 
   usersById = $state<SvelteMap<string, ChatUser>>(new SvelteMap())
-  openedChats = $state<Set<UserId>>(new SvelteSet())
+  openedChats = $state<Set<LotoTicketId>>(new SvelteSet())
 
   constructor(config: LocalStore<LotoConfig>) {
     this.config = config
@@ -126,6 +129,12 @@ export class LotoStore {
       this.superGameGuesses = []
       this.superGameRevealedIds = []
       this.superGameValues = generateSuperGameValues(this.config.value)
+    })
+
+    $effect(() => {
+      if (this.winner) {
+        this.openedChats.add(this.winner.id)
+      }
     })
   }
 
@@ -251,6 +260,7 @@ export class LotoStore {
   }
 
   deleteTicket = (ticketId: LotoTicketId) => {
+    this.openedChats.delete(ticketId)
     this.ticketsFromChat = this.ticketsFromChat.filter((t) => t.id !== ticketId)
     this.ticketsFromPoints = this.ticketsFromPoints.filter((t) => t.id !== ticketId)
   }

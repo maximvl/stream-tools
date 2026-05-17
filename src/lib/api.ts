@@ -78,7 +78,7 @@ export async function fetchMessages({
 
     // const gameMessages = [makeGameMessage(), makeGameMessage()]
     // return { chat_messages: [makeSuperGameMessage()] }
-    const mocksPerRequest = 1
+    const mocksPerRequest = 3
     const mocksLeft = mockedMessagesAmount - mocksPerRequest
 
     // console.log({ mocksLeft, mockedMessagesAmount, mocksPerRequest })

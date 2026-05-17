@@ -16,7 +16,6 @@
   import { flip } from 'svelte/animate'
   import { fade } from 'svelte/transition'
   import Nav from '$lib/components/layout/Nav.svelte'
-  import { SvelteSet } from 'svelte/reactivity'
   import * as Tooltip from '$lib/components/ui/tooltip'
   import SuperGame from '$lib/components/loto/supergame/SuperGame.svelte'
 
@@ -25,8 +24,6 @@
   setLotoStore(lotoStore)
   const store = getChatStore()
   const countdownTimer = new TimerStore()
-
-  let selectedTicketIds = new SvelteSet<string>()
 
   function addTime(seconds: number) {
     if (countdownTimer.state === 'finished') {
@@ -224,10 +221,10 @@
           <button
             class="cursor-pointer transition-transform hover:scale-105"
             onclick={() => {
-              if (selectedTicketIds.has(ticket.id)) {
-                selectedTicketIds.delete(ticket.id)
+              if (lotoStore.openedChats.has(ticket.id)) {
+                lotoStore.openedChats.delete(ticket.id)
               } else {
-                selectedTicketIds.add(ticket.id)
+                lotoStore.openedChats.add(ticket.id)
               }
             }}
           >
@@ -241,7 +238,7 @@
                 : []}
             />
           </button>
-          {#if selectedTicketIds.has(ticket.id)}
+          {#if lotoStore.openedChats.has(ticket.id)}
             {@const userMessages = store.messagesByUser.get(ticket.owner_id) || []}
             <div
               class="w-full overflow-y-auto rounded-xl border border-border/50 bg-card p-3 shadow-inner"
@@ -267,7 +264,6 @@
                       class="text-xs"
                       onclick={() => {
                         lotoStore.deleteTicket(ticket.id)
-                        selectedTicketIds.delete(ticket.id)
                       }}
                     >
                       Удалить билет
