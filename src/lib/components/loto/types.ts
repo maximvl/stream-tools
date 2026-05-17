@@ -15,7 +15,9 @@ export type LotoTicket = {
   isLatecomer: boolean
 }
 
-export type SuperGameReward = 'empty' | 'x1' | 'x2' | 'x3' | { vk_custom: VkRoleId }
+export type SuperGameReward =
+  | { kind: 'empty' | 'x1' | 'x2' | 'x3' }
+  | { kind: 'vk-role'; roleId: VkRoleId }
 
 export type VkRewards = {
   [streamKey: string]: { [id: VkRoleId]: number }

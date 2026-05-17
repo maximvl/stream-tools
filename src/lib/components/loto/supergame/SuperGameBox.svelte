@@ -44,7 +44,6 @@
       hidden={revealAll ? revealed : hidden}
       revealed={revealed}
       onFlip={() => {
-        console.log('Flipper flipped')
         lotoStore.superGameRevealedIds.push(idx)
       }}
     />

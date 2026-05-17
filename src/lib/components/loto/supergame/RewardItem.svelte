@@ -15,8 +15,11 @@
   const { reward, vkRoles, class: className = '', emptyPlaceholder = '' }: Props = $props()
 
   const vkRole = $derived.by(() => {
+    if (reward.kind !== 'vk-role') {
+      return null
+    }
     for (const role of vkRoles) {
-      if (role.id === reward) {
+      if (role.id === reward.roleId) {
         return role
       }
     }
@@ -24,7 +27,7 @@
   })
 </script>
 
-{#if reward === 'empty'}
+{#if reward.kind === 'empty'}
   <div class={cn("flex items-center justify-center text-muted-foreground", className, "text-base!")}>{emptyPlaceholder}</div>
 {:else if vkRole}
   <Tooltip>
@@ -37,7 +40,7 @@
       <p>{vkRole.name}</p>
     </TooltipContent>
   </Tooltip>
-{:else if reward === 'x1'}
+{:else if reward.kind === 'x1'}
   <Tooltip>
     <TooltipTrigger>
       <div class="flex items-center justify-center p-2 {className}">
@@ -52,7 +55,7 @@
       <p>1 очко</p>
     </TooltipContent>
   </Tooltip>
-{:else if reward === 'x2'}
+{:else if reward.kind === 'x2'}
   <Tooltip>
     <TooltipTrigger>
       <div class="flex items-center justify-center p-2 {className}">
@@ -67,7 +70,7 @@
       <p>2 очка</p>
     </TooltipContent>
   </Tooltip>
-{:else if reward === 'x3'}
+{:else if reward.kind === 'x3'}
   <Tooltip>
     <TooltipTrigger>
       <div class="flex items-center justify-center {className}">

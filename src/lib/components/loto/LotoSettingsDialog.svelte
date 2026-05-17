@@ -140,6 +140,16 @@
           />
         </div>
         <div class="flex flex-col gap-2">
+          <Label for="super-game-win-score">Количество очков для победы</Label>
+          <Input
+            id="super-game-win-score"
+            type="number"
+            bind:value={configStore.value.super_game_win_score}
+            min="1"
+            max="100"
+          />
+        </div>
+        <div class="flex flex-col gap-2">
           <Label for="super-game-1-pointers">Ячеек за 1 очко</Label>
           <Input
             id="super-game-1-pointers"

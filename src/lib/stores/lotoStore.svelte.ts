@@ -19,6 +19,8 @@ type SuperGameState = 'not_started' | 'in_progress' | 'finished'
 
 const LOTO_MATCH = 'лото'
 
+
+
 export type LotoConfig = {
   ticket_size: number
   max_number: number
@@ -38,6 +40,7 @@ export type LotoConfig = {
   super_game_3_pointers: number
   super_game_bonus_guesses_enabled: boolean
   super_game_vk_rewards?: VkRewards
+  super_game_win_score: number
 }
 
 const DefaultConfig: LotoConfig = {
@@ -59,6 +62,7 @@ const DefaultConfig: LotoConfig = {
   super_game_3_pointers: 1,
   super_game_bonus_guesses_enabled: true,
   super_game_vk_rewards: undefined,
+  super_game_win_score: 1
 }
 
 export class LotoStore {
@@ -82,7 +86,7 @@ export class LotoStore {
   superGameTotalGuessesAmount = $derived.by(() => {
     const base = this.config.value.super_game_guesses_amount
     if (this.config.value.super_game_bonus_guesses_enabled) {
-      const revealedNonEmpty = this.superGameRevealedIds.filter((id) => this.superGameValues[id] !== 'empty')
+      const revealedNonEmpty = this.superGameRevealedIds.filter((id) => this.superGameValues[id].kind !== 'empty')
       return base + revealedNonEmpty.length
     }
     return base
@@ -92,6 +96,21 @@ export class LotoStore {
       return 'not_started'
     }
     return this.superGameRevealedIds.length === this.superGameTotalGuessesAmount ? 'finished' : 'in_progress'
+  })
+
+  superGameScore = $derived.by(() => {
+    const sum = this.superGameRevealedIds.reduce((acc, id) => acc + getSuperGameRewardScore(this.superGameValues[id]), 0)
+    return sum
+  })
+
+  superGameResult = $derived.by(() => {
+    if (this.superGameScore >= this.config.value.super_game_win_score) {
+      return 'win'
+    }
+    if (this.superGameState === 'finished') {
+      return 'lose'
+    }
+    return 'in_progress'
   })
 
   usersById = $state<SvelteMap<string, ChatUser>>(new SvelteMap())
@@ -369,30 +388,49 @@ function generateSuperGameValues(config: LotoConfig): SuperGameReward[] {
   const values: SuperGameReward[] = []
 
   for (let i = 0; i < config.super_game_1_pointers; i++) {
-    values.push('x1')
+    values.push({ kind: 'x1' })
   }
 
   for (let i = 0; i < config.super_game_2_pointers; i++) {
-    values.push('x2')
+    values.push({ kind: 'x2' })
   }
 
   for (let i = 0; i < config.super_game_3_pointers; i++) {
-    values.push('x3')
+    values.push({ kind: 'x3' })
   }
 
   if (config.super_game_vk_rewards) {
     for (const roles of Object.values(config.super_game_vk_rewards)) {
       for (const [roleId, amount] of Object.entries(roles)) {
         for (let i = 0; i < amount; i++) {
-          values.push({ vk_custom: roleId as VkRoleId })
+          values.push({ kind: 'vk-role', roleId: roleId as VkRoleId })
         }
       }
     }
   }
 
   for (let i = values.length; i < config.super_game_options_amount; i++) {
-    values.push('empty')
+    values.push({ kind: 'empty' })
   }
 
   return shuffle(values)
+}
+
+function getSuperGameRewardScore(reward: SuperGameReward): number {
+  switch (reward.kind) {
+    case 'empty':
+      return 0
+    case 'x1':
+      return 1
+    case 'x2':
+      return 2
+    case 'x3':
+      return 3
+    case 'vk-role':
+      return 1
+    default: {
+      const error: never = reward
+      throw new Error(`Unknown super game reward kind: ${error}`)
+    }
+  }
 }
