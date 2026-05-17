@@ -18,7 +18,7 @@
   import Nav from '$lib/components/layout/Nav.svelte'
   import * as Tooltip from '$lib/components/ui/tooltip'
   import SuperGame from '$lib/components/loto/supergame/SuperGame.svelte'
-    import LotoWinners from '$lib/components/loto/LotoWinners.svelte'
+  import LotoWinners from '$lib/components/loto/LotoWinners.svelte'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -216,40 +216,43 @@
 
     <SuperGame />
 
-    <div class="ml-30 flex flex-wrap justify-center gap-4 z-50">
+    <div class="z-50 ml-30 flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
         {@const user = lotoStore.usersById.get(ticket.owner_id)!}
-        <div class="flex flex-col gap-2" animate:flip={{ duration: 700 }} in:fade>
-          <button
-            class="cursor-pointer transition-transform hover:scale-105"
-            onclick={() => {
-              if (lotoStore.openedChats.has(ticket.id)) {
-                lotoStore.openedChats.delete(ticket.id)
-              } else {
-                lotoStore.openedChats.add(ticket.id)
-              }
-            }}
-          >
-            <LotoTicket
-              {ticket}
-              {user}
-              matchedNumbers={lotoStore.drawnNumbers}
-              lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
-              winnerMatchedNumbers={lotoStore.winner?.id === ticket.id
-                ? lotoStore.winnerMatchedNumbers
-                : []}
-              showTimestamp={lotoStore.winnerCandidates.size > 1 && lotoStore.winnerCandidates.has(ticket.id)}
-            />
-          </button>
+        <div class="inline-grid gap-2" animate:flip={{ duration: 700 }} in:fade>
+          <div class="col-start-1 row-start-1">
+            <button
+              class="cursor-pointer transition-transform hover:scale-105"
+              onclick={() => {
+                if (lotoStore.openedChats.has(ticket.id)) {
+                  lotoStore.openedChats.delete(ticket.id)
+                } else {
+                  lotoStore.openedChats.add(ticket.id)
+                }
+              }}
+            >
+              <LotoTicket
+                {ticket}
+                {user}
+                matchedNumbers={lotoStore.drawnNumbers}
+                lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
+                winnerMatchedNumbers={lotoStore.winner?.id === ticket.id
+                  ? lotoStore.winnerMatchedNumbers
+                  : []}
+                showTimestamp={lotoStore.winnerCandidates.size > 1 &&
+                  lotoStore.winnerCandidates.has(ticket.id)}
+              />
+            </button>
+          </div>
           {#if lotoStore.openedChats.has(ticket.id)}
             {@const userMessages = store.messagesByUser.get(ticket.owner_id) || []}
             {@const sortedMessages = userMessages.toSorted((a, b) => a.ts - b.ts)}
             <div
-              class="w-full max-h-40 overflow-y-auto rounded-xl border border-border/50 bg-card p-3 shadow-inner"
+              class="col-start-1 row-start-2 max-h-40 w-0 min-w-full wrap-break-word overflow-y-auto rounded-xl border border-border/50 bg-card p-3 shadow-inner"
             >
-              <div class="flex flex-col gap-2 text-left">
+              <div class="max-w-full flex flex-col gap-2 text-left">
                 {#each sortedMessages as msg (msg.id)}
-                  <div class="text-sm whitespace-nowrap">
+                  <div class="text-sm">
                     {new Date(msg.ts).toLocaleTimeString('ru-RU', {
                       hour: '2-digit',
                       minute: '2-digit',
@@ -259,7 +262,7 @@
                   </div>
                 {/each}
               </div>
-              <div class="mt-2 flex justify-end">
+              <div class="mt-4 flex justify-end">
                 <Tooltip.Root>
                   <Tooltip.Trigger>
                     <Button

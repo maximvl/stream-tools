@@ -121,7 +121,14 @@ export class ChatMessagesStore {
 
           const newMessages = (res.data?.chat_messages || []).filter(
             (msg) => !messagesIds.has(msg.id),
-          )
+          ).map((msg) => ({
+            ...msg,
+            source: {
+              server: key.split('/')[0] as ChatServer,
+              channel: key.split('/')[1],
+            },
+          }))
+
           if (newMessages.length > 0) {
             this.newMessages = newMessages
             this.messages.push(...newMessages)
