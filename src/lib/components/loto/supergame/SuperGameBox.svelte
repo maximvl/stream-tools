@@ -8,39 +8,49 @@
   const revealAll = $derived(lotoStore.superGameState === 'finished')
 </script>
 
-<div class="flex w-[600px] flex-wrap justify-center gap-2 text-center">
-  {#each lotoStore.superGameValues as value, idx (idx)}
-    {@const active = lotoStore.superGameGuesses.includes(idx + 1)}
-    {@const highlighted = lotoStore.superGameState === 'not_started' || active}
-    {#snippet hidden()}
-      <div
-        class={cn(
-          'round-container flex h-12 w-12 items-center justify-center',
-          highlighted ? '' : 'brightness-50',
-        )}
-      >
+{#if lotoStore.superGameState === 'not_started'}
+  <div class="flex w-[600px] flex-wrap justify-center gap-2 text-center">
+    {#each lotoStore.superGameValues as value, idx (idx)}
+      <div class="round-container h-12 w-12">
         {(idx + 1).toString().padStart(2, '0')}
       </div>
-    {/snippet}
-    {#snippet revealed()}
-      <RewardItem
-        class={cn('round-container h-12 w-12 p-1', highlighted ? '' : 'brightness-50')}
-        reward={value}
-        vkRoles={[]}
-        emptyPlaceholder={active ? '' : (idx + 1).toString().padStart(2, '0')}
+    {/each}
+  </div>
+{:else}
+  <div class="flex w-[600px] flex-wrap justify-center gap-2 text-center">
+    {#each lotoStore.superGameValues as value, idx (idx)}
+      {@const active = lotoStore.superGameGuesses.includes(idx + 1)}
+      {@const highlighted = lotoStore.superGameState === 'not_started' || active}
+      {#snippet hidden()}
+        <div
+          class={cn(
+            'round-container flex h-12 w-12 items-center justify-center',
+            highlighted ? '' : 'brightness-50',
+          )}
+        >
+          {(idx + 1).toString().padStart(2, '0')}
+        </div>
+      {/snippet}
+      {#snippet revealed()}
+        <RewardItem
+          class={cn('round-container h-12 w-12 p-1', highlighted ? '' : 'brightness-50')}
+          reward={value}
+          vkRoles={[]}
+          emptyPlaceholder={active ? '' : (idx + 1).toString().padStart(2, '0')}
+        />
+      {/snippet}
+      <Flipper
+        oneShot
+        class={cn('h-12 w-12', active ? '' : 'pointer-events-none')}
+        hidden={revealAll ? revealed : hidden}
+        {revealed}
+        onFlip={() => {
+          lotoStore.superGameRevealedIds.push(idx)
+        }}
       />
-    {/snippet}
-    <Flipper
-      oneShot
-      class={cn('h-12 w-12', active ? '' : 'pointer-events-none')}
-      hidden={revealAll ? revealed : hidden}
-      revealed={revealed}
-      onFlip={() => {
-        lotoStore.superGameRevealedIds.push(idx)
-      }}
-    />
-  {/each}
-</div>
+    {/each}
+  </div>
+{/if}
 
 <style>
   :global(.round-container) {
