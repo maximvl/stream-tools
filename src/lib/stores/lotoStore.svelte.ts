@@ -39,7 +39,7 @@ export type LotoConfig = {
   super_game_win_score: number
 }
 
-const DefaultConfig: LotoConfig = {
+export const DefaultConfig: LotoConfig = {
   ticket_size: 8,
   max_number: 99,
   roll_animation_time: 1500,
