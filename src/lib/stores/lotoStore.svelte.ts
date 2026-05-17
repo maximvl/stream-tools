@@ -11,9 +11,11 @@ import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 import { LocalStore } from './localStore.svelte'
 import type { LotoTicket, LotoTicketId, SuperGameReward, VkRewards } from '$lib/components/loto/types'
 import { createContext } from 'svelte'
+import shuffle from 'lodash/shuffle'
 
 
 type GameState = 'registration' | 'playing'
+type SuperGameState = 'not_started' | 'in_progress' | 'finished'
 
 const LOTO_MATCH = 'лото'
 
@@ -77,6 +79,21 @@ export class LotoStore {
   superGameGuesses = $state<number[]>([])
   superGameRevealedIds = $state<number[]>([])
 
+  superGameTotalGuessesAmount = $derived.by(() => {
+    const base = this.config.value.super_game_guesses_amount
+    if (this.config.value.super_game_bonus_guesses_enabled) {
+      const revealedNonEmpty = this.superGameRevealedIds.filter((id) => this.superGameValues[id] !== 'empty')
+      return base + revealedNonEmpty.length
+    }
+    return base
+  })
+  superGameState: SuperGameState = $derived.by(() => {
+    if (this.superGameGuesses.length === 0) {
+      return 'not_started'
+    }
+    return this.superGameRevealedIds.length === this.superGameTotalGuessesAmount ? 'finished' : 'in_progress'
+  })
+
   usersById = $state<SvelteMap<string, ChatUser>>(new SvelteMap())
   openedChats = $state<Set<UserId>>(new SvelteSet())
 
@@ -87,6 +104,8 @@ export class LotoStore {
     )
     $effect(() => {
       void this.winner
+      this.superGameGuesses = []
+      this.superGameRevealedIds = []
       this.superGameValues = generateSuperGameValues(this.config.value)
     })
   }
@@ -375,5 +394,5 @@ function generateSuperGameValues(config: LotoConfig): SuperGameReward[] {
     values.push('empty')
   }
 
-  return values
+  return shuffle(values)
 }

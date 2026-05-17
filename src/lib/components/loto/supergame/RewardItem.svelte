@@ -2,15 +2,17 @@
   import { Tooltip, TooltipContent, TooltipTrigger } from '$lib/components/ui/tooltip'
   import { POG_IMG } from '$lib/constants'
   import type { VkRole } from '$lib/types'
+    import { cn } from '$lib/utils'
   import type { SuperGameReward } from '../types'
 
   type Props = {
     class?: string
     reward: SuperGameReward
+    emptyPlaceholder?: string
     vkRoles: VkRole[]
   }
 
-  const { reward, vkRoles, class: className = '' }: Props = $props()
+  const { reward, vkRoles, class: className = '', emptyPlaceholder = '' }: Props = $props()
 
   const vkRole = $derived.by(() => {
     for (const role of vkRoles) {
@@ -23,12 +25,12 @@
 </script>
 
 {#if reward === 'empty'}
-  <div class="{className}"></div>
+  <div class={cn("flex items-center justify-center text-muted-foreground", className, "text-base!")}>{emptyPlaceholder}</div>
 {:else if vkRole}
   <Tooltip>
     <TooltipTrigger>
       <div class="flex items-center justify-center {className}">
-        <img src={vkRole.largeUrl} class="w-full h-full" alt={vkRole.name} />
+        <img src={vkRole.largeUrl} class="h-full w-full" alt={vkRole.name} />
       </div>
     </TooltipTrigger>
     <TooltipContent>
@@ -41,7 +43,7 @@
       <div class="flex items-center justify-center p-2 {className}">
         <img
           src="https://images.live.vkvideo.ru/smile/2ec232fd-bb31-4122-b3d1-4c8e7b721561/icon/size/medium"
-          class="w-full h-full"
+          class="h-full w-full"
           alt="x1"
         />
       </div>
@@ -56,7 +58,7 @@
       <div class="flex items-center justify-center p-2 {className}">
         <img
           src="https://images.live.vkvideo.ru/smile/c78b5408-e42c-4aeb-b6f5-9ca21d73c0f1/icon/size/medium"
-          class="w-full h-full"
+          class="h-full w-full"
           alt="x2"
         />
       </div>
@@ -69,7 +71,7 @@
   <Tooltip>
     <TooltipTrigger>
       <div class="flex items-center justify-center {className}">
-        <img src={POG_IMG} class="w-full h-full" alt="x3" />
+        <img src={POG_IMG} class="h-full w-full" alt="x3" />
       </div>
     </TooltipTrigger>
     <TooltipContent>

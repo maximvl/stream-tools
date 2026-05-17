@@ -18,7 +18,7 @@
   import Nav from '$lib/components/layout/Nav.svelte'
   import { SvelteSet } from 'svelte/reactivity'
   import * as Tooltip from '$lib/components/ui/tooltip'
-    import SuperGameBox from '$lib/components/loto/supergame/SuperGameBox.svelte'
+  import SuperGame from '$lib/components/loto/supergame/SuperGame.svelte'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -152,7 +152,7 @@
     {:else}
       {#if lotoStore.winner}
         {@const winnerUser = lotoStore.usersById.get(lotoStore.winner.owner_id)}
-        <LotoWinnerBanner ticket={lotoStore.ticketsOrdered[0]} user={winnerUser} />
+        <LotoWinnerBanner user={winnerUser} name={lotoStore.winner.owner_name} />
       {:else}
         {@const numStr = lotoStore.displayNextNumber || '00'}
         <div class="flex flex-col items-center gap-6">
@@ -195,7 +195,7 @@
         >
           <div class="flex items-center justify-center px-2">
             <h2 class="text-xs font-black tracking-[0.3em] text-muted-foreground uppercase">
-              Открыто ({lotoStore.drawnNumbers.length})
+              Открыто {lotoStore.drawnNumbers.length}
             </h2>
           </div>
           <div class="flex flex-wrap justify-center gap-2">
@@ -215,7 +215,7 @@
       {/if}
     {/if}
 
-    <SuperGameBox />
+    <SuperGame />
 
     <div class="flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}

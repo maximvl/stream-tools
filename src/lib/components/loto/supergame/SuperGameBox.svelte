@@ -2,19 +2,52 @@
   import RewardItem from './RewardItem.svelte'
   import { getLotoStore } from '$lib/stores/lotoStore.svelte'
   import Flipper from './Flipper.svelte'
+  import { cn } from '$lib/utils'
 
   const lotoStore = getLotoStore()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(window as any).admin = {
+    setSuperGameGuesses: (guesses: number[]) => {
+      lotoStore.superGameGuesses = guesses
+    }
+  }
+
+  const revealAll = $derived(lotoStore.superGameState === 'finished')
 </script>
 
-<div class="border-red flex w-[630px] gap-2 flex-wrap justify-center border-5 text-center">
+<div class="flex w-[600px] flex-wrap justify-center gap-2 text-center">
   {#each lotoStore.superGameValues as value, idx (idx)}
-    {#snippet empty()}
-      <div class="round-container flex h-12 w-12 items-center justify-center">{idx}</div>
+    {@const active = lotoStore.superGameGuesses.includes(idx + 1)}
+    {@const highlighted = lotoStore.superGameState === 'not_started' || active}
+    {#snippet hidden()}
+      <div
+        class={cn(
+          'round-container flex h-12 w-12 items-center justify-center',
+          highlighted ? '' : 'brightness-50',
+        )}
+      >
+        {(idx + 1).toString().padStart(2, '0')}
+      </div>
     {/snippet}
-    {#snippet content()}
-      <RewardItem class="round-container h-12 w-12 p-1" reward={value} vkRoles={[]} />
+    {#snippet revealed()}
+      <RewardItem
+        class={cn('round-container h-12 w-12 p-1', highlighted ? '' : 'brightness-50')}
+        reward={value}
+        vkRoles={[]}
+        emptyPlaceholder={active ? '' : (idx + 1).toString().padStart(2, '0')}
+      />
     {/snippet}
-    <Flipper oneShot class="h-12 w-12" {empty} {content} />
+    <Flipper
+      oneShot
+      class={cn('h-12 w-12', active ? '' : 'pointer-events-none')}
+      hidden={revealAll ? revealed : hidden}
+      revealed={revealed}
+      onFlip={() => {
+        console.log('Flipper flipped')
+        lotoStore.superGameRevealedIds.push(idx)
+      }}
+    />
   {/each}
 </div>
 

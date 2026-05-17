@@ -7,29 +7,33 @@
 
   type Props = {
     class?: string
-    empty?: Snippet
-    content?: Snippet
+    hidden?: Snippet
+    revealed?: Snippet
     oneShot?: boolean
+    onFlip?: () => void
   }
 
-  let { class: className = '', empty, content, oneShot = false }: Props = $props()
+  let { class: className = '', hidden, revealed, oneShot = false, onFlip }: Props = $props()
 
   function toggle() {
     if (oneShot && flipped) {
       return
     }
     flipped = !flipped
+    setTimeout(() => {
+      onFlip?.()
+    }, 800)
   }
 </script>
 
 <Button class={cn(className, 'flipper bg-transparent hover:bg-transparent', flipped ? 'flipped' : '')} onclick={toggle}>
   <div class="inner">
     <div class="face front">
-      {@render empty?.()}
+      {@render hidden?.()}
     </div>
 
     <div class="face back">
-      {@render content?.()}
+      {@render revealed?.()}
     </div>
   </div>
 </Button>
