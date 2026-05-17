@@ -5,7 +5,7 @@
 
   const lotoStore = getLotoStore()
   const user = $derived(
-    lotoStore.winner ? lotoStore.usersById.get(lotoStore.winner.owner_id) : undefined,
+    lotoStore.winner ? lotoStore.usersById.get(lotoStore.winner.owner_id) : undefined
   )
 </script>
 

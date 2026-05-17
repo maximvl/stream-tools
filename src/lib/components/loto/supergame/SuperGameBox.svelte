@@ -3,37 +3,31 @@
   import { getLotoStore } from '$lib/stores/lotoStore.svelte'
   import Flipper from './Flipper.svelte'
   import { cn } from '$lib/utils'
+  import Animation4 from './Animation4.svelte'
 
   const lotoStore = getLotoStore()
   const revealAll = $derived(lotoStore.superGameState === 'finished')
 </script>
 
 {#if lotoStore.superGameState === 'not_started'}
-  <div class="flex w-[600px] flex-wrap justify-center gap-2 text-center">
-    {#each lotoStore.superGameValues as value, idx (idx)}
-      <div class="round-container h-12 w-12">
-        {(idx + 1).toString().padStart(2, '0')}
-      </div>
-    {/each}
-  </div>
+  <Animation4 />
 {:else}
-  <div class="flex w-[600px] flex-wrap justify-center gap-2 text-center">
+  <div class="grid grid-cols-10 justify-center gap-2 text-center">
     {#each lotoStore.superGameValues as value, idx (idx)}
       {@const active = lotoStore.superGameGuesses.includes(idx + 1)}
-      {@const highlighted = lotoStore.superGameState === 'not_started' || active}
       {#snippet hidden()}
         <div
           class={cn(
-            'round-container flex h-12 w-12 items-center justify-center',
-            highlighted ? '' : 'brightness-50',
+            'cell flex h-12 w-12 items-center justify-center',
+            active ? 'cell-highlight' : '',
           )}
         >
-          {(idx + 1).toString().padStart(2, '0')}
+          <span class="cell-text">{(idx + 1).toString().padStart(2, '0')}</span>
         </div>
       {/snippet}
       {#snippet revealed()}
         <RewardItem
-          class={cn('round-container h-12 w-12 p-1', highlighted ? '' : 'brightness-50')}
+          class={cn('cell h-12 w-12 p-1', active ? 'cell-highlight' : '')}
           reward={value}
           vkRoles={[]}
           emptyPlaceholder={active ? '' : (idx + 1).toString().padStart(2, '0')}
@@ -59,5 +53,80 @@
     background: #f4e1c7;
     font-family: monospace;
     font-size: 1.3rem;
+    color: black;
+  }
+
+  :global(.cell) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 3rem;
+    height: 3rem;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+
+    background: rgba(255, 255, 255, 0.03);
+
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.04);
+  }
+
+  :global(.cell-text) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2rem;
+    height: 2rem;
+
+    font-weight: 700;
+    color: white;
+
+    border-radius: 9999px;
+  }
+
+  :global(.cell-highlight) {
+    transform: scale(1.1);
+
+    background: rgba(255, 215, 0, 0.14);
+
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.35);
+  }
+
+  :global(.cell-highlight .cell-text) {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  }
+
+  :global(.cell-highlight::after) {
+    content: '';
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: 9999px;
+
+    background: rgba(255, 215, 0, 0.12);
+
+    animation: cell-pulse 1.5s ease-in-out infinite;
+
+    pointer-events: none;
+  }
+
+  @keyframes cell-pulse {
+    0% {
+      opacity: 0.5;
+      transform: scale(0.96);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+
+    100% {
+      opacity: 0.5;
+      transform: scale(0.96);
+    }
   }
 </style>
