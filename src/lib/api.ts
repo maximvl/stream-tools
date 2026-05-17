@@ -1,5 +1,7 @@
 import { makeMessage, MocksManager } from './apiMocks'
 import type { ChatMessage, ChatServer, VkRole, VkRoleId } from './types'
+import random from 'lodash/random'
+import sample from 'lodash/sample'
 
 const URL_PREFIX = '/v2'
 // const URL_PREFIX = 'http://localhost:8088/v2'
@@ -178,4 +180,46 @@ export async function fetchVkRoles(
     }
     return data
   })
+}
+
+type SuperGameStatus = 'skip' | 'win' | 'lose'
+
+export type LotoWinner = {
+  id: number
+  username: string
+  super_game_status: SuperGameStatus
+  created_at: number
+  stream_channel: string
+}
+
+type FetchLotoWinnersResponse = {
+  winners: LotoWinner[]
+}
+
+
+export async function fetchLotoWinners(
+  server: string,
+  channel: string
+): Promise<FetchLotoWinnersResponse> {
+  const url = `${URL_PREFIX}/turnir-api/loto_winners?server=${server}&channel=${channel}`
+
+  if (MOCK_API) {
+    console.log(`GET ${url}`)
+    const makeWinner = (): LotoWinner => {
+      const id = random(1, 10000)
+      return {
+        id,
+        username: `user-${id}-very-very-long-name`,
+        super_game_status: sample(['win', 'lose', 'skip']) as SuperGameStatus,
+        created_at: Date.now() / 1000,
+        stream_channel: sample(['twitch/lasqa', 'vkvideo/lasqa', 'kick/lasqa']),
+      }
+    }
+
+    return {
+      winners: Array.from({ length: 10 }, makeWinner),
+    }
+  }
+
+  return fetch(url).then((res) => res.json())
 }

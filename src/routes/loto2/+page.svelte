@@ -18,6 +18,7 @@
   import Nav from '$lib/components/layout/Nav.svelte'
   import * as Tooltip from '$lib/components/ui/tooltip'
   import SuperGame from '$lib/components/loto/supergame/SuperGame.svelte'
+    import LotoWinners from '$lib/components/loto/LotoWinners.svelte'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -94,6 +95,7 @@
     {:else}
       <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
     {/if}
+    <LotoWinners />
   </div>
 
   <div class="fixed top-6 right-8 z-50">
@@ -214,7 +216,7 @@
 
     <SuperGame />
 
-    <div class="flex flex-wrap justify-center gap-4">
+    <div class="ml-30 flex flex-wrap justify-center gap-4 z-50">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
         {@const user = lotoStore.usersById.get(ticket.owner_id)!}
         <div class="flex flex-col gap-2" animate:flip={{ duration: 700 }} in:fade>
