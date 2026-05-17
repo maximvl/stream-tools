@@ -14,6 +14,7 @@
     lastRolledNumber?: string
     winnerMatchedNumbers?: string[]
     class?: string
+    showTimestamp?: boolean
   }
 
   let {
@@ -23,6 +24,7 @@
     lastRolledNumber,
     winnerMatchedNumbers = [],
     class: className,
+    showTimestamp = false,
   }: Props = $props()
 
   const isMatched = (num: string) => matchedNumbers.includes(num)
@@ -103,9 +105,7 @@
   ]
 
   // Select style based on username
-  const selectedStyle = $derived(
-    ticketStyles[hashString(user.username) % ticketStyles.length]
-  )
+  const selectedStyle = $derived(ticketStyles[hashString(user.username) % ticketStyles.length])
 </script>
 
 <div
@@ -161,4 +161,15 @@
       </div>
     {/each}
   </div>
+  {#if showTimestamp}
+    <div class="text-sm text-white/60">
+      Выдан {new Date(ticket.created_at).toLocaleString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: 'numeric',
+        fractionalSecondDigits: 3,
+        hour12: false,
+      })}
+    </div>
+  {/if}
 </div>

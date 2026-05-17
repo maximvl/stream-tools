@@ -61,6 +61,11 @@ const DefaultConfig: LotoConfig = {
   super_game_win_score: 1,
 }
 
+type LotoTicketWithMatchData = LotoTicket & {
+  matchScore: number
+  maxSequentialMatches: number
+}
+
 export class LotoStore {
   config: LocalStore<LotoConfig>
 
@@ -138,41 +143,54 @@ export class LotoStore {
     })
   }
 
+  ticketsEnriched: LotoTicketWithMatchData[] = $derived.by(() => {
+    const allTickets = [...this.ticketsFromChat, ...this.ticketsFromPoints]
+    const drawnSet = new SvelteSet(this.drawnNumbers)
+    return allTickets.map((ticket) => {
+      const match = getTicketMatch(ticket, drawnSet)
+      return {
+        ...ticket,
+        matchScore: match.score,
+        maxSequentialMatches: match.maxSequentialMatch,
+      }
+    })
+  })
+
   ticketsOrdered = $derived.by(() => {
     if (this.gameState === 'registration') {
-      const allTickets = [...this.ticketsFromChat, ...this.ticketsFromPoints]
-      allTickets.sort((t1, t2) => t2.created_at - t1.created_at)
-      return allTickets
+      return this.ticketsEnriched.toSorted((t1, t2) => t2.created_at - t1.created_at)
     }
     if (this.gameState === 'playing') {
-      const allTickets = [...this.ticketsFromChat, ...this.ticketsFromPoints]
-
-      const drawnSet = new SvelteSet(this.drawnNumbers)
-
-      allTickets.sort((t1, t2) => {
-        const score1 = getTicketMatchScore(t1, drawnSet)
-        const score2 = getTicketMatchScore(t2, drawnSet)
+      return this.ticketsEnriched.toSorted((t1, t2) => {
+        const score1 = t1.matchScore
+        const score2 = t2.matchScore
         if (score1 !== score2) {
           return score2 - score1
         }
         return t1.created_at - t2.created_at
       })
-      return allTickets
     }
     return []
   })
 
   winner = $derived.by(() => {
-    if (this.ticketsOrdered.length === 0) return null
     const firstTicket = this.ticketsOrdered[0]
-    const drawnSet = new SvelteSet(this.drawnNumbers)
-    const matches = firstTicket.value.map((n) => drawnSet.has(n))
-    const maxSeq = getMaxSequentialMatches(matches)
-
-    if (maxSeq >= this.config.value.win_matches_amount) {
+    if (firstTicket && firstTicket.maxSequentialMatches >= this.config.value.win_matches_amount) {
       return firstTicket
     }
     return null
+  })
+
+  winnerCandidates = $derived.by(() => {
+    const candidates: SvelteSet<LotoTicketId> = new SvelteSet()
+    if (this.winner) {
+      for (const ticket of this.ticketsOrdered.slice(0, 20)) {
+        if (ticket.matchScore === this.winner.matchScore) {
+          candidates.add(ticket.id)
+        }
+      }
+    }
+    return candidates
   })
 
   winnerMatchedNumbers = $derived.by(() => {
@@ -300,25 +318,19 @@ function getMaxSequentialMatches(matches: boolean[]) {
   return maxSeq
 }
 
-function getTicketMatchScore(ticket: LotoTicket, drawnSet: SvelteSet<string>) {
+function getTicketMatch(ticket: LotoTicket, drawnSet: SvelteSet<string>) {
   const matches = ticket.value.map((n) => drawnSet.has(n))
 
   const maxSeq = getMaxSequentialMatches(matches)
-
-  let gapMatches = 0
-  for (let i = 0; i < matches.length - 2; i++) {
-    if (matches[i] && !matches[i + 1] && matches[i + 2]) {
-      gapMatches++
-    }
-  }
-
   const totalMatches = matches.filter(Boolean).length
 
   // Weighting:
   // maxSeq is most important (e.g. * 1000)
-  // gapMatches is next (e.g. * 100)
   // totalMatches is next (e.g. * 1)
-  return maxSeq * 1000 + gapMatches * 100 + totalMatches
+  return {
+    score: maxSeq * 1000 + totalMatches,
+    maxSequentialMatch: maxSeq,
+  }
 }
 
 function makeTicket(params: {

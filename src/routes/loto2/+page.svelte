@@ -236,6 +236,7 @@
               winnerMatchedNumbers={lotoStore.winner?.id === ticket.id
                 ? lotoStore.winnerMatchedNumbers
                 : []}
+              showTimestamp={lotoStore.winnerCandidates.has(ticket.id)}
             />
           </button>
           {#if lotoStore.openedChats.has(ticket.id)}
