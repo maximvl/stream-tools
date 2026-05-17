@@ -1,4 +1,4 @@
-import { makeMessage } from './apiMocks'
+import { makeMessage, MocksManager } from './apiMocks'
 import type { ChatMessage, ChatServer, VkRole, VkRoleId } from './types'
 
 const URL_PREFIX = '/v2'
@@ -9,7 +9,6 @@ const MOCK_API = true
 
 console.log('MOCK_API', MOCK_API)
 
-let chatResultMock: ChatMessagesResponse | null = null
 const throwApiError: boolean = false
 const mockedMessagesAmount = 20
 
@@ -70,9 +69,9 @@ export async function fetchMessages({
 
     // console.log('fetching messages', channel, ts, textFilter, platform)
 
-    if (chatResultMock) {
-      const result = chatResultMock
-      chatResultMock = null
+    if (MocksManager.chatMessages && MocksManager.chatMessages.length > 0) {
+      const result: ChatMessagesResponse = { chat_messages: MocksManager.chatMessages as ChatMessage[] }
+      MocksManager.chatMessages = []
       return result
     }
 

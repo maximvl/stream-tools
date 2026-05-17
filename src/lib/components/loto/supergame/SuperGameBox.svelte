@@ -5,14 +5,6 @@
   import { cn } from '$lib/utils'
 
   const lotoStore = getLotoStore()
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(window as any).admin = {
-    setSuperGameGuesses: (guesses: number[]) => {
-      lotoStore.superGameGuesses = guesses
-    }
-  }
-
   const revealAll = $derived(lotoStore.superGameState === 'finished')
 </script>
 

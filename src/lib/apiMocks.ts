@@ -1,7 +1,7 @@
-import lodash from 'lodash'
+import random from 'lodash/random'
+import sample from 'lodash/sample'
 import type { ChatMessage, ChatServer, UserId } from './types'
 
-const { random, sample } = lodash
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const makeBadge = () => {
@@ -17,8 +17,8 @@ const makeBadge = () => {
   }
 }
 
-export const makeMessage = (server: ChatServer, channel: string): ChatMessage => {
-  const user_id = random(1, 10000)
+export const makeMessage = (server: ChatServer, channel: string, user_id?: string): ChatMessage => {
+  const userId = user_id || random(1, 10000).toString()
   const colors = [
     '#0000FF',
     '#FF7F50',
@@ -52,8 +52,8 @@ export const makeMessage = (server: ChatServer, channel: string): ChatMessage =>
     // fixed date based on user id for testing
     //user_id % 2 === 0 ? '2024-10-01T12:00:00Z' : '2024-10-02T12:00:00Z'
     user: {
-      id: `${user_id}` as UserId,
-      username: user_id.toString(),
+      id: userId as UserId,
+      username: userId,
       source: { server, channel },
       // vk_fields: {
       //   nickColor: 0,
@@ -115,3 +115,16 @@ const makeSuperGameMessage = () => {
     },
   }
 }
+
+
+export const MocksManager = {
+  chatMessages: [] as ChatMessage[],
+  sendMessage(user_id: string, msg: string) {
+    const obj = makeMessage('twitch', 'tmp', user_id)
+    obj.message = msg
+    this.chatMessages.push(obj)
+  },
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+;(window as any).mocks = MocksManager
