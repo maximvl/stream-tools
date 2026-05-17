@@ -25,7 +25,9 @@ class _LocalStore<T> {
     window.addEventListener(`localStore:${key}`, (event: Event) => {
       const customEvent = event as CustomEvent<CustomEventData<T>>
       if (customEvent.detail.emitterId !== this._storeId) {
-        untrack(() => (this.value = customEvent.detail.value))
+        untrack(() => {
+          this.value = customEvent.detail.value
+        })
       }
     })
 

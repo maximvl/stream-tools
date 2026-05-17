@@ -4,7 +4,7 @@
   import { Input } from '$lib/components/ui/input'
   import { Label } from '$lib/components/ui/label'
   import { Checkbox } from '$lib/components/ui/checkbox'
-  import { getLotoConfigStore } from '$lib/stores/lotoStore.svelte'
+  import { getLotoConfigStore, resetLotoConfig } from '$lib/stores/lotoStore.svelte'
 
   const configStore = getLotoConfigStore()
   let open = $state(false)
@@ -18,6 +18,7 @@
     <Dialog.Header>Настройки лото</Dialog.Header>
     <div class="flex max-h-[70vh] flex-col gap-8 overflow-y-auto pr-2">
       <div class="flex flex-col gap-4">
+        <Button variant="destructive" size="sm" class="w-full" onclick={resetLotoConfig}>Сбросить настройки</Button>
         <h3 class="font-semibold text-muted-foreground">Основные настройки</h3>
         <div class="flex flex-col gap-2">
           <Label for="win-matches-amount">Количество совпадений для победы</Label>
@@ -179,6 +180,7 @@
             max="10"
           />
         </div>
+        <div class="mb-10"></div>
       </div>
     </div>
   </Dialog.Content>

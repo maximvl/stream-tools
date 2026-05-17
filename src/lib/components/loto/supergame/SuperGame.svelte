@@ -17,7 +17,7 @@
       >
         <p class="text-base font-medium text-primary">
           для участия в супер-игре пиши в чат
-          <br />+супер 3 14 15 92 65
+          свои числа
         </p>
       </div>
     {:else}
