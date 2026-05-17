@@ -17,7 +17,8 @@
         class="rounded-xl border border-primary/20 bg-card px-6 py-3 shadow-lg ring-1 ring-primary/5"
       >
         <p class="text-base font-medium text-primary">
-          для участия в супер-игре пиши в чат свои числа
+          для участия в супер-игре пиши в чат {lotoStore.config.value.super_game_guesses_amount} чисел
+          <br />шанс победы: {Math.round(lotoStore.superGameWinChance * 100)}%
         </p>
       </div>
     {:else}

@@ -63,7 +63,6 @@ export const DefaultConfig: LotoConfig = {
   super_game_bombs: 1,
 }
 
-
 export class LotoStore {
   config: LocalStore<LotoConfig>
 
@@ -81,6 +80,8 @@ export class LotoStore {
   superGameValues = $state<SuperGameReward[]>([])
   superGameGuesses = $state<number[]>([])
   superGameRevealedIds = $state<number[]>([])
+
+  superGameWinChance = $derived.by(() => approximateWinChance(this.config.value))
 
   superGameTotalGuessesAmount = $derived.by(() => {
     const base = this.config.value.super_game_guesses_amount
@@ -233,7 +234,10 @@ export class LotoStore {
       const numbers = parseSuperGameNumbers(msg.message, this.config.value)
       if (numbers.length > 0) {
         if (this.superGameGuesses.length < this.superGameTotalGuessesAmount) {
-          this.superGameGuesses = uniq([...this.superGameGuesses, ...numbers]).slice(0, this.superGameTotalGuessesAmount)
+          this.superGameGuesses = uniq([...this.superGameGuesses, ...numbers]).slice(
+            0,
+            this.superGameTotalGuessesAmount,
+          )
         }
         return
       }
@@ -490,4 +494,36 @@ function parseSuperGameNumbers(message: string, config: LotoConfig): number[] {
   }
 
   return uniq(potentialNumbers.filter((n) => n >= 1 && n <= config.super_game_options_amount))
+}
+
+function approximateWinChance(cfg: LotoConfig): number {
+  const N = cfg.super_game_options_amount
+
+  const A1 = cfg.super_game_1_pointers
+  const A2 = cfg.super_game_2_pointers
+  const A3 = cfg.super_game_3_pointers
+
+  const k = cfg.super_game_guesses_amount
+  const win = cfg.super_game_win_score
+
+  const p1 = A1 / N
+  const p2 = A2 / N
+  const p3 = A3 / N
+  const phit = p1 + p2 + p3
+
+  const expectedValuePerDraw = 1 * p1 + 2 * p2 + 3 * p3
+
+  // probability at least one hit in k draws
+  const q = 1 - Math.pow(1 - phit, k)
+
+  // expected total draws (bonus amplification)
+  const expectedDraws = k / (1 - q)
+
+  const expectedScore = expectedDraws * expectedValuePerDraw
+
+  // smooth probability curve (logistic approximation)
+  const varianceFactor = Math.sqrt(k) // rough dispersion scale
+  const z = (expectedScore - win) / (varianceFactor + 1e-9)
+
+  return 1 / (1 + Math.exp(-z))
 }
