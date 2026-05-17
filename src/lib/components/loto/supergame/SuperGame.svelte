@@ -26,11 +26,7 @@
       </div>
       <div class="flex flex-col gap-2 rounded-lg bg-card p-4">
         <div class="text-center text-xl">
-          {#if lotoStore.superGameResult === 'win'}
-            <span>Победа&nbsp;</span>
-          {:else if lotoStore.superGameResult === 'lose'}
-            <span>Поражение&nbsp;</span>
-          {/if}
+          <span>Очки&nbsp;</span>
           {lotoStore.superGameScore}/{lotoStore.config.value.super_game_win_score}
         </div>
         <div class="flex items-center gap-2">
@@ -44,7 +40,7 @@
                 : 'hidden'
               : 'hidden'}
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 font-mono text-lg font-bold data-[status=empty]:bg-red-700 data-[status=score]:bg-green-800"
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 font-mono text-lg data-[status=empty]:bg-red-700 data-[status=score]:bg-green-800"
               data-status={status}
             >
               {(guess ?? '__').toString().padStart(2, '0')}

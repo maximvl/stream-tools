@@ -122,6 +122,7 @@ export const MocksManager = {
   sendMessage(user_id: string, msg: string) {
     const obj = makeMessage('twitch', 'tmp', user_id)
     obj.message = msg
+    obj.ts = new Date().getTime()
     this.chatMessages.push(obj)
   },
 }

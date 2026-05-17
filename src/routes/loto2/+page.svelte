@@ -38,7 +38,7 @@
   $effect(() => {
     const messages = store.newMessages
     untrack(() => {
-      messages.forEach(lotoStore.addTicket)
+      messages.forEach(lotoStore.handleMessage)
     })
   })
 </script>
@@ -236,18 +236,19 @@
               winnerMatchedNumbers={lotoStore.winner?.id === ticket.id
                 ? lotoStore.winnerMatchedNumbers
                 : []}
-              showTimestamp={lotoStore.winnerCandidates.has(ticket.id)}
+              showTimestamp={lotoStore.winnerCandidates.size > 1 && lotoStore.winnerCandidates.has(ticket.id)}
             />
           </button>
           {#if lotoStore.openedChats.has(ticket.id)}
             {@const userMessages = store.messagesByUser.get(ticket.owner_id) || []}
+            {@const sortedMessages = userMessages.toSorted((a, b) => a.ts - b.ts)}
             <div
-              class="w-full overflow-y-auto rounded-xl border border-border/50 bg-card p-3 shadow-inner"
+              class="w-full max-h-40 overflow-y-auto rounded-xl border border-border/50 bg-card p-3 shadow-inner"
             >
               <div class="flex flex-col gap-2 text-left">
-                {#each userMessages.slice(-10).reverse() as msg (msg.id)}
+                {#each sortedMessages as msg (msg.id)}
                   <div class="text-sm whitespace-nowrap">
-                    {new Date(msg.ts * 1000).toLocaleTimeString('ru-RU', {
+                    {new Date(msg.ts).toLocaleTimeString('ru-RU', {
                       hour: '2-digit',
                       minute: '2-digit',
                       hour12: false,

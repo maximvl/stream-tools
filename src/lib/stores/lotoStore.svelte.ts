@@ -61,10 +61,6 @@ const DefaultConfig: LotoConfig = {
   super_game_win_score: 1,
 }
 
-type LotoTicketWithMatchData = LotoTicket & {
-  matchScore: number
-  maxSequentialMatches: number
-}
 
 export class LotoStore {
   config: LocalStore<LotoConfig>
@@ -143,27 +139,31 @@ export class LotoStore {
     })
   }
 
-  ticketsEnriched: LotoTicketWithMatchData[] = $derived.by(() => {
-    const allTickets = [...this.ticketsFromChat, ...this.ticketsFromPoints]
-    const drawnSet = new SvelteSet(this.drawnNumbers)
-    return allTickets.map((ticket) => {
-      const match = getTicketMatch(ticket, drawnSet)
-      return {
-        ...ticket,
-        matchScore: match.score,
-        maxSequentialMatches: match.maxSequentialMatch,
-      }
-    })
+  drawnNumbersSet = $derived(new SvelteSet(this.drawnNumbers))
+
+  allTickets = $derived([...this.ticketsFromChat, ...this.ticketsFromPoints])
+
+  ticketsMatchData: Record<LotoTicketId, number> = $derived.by(() => {
+    const result: Record<LotoTicketId, number> = {}
+    for (const ticket of this.ticketsFromChat) {
+      const match = getTicketMatch(ticket, this.drawnNumbersSet)
+      result[ticket.id] = match.score
+    }
+    for (const ticket of this.ticketsFromPoints) {
+      const match = getTicketMatch(ticket, this.drawnNumbersSet)
+      result[ticket.id] = match.score
+    }
+    return result
   })
 
   ticketsOrdered = $derived.by(() => {
     if (this.gameState === 'registration') {
-      return this.ticketsEnriched.toSorted((t1, t2) => t2.created_at - t1.created_at)
+      return this.allTickets.toSorted((t1, t2) => t2.created_at - t1.created_at)
     }
     if (this.gameState === 'playing') {
-      return this.ticketsEnriched.toSorted((t1, t2) => {
-        const score1 = t1.matchScore
-        const score2 = t2.matchScore
+      return this.allTickets.toSorted((t1, t2) => {
+        const score1 = this.ticketsMatchData[t1.id] ?? 0
+        const score2 = this.ticketsMatchData[t2.id] ?? 0
         if (score1 !== score2) {
           return score2 - score1
         }
@@ -175,8 +175,11 @@ export class LotoStore {
 
   winner = $derived.by(() => {
     const firstTicket = this.ticketsOrdered[0]
-    if (firstTicket && firstTicket.maxSequentialMatches >= this.config.value.win_matches_amount) {
-      return firstTicket
+    if (firstTicket) {
+      const firstScore = this.ticketsMatchData[firstTicket.id] ?? 0
+      if (firstScore >= this.config.value.win_matches_amount) {
+        return firstTicket
+      }
     }
     return null
   })
@@ -184,8 +187,10 @@ export class LotoStore {
   winnerCandidates = $derived.by(() => {
     const candidates: SvelteSet<LotoTicketId> = new SvelteSet()
     if (this.winner) {
+      const winnerScore = this.ticketsMatchData[this.winner.id] ?? 0
       for (const ticket of this.ticketsOrdered.slice(0, 20)) {
-        if (ticket.matchScore === this.winner.matchScore) {
+        const score = this.ticketsMatchData[ticket.id] ?? 0
+        if (score === winnerScore) {
           candidates.add(ticket.id)
         }
       }
@@ -221,7 +226,17 @@ export class LotoStore {
     return this.winner.value.slice(maxSeqStartIndex, maxSeqStartIndex + maxSeq)
   })
 
-  addTicket = (msg: ChatMessage) => {
+  handleMessage = (msg: ChatMessage) => {
+    if (this.winner && msg.user.id === this.winner.owner_id) {
+      const numbers = parseSuperGameNumbers(msg.message, this.config.value)
+      if (numbers.length > 0) {
+        if (this.superGameGuesses.length < this.superGameTotalGuessesAmount) {
+          this.superGameGuesses = uniq([...this.superGameGuesses, ...numbers]).slice(0, this.superGameTotalGuessesAmount)
+        }
+        return
+      }
+    }
+
     if (!msg.message.toLowerCase().includes(LOTO_MATCH)) {
       return
     }
@@ -371,7 +386,7 @@ function genTicketNumber(params: { text: string; pool: string[]; config: LotoCon
     text
       .split(' ')
       .map((n) => parseInt(n))
-      .filter((n) => n > 0 && n < config.max_number)
+      .filter((n) => n >= 1 && n <= config.max_number)
       .map((n) => n.toString().padStart(2, '0'))
       .filter((n) => pool.includes(n)),
   )
@@ -455,4 +470,22 @@ function getSuperGameRewardScore(reward: SuperGameReward): number {
       throw new Error(`Unknown super game reward kind: ${error}`)
     }
   }
+}
+
+function parseSuperGameNumbers(message: string, config: LotoConfig): number[] {
+  const cleaned = message
+    .toLocaleLowerCase()
+    .replace(/\+/g, '')
+    .replace(/супер/g, '')
+    .replace(/лото/g, '')
+  const potentialNumbers = cleaned
+    .split(' ')
+    .filter((n) => n !== '')
+    .map(Number)
+
+  if (potentialNumbers.some((n) => isNaN(n))) {
+    return []
+  }
+
+  return uniq(potentialNumbers.filter((n) => n >= 1 && n <= config.super_game_options_amount))
 }
