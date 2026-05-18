@@ -146,6 +146,14 @@ export class LotoStore {
 
   allTickets = $derived([...this.ticketsFromChat, ...this.ticketsFromPoints])
 
+  streamerTickets = $derived(
+    this.allTickets.filter(
+      (ticket) =>
+        ticket.owner_name.toLocaleLowerCase() ===
+        ticket.source.channel.toLocaleLowerCase(),
+    ),
+  )
+
   ticketsMatchData: Record<LotoTicketId, number> = $derived.by(() => {
     const result: Record<LotoTicketId, number> = {}
     for (const ticket of this.ticketsFromChat) {

@@ -34,7 +34,7 @@
 </script>
 
 <div class="flex max-w-70 flex-col gap-2 rounded-lg bg-card p-2 z-1">
-  <div>Прошлы победители</div>
+  <div>Прошлые победители</div>
   {#each winnersSorted as winner (winner.id)}
     {@const server = winner.stream_channel.split('/')[0] as ChatServer}
     <div class="flex items-center gap-2">

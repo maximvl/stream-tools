@@ -42,6 +42,11 @@
       messages.forEach(lotoStore.handleMessage)
     })
   })
+
+  const streamerFirstTicket = $derived(lotoStore.streamerTickets[0])
+  const streamerUser = $derived(
+    streamerFirstTicket ? lotoStore.usersById.get(streamerFirstTicket.owner_id) : undefined,
+  )
 </script>
 
 <div class="dark flex flex-col items-center p-8">
@@ -96,6 +101,26 @@
       <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
     {/if}
     <LotoWinners />
+  </div>
+
+  <div class="absolute top-30 right-20 w-fit">
+    {#if lotoStore.streamerTickets.length === 0}
+      <div>Стример пока не зарегался</div>
+    {:else if streamerUser}
+      {#each lotoStore.streamerTickets as ticket (ticket.id)}
+        <LotoTicket
+          {ticket}
+          user={streamerUser}
+          matchedNumbers={lotoStore.drawnNumbers}
+          lastRolledNumber={lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]}
+          winnerMatchedNumbers={lotoStore.winner?.id === ticket.id
+            ? lotoStore.winnerMatchedNumbers
+            : []}
+          showTimestamp={lotoStore.winnerCandidates.size > 1 &&
+            lotoStore.winnerCandidates.has(ticket.id)}
+        />
+      {/each}
+    {/if}
   </div>
 
   <div class="fixed top-6 right-8 z-50">
@@ -248,9 +273,9 @@
             {@const userMessages = store.messagesByUser.get(ticket.owner_id) || []}
             {@const sortedMessages = userMessages.toSorted((a, b) => a.ts - b.ts)}
             <div
-              class="col-start-1 row-start-2 max-h-40 w-0 min-w-full wrap-break-word overflow-y-auto rounded-xl border border-border/50 bg-card p-3 shadow-inner"
+              class="col-start-1 row-start-2 max-h-40 w-0 min-w-full overflow-y-auto rounded-xl border border-border/50 bg-card p-3 wrap-break-word shadow-inner"
             >
-              <div class="max-w-full flex flex-col gap-2 text-left">
+              <div class="flex max-w-full flex-col gap-2 text-left">
                 {#each sortedMessages as msg (msg.id)}
                   <div class="text-sm">
                     {new Date(msg.ts).toLocaleTimeString('ru-RU', {
