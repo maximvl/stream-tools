@@ -82,14 +82,15 @@ export class ChatMessagesStore {
   })
 
   messagesResponses = createQueries(() => {
+    const nowTs = Date.now()
     // console.log('creating messages queries for:', this.connectedConnections)
     return {
       queries: this.connectedConnections.map((connKey) => {
-        const ts = untrack(() => this.lastMessageReceivedPerConnection[connKey]?.ts || 0)
         const [server, channel] = connKey.split('/')
         return {
           queryKey: ['fetch-chat-messages', server, channel],
           queryFn: async () => {
+            const ts = untrack(() => this.lastMessageReceivedPerConnection[connKey]?.ts || nowTs) - 10 * 1000
             const msgs = await fetchMessages({
               platform: server as ChatServer,
               channel,
@@ -119,28 +120,30 @@ export class ChatMessagesStore {
             return
           }
 
-          const newMessages = (res.data?.chat_messages || []).filter(
-            (msg) => !messagesIds.has(msg.id),
-          ).map((msg) => ({
-            ...msg,
-            source: {
-              server: key.split('/')[0] as ChatServer,
-              channel: key.split('/')[1],
-            },
-          }))
+          const newMessages = (res.data?.chat_messages || [])
+            .filter((msg) => !messagesIds.has(msg.id))
+            .map((msg) => ({
+              ...msg,
+              source: {
+                server: key.split('/')[0] as ChatServer,
+                channel: key.split('/')[1],
+              },
+            }))
 
           if (newMessages.length > 0) {
             this.newMessages = newMessages
             this.messages.push(...newMessages)
           }
 
-          const lastMsg = res.data?.chat_messages?.[res.data.chat_messages.length - 1]
-          if (this.lastMessageReceivedPerConnection[key]) {
-            if (lastMsg && lastMsg.ts > this.lastMessageReceivedPerConnection[key].ts) {
+          if (res.data?.chat_messages) {
+            const lastMsg = res.data.chat_messages[res.data.chat_messages.length - 1]
+            if (this.lastMessageReceivedPerConnection[key]) {
+              if (lastMsg && lastMsg.ts > this.lastMessageReceivedPerConnection[key].ts) {
+                this.lastMessageReceivedPerConnection[key] = lastMsg
+              }
+            } else if (lastMsg) {
               this.lastMessageReceivedPerConnection[key] = lastMsg
             }
-          } else if (lastMsg) {
-            this.lastMessageReceivedPerConnection[key] = lastMsg
           }
         })
         return results

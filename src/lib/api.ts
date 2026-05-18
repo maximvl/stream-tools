@@ -212,13 +212,13 @@ export async function fetchLotoWinners(
         id,
         username: `user-${id}-very-very-long-name`,
         super_game_status: sample(['win', 'lose', 'skip']) as SuperGameStatus,
-        created_at: Date.now() / 1000,
+        created_at: 10000000 + Date.now() / 1000,
         stream_channel: sample(['twitch/lasqa', 'vkvideo/lasqa', 'kick/lasqa']),
       }
     }
 
     return {
-      winners: Array.from({ length: 10 }, makeWinner),
+      winners: Array.from({ length: 30 }, makeWinner),
     }
   }
 

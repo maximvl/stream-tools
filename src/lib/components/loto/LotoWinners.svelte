@@ -31,31 +31,53 @@
       },
     }
   })
+
+  function formatTime(timestamp: number) {
+    const formatter = new Intl.DateTimeFormat('ru-RU', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+    const parts = formatter.formatToParts(new Date(timestamp * 1000))
+    console.log(parts)
+    return parts
+      .filter((p) => p.type !== 'literal' || p.value.trim() !== 'г.')
+      .map((p) => (p.value.endsWith('.') ? p.value.slice(0, -1) : p.value))
+      .join('')
+  }
 </script>
 
-<div class="flex max-w-70 flex-col gap-2 rounded-lg bg-card p-2 z-1">
+<div
+  class="flex max-w-70 flex-col gap-2 rounded-lg bg-card p-2"
+  role="region"
+  aria-label="Прошлые победители"
+>
   <div>Прошлые победители</div>
-  {#each winnersSorted as winner (winner.id)}
-    {@const server = winner.stream_channel.split('/')[0] as ChatServer}
-    <div class="flex items-center gap-2">
-      <span class="text-lg font-bold">{winner.username}</span>
-      <img
-        src={ServerIcons[server]}
-        alt={server}
-        class="h-4 w-4 shrink-0 opacity-70 transition-opacity hover:opacity-100"
-      />
-      <Tooltip>
-        <TooltipTrigger>
-          {#if winner.super_game_status === 'win'}
-            <img src={EZ_SMILE_IMG} class="h-6 w-6" alt="win" />
-          {:else if winner.super_game_status === 'lose'}
-            <img src={GAGA_SMILE_IMG} class="h-6 w-6" alt="lose" />
-          {/if}
-        </TooltipTrigger>
-        <TooltipContent>
-          {winner.super_game_status === 'win' ? 'Победил в супер-игре' : 'Проиграл в супер-игре'}
-        </TooltipContent>
-      </Tooltip>
-    </div>
-  {/each}
+  <div class="mt-4 max-h-screen overflow-y-auto">
+    {#each winnersSorted as winner (winner.id)}
+      {@const server = winner.stream_channel.split('/')[0] as ChatServer}
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-muted-foreground">{formatTime(winner.created_at)}</span>
+        <span class="text-lg font-bold">{winner.username}</span>
+        <img
+          src={ServerIcons[server]}
+          alt={server}
+          class="h-4 w-4 shrink-0 opacity-70 transition-opacity hover:opacity-100"
+        />
+        <Tooltip>
+          <TooltipTrigger>
+            {#if winner.super_game_status === 'win'}
+              <img src={EZ_SMILE_IMG} class="h-6 w-6" alt="win" />
+            {:else if winner.super_game_status === 'lose'}
+              <img src={GAGA_SMILE_IMG} class="h-6 w-6" alt="lose" />
+            {/if}
+          </TooltipTrigger>
+          <TooltipContent>
+            {winner.super_game_status === 'win' ? 'Победил в супер-игре' : 'Проиграл в супер-игре'}
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    {/each}
+    <div class="mt-100"></div>
+  </div>
 </div>
