@@ -19,6 +19,7 @@
   import * as Tooltip from '$lib/components/ui/tooltip'
   import SuperGame from '$lib/components/loto/supergame/SuperGame.svelte'
   import LotoWinners from '$lib/components/loto/LotoWinners.svelte'
+    import { cn } from '$lib/utils'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -78,7 +79,7 @@
     ></div>
   </div>
 
-  <div class="fixed top-6 left-6 z-50 flex flex-col gap-4">
+  <div class="fixed top-6 left-6 z-10 flex flex-col gap-4">
     <ConnectionDialog />
     <LotoSettingsDialog />
     {#if lotoStore.gameState === 'registration'}
@@ -241,7 +242,7 @@
 
     <SuperGame />
 
-    <div class="z-50 ml-30 flex flex-wrap justify-center gap-4">
+    <div class="z-50 ml-50 flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
         {@const user = lotoStore.usersById.get(ticket.owner_id)!}
         <div class="inline-grid gap-2" animate:flip={{ duration: 700 }} in:fade>

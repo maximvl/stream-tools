@@ -154,15 +154,15 @@ export class LotoStore {
     ),
   )
 
-  ticketsMatchData: Record<LotoTicketId, number> = $derived.by(() => {
-    const result: Record<LotoTicketId, number> = {}
+  ticketsMatchData: Record<LotoTicketId, { score: number; maxSequentialMatch: number }> = $derived.by(() => {
+    const result: Record<LotoTicketId, { score: number; maxSequentialMatch: number }> = {}
     for (const ticket of this.ticketsFromChat) {
       const match = getTicketMatch(ticket, this.drawnNumbersSet)
-      result[ticket.id] = match.score
+      result[ticket.id] = match
     }
     for (const ticket of this.ticketsFromPoints) {
       const match = getTicketMatch(ticket, this.drawnNumbersSet)
-      result[ticket.id] = match.score
+      result[ticket.id] = match
     }
     return result
   })
@@ -173,8 +173,8 @@ export class LotoStore {
     }
     if (this.gameState === 'playing') {
       return this.allTickets.toSorted((t1, t2) => {
-        const score1 = this.ticketsMatchData[t1.id] ?? 0
-        const score2 = this.ticketsMatchData[t2.id] ?? 0
+        const score1 = this.ticketsMatchData[t1.id]?.score ?? 0
+        const score2 = this.ticketsMatchData[t2.id]?.score ?? 0
         if (score1 !== score2) {
           return score2 - score1
         }
@@ -187,8 +187,8 @@ export class LotoStore {
   winner = $derived.by(() => {
     const firstTicket = this.ticketsOrdered[0]
     if (firstTicket) {
-      const firstScore = this.ticketsMatchData[firstTicket.id] ?? 0
-      if (firstScore >= this.config.value.win_matches_amount) {
+      const match = this.ticketsMatchData[firstTicket.id]
+      if (match && match.maxSequentialMatch >= this.config.value.win_matches_amount) {
         return firstTicket
       }
     }
@@ -198,9 +198,11 @@ export class LotoStore {
   winnerCandidates = $derived.by(() => {
     const candidates: SvelteSet<LotoTicketId> = new SvelteSet()
     if (this.winner) {
-      const winnerScore = this.ticketsMatchData[this.winner.id] ?? 0
+      const winnerMatch = this.ticketsMatchData[this.winner.id]
+      const winnerScore = winnerMatch?.maxSequentialMatch ?? 0
       for (const ticket of this.ticketsOrdered.slice(0, 20)) {
-        const score = this.ticketsMatchData[ticket.id] ?? 0
+        const match = this.ticketsMatchData[ticket.id]
+        const score = match?.maxSequentialMatch ?? 0
         if (score === winnerScore) {
           candidates.add(ticket.id)
         }
