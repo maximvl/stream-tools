@@ -24,7 +24,6 @@
       }),
       combine: (results) => {
         if (results && results.length > 0) {
-          console.log({ results })
           winners = results.flatMap((result) => result?.data?.winners ?? [])
         }
         return results
@@ -39,7 +38,6 @@
       day: 'numeric',
     })
     const parts = formatter.formatToParts(new Date(timestamp * 1000))
-    console.log(parts)
     return parts
       .filter((p) => p.type !== 'literal' || p.value.trim() !== 'г.')
       .map((p) => (p.value.endsWith('.') ? p.value.slice(0, -1) : p.value))
@@ -54,7 +52,7 @@
 >
   <div>Прошлые победители</div>
   <div class="mt-4 max-h-screen overflow-y-auto">
-    {#each winnersSorted as winner (winner.id)}
+    {#each winnersSorted as winner (`${winner.id}-${winner.created_at}-${winner.stream_channel}`)}
       {@const server = winner.stream_channel.split('/')[0] as ChatServer}
       <div class="flex items-center gap-2">
         <span class="text-sm text-muted-foreground">{formatTime(winner.created_at)}</span>

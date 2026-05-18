@@ -29,7 +29,7 @@
         <RewardItem
           class={cn('cell h-12 w-12 p-1', active ? 'cell-highlight' : '')}
           reward={value}
-          vkRoles={[]}
+          vkRoles={lotoStore.allVkRoles}
           emptyPlaceholder={active ? '' : (idx + 1).toString().padStart(2, '0')}
         />
       {/snippet}

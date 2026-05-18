@@ -1,4 +1,4 @@
-import type { ChatMessage, ChatUser, UserId, VkMention, VkRoleId } from '$lib/types'
+import type { ChatMessage, ChatUser, UserId, VkMention, VkRole, VkRoleId } from '$lib/types'
 import sampleSize from 'lodash/sampleSize'
 import uniq from 'lodash/uniq'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
@@ -11,6 +11,7 @@ import type {
 } from '$lib/components/loto/types'
 import { createContext } from 'svelte'
 import shuffle from 'lodash/shuffle'
+
 
 type GameState = 'registration' | 'playing'
 type SuperGameState = 'not_started' | 'in_progress' | 'finished'
@@ -35,7 +36,7 @@ export type LotoConfig = {
   super_game_2_pointers: number
   super_game_3_pointers: number
   super_game_bonus_guesses_enabled: boolean
-  super_game_vk_rewards?: VkRewards
+  super_game_vk_rewards: VkRewards
   super_game_win_score: number
   super_game_bombs: number
 }
@@ -58,7 +59,7 @@ export const DefaultConfig: LotoConfig = {
   super_game_2_pointers: 2,
   super_game_3_pointers: 1,
   super_game_bonus_guesses_enabled: true,
-  super_game_vk_rewards: undefined,
+  super_game_vk_rewards: {},
   super_game_win_score: 1,
   super_game_bombs: 1,
 }
@@ -128,6 +129,7 @@ export class LotoStore {
     this.drawPool = Array.from({ length: this.config.value.max_number }, (_, i) =>
       (i + 1).toString().padStart(2, '0'),
     )
+
     $effect(() => {
       void this.winner
       this.superGameGuesses = []
@@ -149,23 +151,23 @@ export class LotoStore {
   streamerTickets = $derived(
     this.allTickets.filter(
       (ticket) =>
-        ticket.owner_name.toLocaleLowerCase() ===
-        ticket.source.channel.toLocaleLowerCase(),
+        ticket.owner_name.toLocaleLowerCase() === ticket.source.channel.toLocaleLowerCase(),
     ),
   )
 
-  ticketsMatchData: Record<LotoTicketId, { score: number; maxSequentialMatch: number }> = $derived.by(() => {
-    const result: Record<LotoTicketId, { score: number; maxSequentialMatch: number }> = {}
-    for (const ticket of this.ticketsFromChat) {
-      const match = getTicketMatch(ticket, this.drawnNumbersSet)
-      result[ticket.id] = match
-    }
-    for (const ticket of this.ticketsFromPoints) {
-      const match = getTicketMatch(ticket, this.drawnNumbersSet)
-      result[ticket.id] = match
-    }
-    return result
-  })
+  ticketsMatchData: Record<LotoTicketId, { score: number; maxSequentialMatch: number }> =
+    $derived.by(() => {
+      const result: Record<LotoTicketId, { score: number; maxSequentialMatch: number }> = {}
+      for (const ticket of this.ticketsFromChat) {
+        const match = getTicketMatch(ticket, this.drawnNumbersSet)
+        result[ticket.id] = match
+      }
+      for (const ticket of this.ticketsFromPoints) {
+        const match = getTicketMatch(ticket, this.drawnNumbersSet)
+        result[ticket.id] = match
+      }
+      return result
+    })
 
   ticketsOrdered = $derived.by(() => {
     if (this.gameState === 'registration') {
@@ -237,6 +239,11 @@ export class LotoStore {
     }
 
     return this.winner.value.slice(maxSeqStartIndex, maxSeqStartIndex + maxSeq)
+  })
+
+  vkRolesRewards = $state<Record<string, VkRole[]>>({})
+  allVkRoles = $derived.by(() => {
+    return Object.values(this.vkRolesRewards).flat()
   })
 
   handleMessage = (msg: ChatMessage) => {

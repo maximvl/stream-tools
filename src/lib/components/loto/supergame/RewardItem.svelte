@@ -32,7 +32,7 @@
 {:else if vkRole}
   <Tooltip>
     <TooltipTrigger>
-      <div class="flex items-center justify-center {className}">
+      <div class="flex items-center justify-center p-2 {className}">
         <img src={vkRole.largeUrl} class="h-full w-full" alt={vkRole.name} />
       </div>
     </TooltipTrigger>

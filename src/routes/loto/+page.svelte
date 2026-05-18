@@ -19,13 +19,41 @@
   import * as Tooltip from '$lib/components/ui/tooltip'
   import SuperGame from '$lib/components/loto/supergame/SuperGame.svelte'
   import LotoWinners from '$lib/components/loto/LotoWinners.svelte'
-    import { cn } from '$lib/utils'
+  import { createQueries } from '@tanstack/svelte-query'
+  import { fetchVkRoles } from '$lib/api'
+  import type { ChatServer } from '$lib/types'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
   setLotoStore(lotoStore)
   const store = getChatStore()
   const countdownTimer = new TimerStore()
+
+  const vkConnections = $derived(store.connectedConnections.filter((connKey) => connKey.toLowerCase().startsWith('vkvideo')))
+
+  createQueries(() => {
+    return {
+      queries: vkConnections.map((connection) => {
+        return {
+          queryKey: ['vk-roles', connection],
+          queryFn: async () => {
+            const [server, channel] = connection.split('/')
+            return fetchVkRoles(server as ChatServer, channel)
+          },
+        }
+      }),
+      combine: (results) => {
+        results.forEach((result, id) => {
+          const roles = result.data?.roles?.data?.rewards
+          const conn = vkConnections[id]
+          if (roles && roles.length > 0 && conn) {
+            lotoStore.vkRolesRewards[conn] = roles
+          }
+        })
+        return results
+      },
+    }
+  })
 
   function addTime(seconds: number) {
     if (countdownTimer.state === 'finished') {

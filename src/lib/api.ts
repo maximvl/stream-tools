@@ -163,7 +163,15 @@ export async function fetchVkRoles(
             {
               id: '1' as VkRoleId,
               name: 'Role 1',
-              largeUrl: '',
+              largeUrl: 'https://images.live.vkvideo.ru/smile/09868612-8082-4316-8df9-25bd147ebbd0/icon/size/small?change_time=1686325477',
+              description: '',
+              bgColor: 0,
+              price: 0,
+            },
+            {
+              id: '2' as VkRoleId,
+              name: 'Role 2',
+              largeUrl: 'https://images.live.vkvideo.ru/smile/1fe2bca1-d6d5-4063-9860-f6a1d8e3816e/icon/size/small?change_time=1759944303',
               description: '',
               bgColor: 0,
               price: 0,
@@ -198,6 +206,8 @@ type FetchLotoWinnersResponse = {
 }
 
 
+let id = 0
+
 export async function fetchLotoWinners(
   server: string,
   channel: string
@@ -206,8 +216,9 @@ export async function fetchLotoWinners(
 
   if (MOCK_API) {
     console.log(`GET ${url}`)
+
     const makeWinner = (): LotoWinner => {
-      const id = random(1, 10000)
+      id++
       return {
         id,
         username: `user-${id}-very-very-long-name`,
