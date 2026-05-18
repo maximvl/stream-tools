@@ -1,11 +1,13 @@
 <script lang="ts">
-  import type { ChatUser } from '$lib/types'
+  import type { ChatServer, ChatUser } from '$lib/types'
   import { cn } from '$lib/utils'
   import PlayerName from './PlayerName.svelte'
   import UserBadges from './UserBadges.svelte'
   import { ServerIcons } from '$lib/constants'
   import * as Tooltip from '$lib/components/ui/tooltip'
   import type { LotoTicket } from './types'
+  import { TrophyIcon } from '@lucide/svelte'
+  import { getLotoStore } from '$lib/stores/lotoStore.svelte'
 
   type Props = {
     ticket: LotoTicket
@@ -30,6 +32,10 @@
   const isMatched = (num: string) => matchedNumbers.includes(num)
   const isLastRolledMatch = (num: string) => num === lastRolledNumber
   const isWinnerMatch = (num: string) => winnerMatchedNumbers.includes(num)
+
+  const lotoStore = getLotoStore()
+
+  const userWinsTimestamps = $derived(lotoStore.winsByUser[ticket.owner_name] || [])
 
   const ticketSource = $derived(`${ticket.source.server}/${ticket.source.channel}`)
 
@@ -106,6 +112,19 @@
 
   // Select style based on username
   const selectedStyle = $derived(ticketStyles[hashString(user.username) % ticketStyles.length])
+
+  function formatTime(timestamp: number) {
+    const formatter = new Intl.DateTimeFormat('ru-RU', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+    const parts = formatter.formatToParts(new Date(timestamp * 1000))
+    return parts
+      .filter((p) => p.type !== 'literal' || p.value.trim() !== 'г.')
+      .map((p) => (p.value.endsWith('.') ? p.value.slice(0, -1) : p.value))
+      .join('')
+  }
 </script>
 
 <div
@@ -127,6 +146,30 @@
         >
           Бонус
         </span>
+      {/if}
+      {#if userWinsTimestamps.length > 0}
+        <Tooltip.Root>
+          <Tooltip.Trigger>
+            <div
+              class="inline-flex items-center gap-2 rounded-full border border-yellow-500/20 bg-gradient-to-b from-yellow-500/20 to-yellow-700/10 px-3 py-1 text-yellow-200 shadow"
+            >
+              <TrophyIcon class="h-4 w-4" />
+              <span class="font-bold">{userWinsTimestamps.length}</span>
+            </div>
+          </Tooltip.Trigger>
+          <Tooltip.Content>
+            <div class="flex flex-col gap-2">
+              <p>Выигрывал {userWinsTimestamps.length} раз</p>
+              {#each userWinsTimestamps as winner (winner.id)}
+              {@const server = winner.stream_channel.split("/")[0]}
+                <div class="flex gap-2 items-center">
+                  <div>{formatTime(winner.created_at)}</div>
+                  <img src={ServerIcons[server as ChatServer]} alt={server} class="h-4 w-4" />
+                </div>
+              {/each}
+            </div>
+          </Tooltip.Content>
+        </Tooltip.Root>
       {/if}
       <Tooltip.Root>
         <Tooltip.Trigger>

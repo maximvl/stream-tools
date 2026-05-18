@@ -11,6 +11,7 @@ import type {
 } from '$lib/components/loto/types'
 import { createContext } from 'svelte'
 import shuffle from 'lodash/shuffle'
+import type { LotoWinner } from '$lib/api'
 
 
 type GameState = 'registration' | 'playing'
@@ -244,6 +245,21 @@ export class LotoStore {
   vkRolesRewards = $state<Record<string, VkRole[]>>({})
   allVkRoles = $derived.by(() => {
     return Object.values(this.vkRolesRewards).flat()
+  })
+
+  winnersHistory = $state<Record<string, LotoWinner[]>>({})
+  winnersFlatSorted = $derived.by(() => {
+    return Object.values(this.winnersHistory).flat().sort((a, b) => b.created_at - a.created_at)
+  })
+  winsByUser = $derived.by(() => {
+    const wins: Record<string, LotoWinner[]> = {}
+    for (const winner of this.winnersFlatSorted) {
+      if (!wins[winner.username]) {
+        wins[winner.username] = []
+      }
+      wins[winner.username].push(winner)
+    }
+    return wins
   })
 
   handleMessage = (msg: ChatMessage) => {

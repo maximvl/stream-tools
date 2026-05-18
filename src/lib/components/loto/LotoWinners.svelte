@@ -1,17 +1,14 @@
 <script lang="ts">
-  import { fetchLotoWinners, type LotoWinner } from '$lib/api'
+  import { fetchLotoWinners } from '$lib/api'
   import { EZ_SMILE_IMG, GAGA_SMILE_IMG, ServerIcons } from '$lib/constants'
   import { getChatStore } from '$lib/context'
   import { type ChatServer } from '$lib/types'
   import { createQueries } from '@tanstack/svelte-query'
   import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
+  import { getLotoStore } from '$lib/stores/lotoStore.svelte'
 
   const messagesStore = getChatStore()
-
-  let winners = $state<LotoWinner[]>([])
-  const winnersSorted = $derived.by(() => {
-    return winners.toSorted((a, b) => b.created_at - a.created_at)
-  })
+  const lotoStore = getLotoStore()
 
   createQueries(() => {
     return {
@@ -23,9 +20,12 @@
         }
       }),
       combine: (results) => {
-        if (results && results.length > 0) {
-          winners = results.flatMap((result) => result?.data?.winners ?? [])
-        }
+        results.forEach((result, idx) => {
+          const connection = messagesStore.connectedConnections[idx]
+          if (result && result.data && connection) {
+            lotoStore.winnersHistory[connection] = result.data.winners ?? []
+          }
+        })
         return results
       },
     }
@@ -52,7 +52,7 @@
 >
   <div>Прошлые победители</div>
   <div class="mt-4 max-h-screen overflow-y-auto">
-    {#each winnersSorted as winner (`${winner.id}-${winner.created_at}-${winner.stream_channel}`)}
+    {#each lotoStore.winnersFlatSorted as winner (`${winner.id}-${winner.created_at}-${winner.stream_channel}`)}
       {@const server = winner.stream_channel.split('/')[0] as ChatServer}
       <div class="flex items-center gap-2">
         <span class="text-sm text-muted-foreground">{formatTime(winner.created_at)}</span>

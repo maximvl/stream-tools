@@ -1,8 +1,8 @@
 import { makeMessage, MocksManager } from './apiMocks'
 import type { ChatMessage, ChatServer, VkRole, VkRoleId } from './types'
-import random from 'lodash/random'
 import sample from 'lodash/sample'
 import { dev } from '$app/environment'
+import random from 'lodash/random'
 
 const URL_PREFIX = '/v2'
 // const URL_PREFIX = 'http://localhost:8088/v2'
@@ -77,6 +77,8 @@ export async function fetchMessages({
       MocksManager.chatMessages = []
       return result
     }
+
+    return { chat_messages: [] }
 
     // const gameMessages = [makeGameMessage(), makeGameMessage()]
     // return { chat_messages: [makeSuperGameMessage()] }
@@ -221,15 +223,15 @@ export async function fetchLotoWinners(
       id++
       return {
         id,
-        username: `user-${id}-very-very-long-name`,
+        username: `mapcar`,
         super_game_status: sample(['win', 'lose', 'skip']) as SuperGameStatus,
-        created_at: 10000000 + Date.now() / 1000,
+        created_at: Date.now() / 1000 - random(0, 1000000),
         stream_channel: sample(['twitch/lasqa', 'vkvideo/lasqa', 'kick/lasqa']),
       }
     }
 
     return {
-      winners: Array.from({ length: 30 }, makeWinner),
+      winners: Array.from({ length: 4 }, makeWinner),
     }
   }
 
