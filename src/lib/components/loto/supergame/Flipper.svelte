@@ -45,6 +45,7 @@
 
     padding: 0;
     margin: 0;
+    pointer-events: none;
   }
 
   :global(.inner) {
@@ -67,6 +68,7 @@
 
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    pointer-events: auto;
   }
 
   :global(.front) {
@@ -76,4 +78,12 @@
   :global(.back) {
     transform: rotateY(180deg);
   }
+
+  /* :global(.flipped .back) {
+    transform: rotateY(180deg);
+  }
+
+  :global(.flipped .back > *) {
+    transform: rotateY(-180deg);
+  } */
 </style>
