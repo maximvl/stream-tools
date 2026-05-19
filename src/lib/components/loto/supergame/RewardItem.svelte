@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Tooltip, TooltipContent, TooltipTrigger } from '$lib/components/ui/tooltip'
-  import { POG_IMG } from '$lib/constants'
+  import { SuperGameIcons } from '$lib/constants'
   import type { VkRole } from '$lib/types'
-    import { cn } from '$lib/utils'
+  import { cn } from '$lib/utils'
   import type { SuperGameReward } from '../types'
 
   type Props = {
@@ -28,7 +28,11 @@
 </script>
 
 {#if reward.kind === 'empty'}
-  <div class={cn("flex items-center justify-center text-muted-foreground", className, "text-base!")}>{emptyPlaceholder}</div>
+  <div
+    class={cn('flex items-center justify-center text-muted-foreground', className, 'text-base!')}
+  >
+    {emptyPlaceholder}
+  </div>
 {:else if vkRole}
   <Tooltip>
     <TooltipTrigger>
@@ -44,11 +48,7 @@
   <Tooltip>
     <TooltipTrigger>
       <div class="flex items-center justify-center p-2 {className}">
-        <img
-          src="https://images.live.vkvideo.ru/smile/2ec232fd-bb31-4122-b3d1-4c8e7b721561/icon/size/medium"
-          class="h-full w-full"
-          alt="x1"
-        />
+        <img src={SuperGameIcons['x1']} class="h-full w-full" alt="x1" />
       </div>
     </TooltipTrigger>
     <TooltipContent>
@@ -59,11 +59,7 @@
   <Tooltip>
     <TooltipTrigger>
       <div class="flex items-center justify-center p-2 {className}">
-        <img
-          src="https://images.live.vkvideo.ru/smile/c78b5408-e42c-4aeb-b6f5-9ca21d73c0f1/icon/size/medium"
-          class="h-full w-full"
-          alt="x2"
-        />
+        <img src={SuperGameIcons['x2']} class="h-full w-full" alt="x2" />
       </div>
     </TooltipTrigger>
     <TooltipContent>
@@ -74,13 +70,24 @@
   <Tooltip>
     <TooltipTrigger>
       <div class="flex items-center justify-center {className}">
-        <img src={POG_IMG} class="h-full w-full" alt="x3" />
+        <img src={SuperGameIcons['x3']} class="h-full w-full" alt="x3" />
       </div>
     </TooltipTrigger>
     <TooltipContent>
       <p>3 очка</p>
     </TooltipContent>
   </Tooltip>
+{:else if reward.kind === 'bomb'}
+  <Tooltip>
+    <TooltipTrigger>
+      <div class="flex items-center justify-center p-2 {className}">
+        <img src={SuperGameIcons['bomb']} class="h-full w-full" alt="bomb" />
+      </div>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>-1 очко</p>
+    </TooltipContent>
+  </Tooltip>
 {:else}
-  <div class="bg-green-500 {className}">{reward}</div>
+  <div class="bg-purple-500 {className}"></div>
 {/if}

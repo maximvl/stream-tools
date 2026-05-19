@@ -6,6 +6,7 @@
   import { Checkbox } from '$lib/components/ui/checkbox'
   import { DefaultConfig, getLotoConfigStore, getLotoStore } from '$lib/stores/lotoStore.svelte'
   import { type VkRoleId } from '$lib/types'
+  import { SuperGameIcons } from '$lib/constants'
 
   const configStore = getLotoConfigStore()
   let open = $state(false)
@@ -160,7 +161,10 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-1-pointers">Ячеек за 1 очко</Label>
+          <div class="flex items-center gap-2">
+            <Label for="super-game-1-pointers">Ячеек за 1 очко</Label>
+            <img src={SuperGameIcons['x1']} class="h-6 w-6" alt="x1" />
+          </div>
           <Input
             id="super-game-1-pointers"
             type="number"
@@ -170,7 +174,10 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-2-pointers">Ячеек за 2 очка</Label>
+          <div class="flex items-center gap-2">
+            <Label for="super-game-2-pointers">Ячеек за 2 очка</Label>
+            <img src={SuperGameIcons['x2']} class="h-6 w-6" alt="x2" />
+          </div>
           <Input
             id="super-game-2-pointers"
             type="number"
@@ -180,7 +187,10 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-3-pointers">Ячеек за 3 очка</Label>
+          <div class="flex items-center gap-2">
+            <Label for="super-game-3-pointers">Ячеек за 3 очка</Label>
+            <img src={SuperGameIcons['x3']} class="h-6 w-6" alt="x3" />
+          </div>
           <Input
             id="super-game-3-pointers"
             type="number"
@@ -190,7 +200,10 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <Label for="super-game-bombs">Количество бомб</Label>
+          <div class="flex items-center gap-2">
+            <Label for="super-game-bombs">Количество бомб (-1 очко)</Label>
+            <img src={SuperGameIcons['bomb']} class="h-6 w-6" alt="bomb" />
+          </div>
           <Input
             id="super-game-bombs"
             type="number"

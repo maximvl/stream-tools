@@ -8,6 +8,19 @@
   const user = $derived(
     lotoStore.winner ? lotoStore.usersById.get(lotoStore.winner.owner_id) : undefined,
   )
+
+  function guessStatus(guess: number) {
+    if (!lotoStore.superGameRevealedIds.includes(guess)) {
+      return 'hidden'
+    }
+    if (lotoStore.superGameValues[guess].kind === 'empty') {
+      return 'empty'
+    }
+    if (lotoStore.superGameValues[guess].kind === 'bomb') {
+      return 'bomb'
+    }
+    return 'score'
+  }
 </script>
 
 {#if lotoStore.winner}
@@ -60,21 +73,15 @@
           <div class="flex flex-wrap items-center justify-center gap-3">
             {#each Array.from({ length: lotoStore.superGameTotalGuessesAmount }, (_, i) => i) as id (id)}
               {@const guess = lotoStore.superGameGuesses[id]}
-
-              {@const status = guess
-                ? lotoStore.superGameRevealedIds.includes(guess - 1)
-                  ? lotoStore.superGameValues[guess - 1].kind === 'empty'
-                    ? 'empty'
-                    : 'score'
-                  : 'hidden'
-                : 'hidden'}
+              {@const status = guessStatus(guess - 1)}
 
               <div
                 class={cn(
                   'relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/10 font-mono text-lg  text-white transition-all duration-500',
                   status === 'hidden' && 'bg-white/5',
                   status === 'score' && 'bg-green-500/30',
-                  status === 'empty' && 'bg-red-500/30'
+                  status === 'empty' && 'bg-yellow-500/30',
+                  status === 'bomb' && 'bg-red-500/50'
                 )}
               >
                 {(guess ?? '__').toString().padStart(2, '0')}

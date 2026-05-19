@@ -40,3 +40,10 @@ export const CAT_DANCE_IMG = `${IMG_ROOT}/cat_dance.webp`
 export const POG_IMG = `${IMG_ROOT}/pog_smile.png`
 export const EZ_SMILE_IMG = `${IMG_ROOT}/ez_smile.avif`
 export const GAGA_SMILE_IMG = `${IMG_ROOT}/gaga_smile.avif`
+
+export const SuperGameIcons = {
+  x1: 'https://images.live.vkvideo.ru/smile/2ec232fd-bb31-4122-b3d1-4c8e7b721561/icon/size/medium',
+  x2: 'https://images.live.vkvideo.ru/smile/c78b5408-e42c-4aeb-b6f5-9ca21d73c0f1/icon/size/medium',
+  x3: POG_IMG,
+  bomb: GAGA_SMILE_IMG,
+} as const

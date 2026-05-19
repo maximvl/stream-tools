@@ -89,7 +89,9 @@ export class LotoStore {
     const base = this.config.value.super_game_guesses_amount
     if (this.config.value.super_game_bonus_guesses_enabled) {
       const revealedNonEmpty = this.superGameRevealedIds.filter(
-        (id) => this.superGameValues[id].kind !== 'empty',
+        (id) =>
+          this.superGameValues[id].kind !== 'empty' &&
+          this.superGameValues[id].kind !== 'bomb',
       )
       return base + revealedNonEmpty.length
     }
@@ -475,6 +477,10 @@ function generateSuperGameValues(config: LotoConfig): SuperGameReward[] {
     values.push({ kind: 'x3' })
   }
 
+  for (let i = 0; i < config.super_game_bombs; i++) {
+    values.push({ kind: 'bomb' })
+  }
+
   if (config.super_game_vk_rewards) {
     for (const roles of Object.values(config.super_game_vk_rewards)) {
       for (const [roleId, amount] of Object.entries(roles)) {
@@ -504,6 +510,8 @@ function getSuperGameRewardScore(reward: SuperGameReward): number {
       return 3
     case 'vk-role':
       return 1
+    case 'bomb':
+      return -1
     default: {
       const error: never = reward
       throw new Error(`Unknown super game reward kind: ${error}`)
