@@ -316,7 +316,7 @@
                       minute: '2-digit',
                       hour12: false,
                     })}
-                    {msg.user.username}: {msg.message}
+                    :&nbsp;{msg.message}
                   </div>
                 {/each}
               </div>
