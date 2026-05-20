@@ -402,7 +402,7 @@ function makeTicket(params: {
     config,
   })
   return {
-    id: `${chatMessage.user.id}-${chatMessage.id}` as LotoTicketId,
+    id: crypto.randomUUID() as LotoTicketId,
     owner_id: chatMessage.user.id,
     owner_name: chatMessage.user.username,
     value: ticketNumber,
@@ -538,33 +538,79 @@ function parseSuperGameNumbers(message: string, config: LotoConfig): number[] {
 }
 
 function approximateWinChance(cfg: LotoConfig): number {
-  const N = cfg.super_game_options_amount
+const N = cfg.super_game_options_amount;
+  const k = cfg.super_game_guesses_amount;
 
-  const A1 = cfg.super_game_1_pointers
-  const A2 = cfg.super_game_2_pointers
-  const A3 = cfg.super_game_3_pointers
+  const A1 = cfg.super_game_1_pointers;
+  const A2 = cfg.super_game_2_pointers;
+  const A3 = cfg.super_game_3_pointers;
 
-  const k = cfg.super_game_guesses_amount
-  const win = cfg.super_game_win_score
+  const B = cfg.super_game_bombs;
 
-  const p1 = A1 / N
-  const p2 = A2 / N
-  const p3 = A3 / N
-  const phit = p1 + p2 + p3
+  const p1 = A1 / N;
+  const p2 = A2 / N;
+  const p3 = A3 / N;
+  const pb = B / N;
 
-  const expectedValuePerDraw = 1 * p1 + 2 * p2 + 3 * p3
+  // expected score per draw
+  const meanPerDraw =
+    1 * p1 +
+    2 * p2 +
+    3 * p3 -
+    1 * pb;
 
-  // probability at least one hit in k draws
-  const q = 1 - Math.pow(1 - phit, k)
+  // E[X²]
+  const secondMoment =
+    1 * 1 * p1 +
+    2 * 2 * p2 +
+    3 * 3 * p3 +
+    1 * 1 * pb;
 
-  // expected total draws (bonus amplification)
-  const expectedDraws = k / (1 - q)
+  // Var(X) = E[X²] - E[X]²
+  const variancePerDraw =
+    secondMoment -
+    meanPerDraw * meanPerDraw;
 
-  const expectedScore = expectedDraws * expectedValuePerDraw
+  const mean =
+    k * meanPerDraw;
 
-  // smooth probability curve (logistic approximation)
-  const varianceFactor = Math.sqrt(k) // rough dispersion scale
-  const z = (expectedScore - win) / (varianceFactor + 1e-9)
+  const variance =
+    k * variancePerDraw;
 
-  return 1 / (1 + Math.exp(-z))
+  const stdDev = Math.sqrt(
+    Math.max(variance, 1e-9)
+  );
+
+  const z =
+    (cfg.super_game_win_score - mean) /
+    stdDev;
+
+  return 1 - normalCDF(z);
+}
+
+function normalCDF(x: number): number {
+  const t =
+    1 / (1 + 0.2316419 * Math.abs(x));
+
+  const d =
+    0.3989423 *
+    Math.exp((-x * x) / 2);
+
+  let prob =
+    d *
+    t *
+    (0.3193815 +
+      t *
+        (-0.3565638 +
+          t *
+            (1.781478 +
+              t *
+                (-1.821256 +
+                  t * 1.330274))));
+
+  if (x > 0) {
+    prob = 1 - prob;
+  }
+
+  return prob;
 }

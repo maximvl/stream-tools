@@ -161,8 +161,8 @@
             <div class="flex flex-col gap-2">
               <p>Выигрывал {userWinsTimestamps.length} раз</p>
               {#each userWinsTimestamps as winner (winner.id)}
-              {@const server = winner.stream_channel.split("/")[0]}
-                <div class="flex gap-2 items-center">
+                {@const server = winner.stream_channel.split('/')[0]}
+                <div class="flex items-center gap-2">
                   <div>{formatTime(winner.created_at)}</div>
                   <img src={ServerIcons[server as ChatServer]} alt={server} class="h-4 w-4" />
                 </div>
@@ -187,7 +187,7 @@
   </div>
 
   <div class="flex flex-nowrap gap-1.5">
-    {#each ticket.value as num (num)}
+    {#each ticket.value as num, id (id)}
       <div
         class={cn(
           'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 text-sm font-black transition-all duration-300',

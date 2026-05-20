@@ -121,6 +121,7 @@
 
       <div class="flex flex-col gap-4">
         <h3 class="font-semibold text-muted-foreground">Супер игра</h3>
+        <div>Шанс победы: {Math.round(lotoStore.superGameWinChance * 100)}%</div>
         <div class="flex items-center gap-2">
           <Checkbox
             id="super-game-bonus-guesses-enabled"

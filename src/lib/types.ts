@@ -18,7 +18,7 @@ type VkUserBadgeAchievement = {
 }
 
 type VkUserBadge = {
-  id: string
+  id: string // this is uuid
   name: string
   largeUrl: string
   achievement: VkUserBadgeAchievement

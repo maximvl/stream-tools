@@ -78,6 +78,10 @@
   )
 </script>
 
+<svelte:head>
+  <title>Лото: {lotoStore.ticketsOrdered.length} билетов зарегано</title>
+</svelte:head>
+
 <div class="dark flex flex-col items-center p-8">
   <Nav />
 </div>

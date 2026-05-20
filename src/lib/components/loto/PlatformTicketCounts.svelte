@@ -20,7 +20,11 @@
     return counts
   })
 
-  const platforms = $derived(Object.keys(ticketsByPlatform) as ChatServer[])
+  const platforms = $derived(
+    Object.entries(ticketsByPlatform)
+      .toSorted(([_, a], [__, b]) => b - a)
+      .map(([key]) => key as ChatServer)
+  )
 </script>
 
 <div class={cn('flex items-center gap-3', className)}>
