@@ -1,6 +1,6 @@
 import { SvelteMap } from 'svelte/reactivity'
 import { LocalStore } from './localStore.svelte'
-import type { ChatMessage, UserId } from '$lib/types'
+import type { ChatMessage, UserId, ChatServer } from '$lib/types'
 import { createContext, untrack } from 'svelte'
 import { TimerStore } from './timerStore.svelte'
 
@@ -14,6 +14,7 @@ export type Vote = {
   username: string
   optionIndex: number
   timestamp: number
+  server: ChatServer
 }
 
 export type VotingState = 'idle' | 'voting' | 'ended'
@@ -105,6 +106,7 @@ export class VotingStore {
         username: msg.user.username,
         optionIndex: num - 1,
         timestamp: msg.ts,
+        server: msg.source.server,
       })
     }
   }
@@ -133,6 +135,25 @@ export class VotingStore {
         percentage,
       }
     })
+  })
+
+  votesPerServerPerOption = $derived.by(() => {
+    const counts = this.options.map(() => {
+      const serverCounts: Record<ChatServer, number> = {
+        twitch: 0,
+        vkvideo: 0,
+        kick: 0,
+      }
+      return serverCounts
+    })
+
+    this.votes.forEach((vote) => {
+      if (vote.optionIndex >= 0 && vote.optionIndex < this.options.length) {
+        counts[vote.optionIndex][vote.server]++
+      }
+    })
+
+    return counts
   })
 
   // Sorted options by vote count (for ended state)

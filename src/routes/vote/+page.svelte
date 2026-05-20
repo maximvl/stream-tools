@@ -6,6 +6,7 @@
   import { getChatStore } from '$lib/context'
   import { VotingStore, setVotingStore } from '$lib/stores/votingStore.svelte'
   import { untrack } from 'svelte'
+    import { ServerIcons } from '$lib/constants'
 
   const chatStore = getChatStore()
   const votingStore = new VotingStore()
@@ -219,6 +220,7 @@
 
       <div class="flex w-full max-w-3xl flex-col gap-4">
         {#each votingStore.optionStats as stat, index (stat.id)}
+          {@const serverCounts = votingStore.votesPerServerPerOption[index]}
           <div
             class="relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 p-5 shadow-sm backdrop-blur-xs transition-all hover:border-primary/30"
           >
@@ -243,7 +245,29 @@
               </div>
               <div class="text-right">
                 <p class="text-2xl font-black text-primary">{stat.percentage}%</p>
-                <p class="text-xs font-semibold text-muted-foreground">{stat.count} голосов</p>
+                <div class="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                  <span>{stat.count} </span>
+                  <span class="flex items-center gap-1">
+                    {#if serverCounts.twitch > 0}
+                      <span class="flex items-center gap-0.5">
+                       <img src={ServerIcons['twitch']} alt="Twitch" class="h-4 w-4" />
+                        {serverCounts.twitch}
+                      </span>
+                    {/if}
+                    {#if serverCounts.vkvideo > 0}
+                      <span class="flex items-center gap-0.5">
+                        <img src={ServerIcons['vkvideo']} alt="VK Video" class="h-4 w-4" />
+                        {serverCounts.vkvideo}
+                      </span>
+                    {/if}
+                    {#if serverCounts.kick > 0}
+                      <span class="flex items-center gap-0.5">
+                        <img src={ServerIcons['kick']} alt="Kick" class="h-4 w-4" />
+                        {serverCounts.kick}
+                      </span>
+                    {/if}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -301,6 +325,7 @@
       <div class="flex w-full max-w-3xl flex-col gap-4">
         {#each votingStore.optionStats as stat, index (stat.id)}
           {@const isWinner = votingStore.winners.some((w) => w.id === stat.id)}
+          {@const serverCounts = votingStore.votesPerServerPerOption[index]}
           <div
             class="relative overflow-hidden rounded-2xl border p-5 transition-all {isWinner
               ? 'border-yellow-500/50 bg-yellow-500/5 shadow-lg ring-1 shadow-yellow-500/5 ring-yellow-500/20'
@@ -344,7 +369,29 @@
                 <p class="text-2xl font-black {isWinner ? 'text-yellow-500' : 'text-primary'}">
                   {stat.percentage}%
                 </p>
-                <p class="text-xs font-semibold text-muted-foreground">{stat.count} голосов</p>
+                <div class="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                  <span>{stat.count} </span>
+                  <span class="flex items-center gap-1">
+                    {#if serverCounts.twitch > 0}
+                      <span class="flex items-center gap-0.5">
+                        <img src={ServerIcons['twitch']} alt="Twitch" class="h-4 w-4" />
+                        {serverCounts.twitch}
+                      </span>
+                    {/if}
+                    {#if serverCounts.vkvideo > 0}
+                      <span class="flex items-center gap-0.5">
+                        <img src={ServerIcons['vkvideo']} alt="VK Video" class="h-4 w-4" />
+                        {serverCounts.vkvideo}
+                      </span>
+                    {/if}
+                    {#if serverCounts.kick > 0}
+                      <span class="flex items-center gap-0.5">
+                        <img src={ServerIcons['kick']} alt="Kick" class="h-4 w-4" />
+                        {serverCounts.kick}
+                      </span>
+                    {/if}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
