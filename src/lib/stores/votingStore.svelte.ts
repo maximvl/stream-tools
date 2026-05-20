@@ -1,7 +1,8 @@
 import { SvelteMap } from 'svelte/reactivity'
 import { LocalStore } from './localStore.svelte'
 import type { ChatMessage, UserId } from '$lib/types'
-import { createContext } from 'svelte'
+import { createContext, untrack } from 'svelte'
+import { TimerStore } from './timerStore.svelte'
 
 export type VoteOption = {
   id: string
@@ -19,14 +20,24 @@ export type VotingState = 'idle' | 'voting' | 'ended'
 
 export class VotingStore {
   optionsStore: LocalStore<VoteOption[]>
+  durationStore = new LocalStore<number>('voting-duration', 60)
   votingState = $state<VotingState>('idle')
   votes = $state<SvelteMap<UserId, Vote>>(new SvelteMap())
+  timer = new TimerStore()
 
   constructor() {
     this.optionsStore = new LocalStore<VoteOption[]>('voting-options', [
       { id: crypto.randomUUID(), text: 'Вариант 1' },
       { id: crypto.randomUUID(), text: 'Вариант 2' },
     ])
+
+    $effect(() => {
+      if (this.timer.state === 'finished' && this.votingState === 'voting') {
+        untrack(() => {
+          this.endVoting()
+        })
+      }
+    })
   }
 
   // Getters for options
@@ -60,15 +71,25 @@ export class VotingStore {
   startVoting() {
     this.votes = new SvelteMap()
     this.votingState = 'voting'
+
+    const duration = this.durationStore.value
+    if (duration > 0) {
+      this.timer.limitMs = duration * 1000
+      this.timer.start()
+    } else {
+      this.timer.stop()
+    }
   }
 
   endVoting() {
     this.votingState = 'ended'
+    this.timer.stop()
   }
 
   resetVoting() {
     this.votes = new SvelteMap()
     this.votingState = 'idle'
+    this.timer.stop()
   }
 
   handleMessage = (msg: ChatMessage) => {
