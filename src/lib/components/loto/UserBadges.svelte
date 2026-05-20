@@ -8,7 +8,13 @@
 
   let { user }: Props = $props()
 
-  const twitchBadges = $derived(user.twitch_fields?.badges || [])
+  const twitchBadges = $derived.by(() => {
+    const b = user.twitch_fields?.badges || []
+    // if (b.length > 1) {
+    //   console.log('twitchBadges', b)
+    // }
+    return b
+  })
   const vkRoles = $derived(user.vk_fields?.roles || [])
   const vkBadges = $derived(user.vk_fields?.badges || [])
 
@@ -21,7 +27,7 @@
 </script>
 
 <div class="flex items-center gap-1">
-  {#each twitchBadges as badge (badge.id)}
+  {#each twitchBadges as badge (badge.title)}
     <Tooltip.Root>
       <Tooltip.Trigger>
         <img
