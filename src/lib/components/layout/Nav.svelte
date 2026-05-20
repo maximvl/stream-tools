@@ -44,5 +44,15 @@
         Угадай слово
       </a>
     </li>
+    <li>
+      <a
+        href="/vote"
+        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/vote')
+          ? 'text-primary'
+          : 'opacity-60'}"
+      >
+        Голосование
+      </a>
+    </li>
   </ul>
 </nav>
