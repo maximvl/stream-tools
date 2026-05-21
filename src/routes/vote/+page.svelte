@@ -6,7 +6,8 @@
   import { getChatStore } from '$lib/context'
   import { VotingStore, setVotingStore } from '$lib/stores/votingStore.svelte'
   import { untrack } from 'svelte'
-    import { ServerIcons } from '$lib/constants'
+  import OptionInput from '$lib/components/voting/OptionInput.svelte'
+  import VotingOptionCard from '$lib/components/voting/VotingOptionCard.svelte'
 
   const chatStore = getChatStore()
   const votingStore = new VotingStore()
@@ -96,8 +97,8 @@
               min="0"
               placeholder="0 (без лимита)"
               value={votingStore.durationStore.value}
-              oninput={(e) => {
-                const val = parseInt(e.currentTarget.value, 10)
+              oninput={(e: Event) => {
+                const val = parseInt((e.currentTarget as HTMLInputElement).value, 10)
                 votingStore.durationStore.value = isNaN(val) ? 0 : val
               }}
               class="w-32"
@@ -108,42 +109,13 @@
 
         <div class="flex flex-col gap-3">
           {#each votingStore.options as option, index (option.id)}
-            <div class="flex items-center gap-2">
-              <span
-                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40 font-bold"
-              >
-                {index + 1}
-              </span>
-              <Input
-                type="text"
-                placeholder="Текст варианта..."
-                value={option.text}
-                oninput={(e) => votingStore.updateOption(index, e.currentTarget.value)}
-              />
-              {#if votingStore.options.length > 2}
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  onclick={() => votingStore.removeOption(index)}
-                  class="shrink-0"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    ><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path
-                      d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
-                    /></svg
-                  >
-                </Button>
-              {/if}
-            </div>
+            <OptionInput
+              {index}
+              bind:value={option.text}
+              showDelete={votingStore.options.length > 2}
+              onUpdate={(val) => votingStore.updateOption(index, val)}
+              onDelete={() => votingStore.removeOption(index)}
+            />
           {/each}
         </div>
 
@@ -206,9 +178,9 @@
                 ? 'animate-pulse border-red-500/50 bg-red-500/10 text-red-500 ring-red-500/20'
                 : 'border-primary/20 bg-card/85 text-primary ring-primary/5'}"
             >
-              <span class="mr-1.5 text-[10px] font-black tracking-wider uppercase opacity-80"
-                >Времени осталось:</span
-              >
+              <span class="mr-1.5 text-[10px] font-black tracking-wider uppercase opacity-80">
+                Времени осталось:
+              </span>
               <span class="text-base font-black">
                 {Math.max(0, votingStore.timer.remainingSeconds)}
               </span>
@@ -221,56 +193,13 @@
       <div class="flex w-full max-w-3xl flex-col gap-4">
         {#each votingStore.optionStats as stat, index (stat.id)}
           {@const serverCounts = votingStore.votesPerServerPerOption[index]}
-          <div
-            class="relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 p-5 shadow-sm backdrop-blur-xs transition-all hover:border-primary/30"
-          >
-            <!-- Animated Progress Bar -->
-            <div
-              class="absolute inset-y-0 left-0 -z-10 bg-primary/15 transition-all duration-500 ease-out"
-              style="width: {stat.percentage}%"
-            ></div>
-
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <span
-                  class="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/20 text-xl font-black text-primary shadow-inner"
-                >
-                  {index + 1}
-                </span>
-                <div>
-                  <p class="text-xl font-bold text-foreground">
-                    {stat.text || `Вариант ${index + 1}`}
-                  </p>
-                </div>
-              </div>
-              <div class="text-right">
-                <p class="text-2xl font-black text-primary">{stat.percentage}%</p>
-                <div class="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                  <span>{stat.count} </span>
-                  <span class="flex items-center gap-1">
-                    {#if serverCounts.twitch > 0}
-                      <span class="flex items-center gap-0.5">
-                       <img src={ServerIcons['twitch']} alt="Twitch" class="h-4 w-4" />
-                        {serverCounts.twitch}
-                      </span>
-                    {/if}
-                    {#if serverCounts.vkvideo > 0}
-                      <span class="flex items-center gap-0.5">
-                        <img src={ServerIcons['vkvideo']} alt="VK Video" class="h-4 w-4" />
-                        {serverCounts.vkvideo}
-                      </span>
-                    {/if}
-                    {#if serverCounts.kick > 0}
-                      <span class="flex items-center gap-0.5">
-                        <img src={ServerIcons['kick']} alt="Kick" class="h-4 w-4" />
-                        {serverCounts.kick}
-                      </span>
-                    {/if}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <VotingOptionCard
+            {index}
+            {stat}
+            {serverCounts}
+            isWinner={false}
+            showWinnerBadge={false}
+          />
         {/each}
       </div>
 
@@ -326,75 +255,13 @@
         {#each votingStore.optionStats as stat, index (stat.id)}
           {@const isWinner = votingStore.winners.some((w) => w.id === stat.id)}
           {@const serverCounts = votingStore.votesPerServerPerOption[index]}
-          <div
-            class="relative overflow-hidden rounded-2xl border p-5 transition-all {isWinner
-              ? 'border-yellow-500/50 bg-yellow-500/5 shadow-lg ring-1 shadow-yellow-500/5 ring-yellow-500/20'
-              : 'border-border/50 bg-card/20'}"
-          >
-            <!-- Animated Progress Bar -->
-            <div
-              class="absolute inset-y-0 left-0 -z-10 transition-all duration-500 ease-out {isWinner
-                ? 'bg-yellow-500/15'
-                : 'bg-primary/15'}"
-              style="width: {stat.percentage}%"
-            ></div>
-
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <span
-                  class="flex h-12 w-12 items-center justify-center rounded-xl border text-xl font-black {isWinner
-                    ? 'border-yellow-500/20 bg-yellow-500/20 text-yellow-500 shadow-lg shadow-yellow-500/10'
-                    : 'border-border bg-muted/40 text-muted-foreground'} shadow-inner"
-                >
-                  {index + 1}
-                </span>
-                <div>
-                  <p
-                    class="text-xl font-bold {isWinner
-                      ? 'font-extrabold text-yellow-500'
-                      : 'text-foreground'}"
-                  >
-                    {stat.text || `Вариант ${index + 1}`}
-                  </p>
-                </div>
-              </div>
-              {#if isWinner}
-                <div
-                  class="rounded-full border border-yellow-500/30 bg-yellow-500/20 px-3 py-1 text-[10px] font-black tracking-wider text-yellow-500 uppercase"
-                >
-                  Победитель!
-                </div>
-              {/if}
-              <div class="text-right">
-                <p class="text-2xl font-black {isWinner ? 'text-yellow-500' : 'text-primary'}">
-                  {stat.percentage}%
-                </p>
-                <div class="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                  <span>{stat.count} </span>
-                  <span class="flex items-center gap-1">
-                    {#if serverCounts.twitch > 0}
-                      <span class="flex items-center gap-0.5">
-                        <img src={ServerIcons['twitch']} alt="Twitch" class="h-4 w-4" />
-                        {serverCounts.twitch}
-                      </span>
-                    {/if}
-                    {#if serverCounts.vkvideo > 0}
-                      <span class="flex items-center gap-0.5">
-                        <img src={ServerIcons['vkvideo']} alt="VK Video" class="h-4 w-4" />
-                        {serverCounts.vkvideo}
-                      </span>
-                    {/if}
-                    {#if serverCounts.kick > 0}
-                      <span class="flex items-center gap-0.5">
-                        <img src={ServerIcons['kick']} alt="Kick" class="h-4 w-4" />
-                        {serverCounts.kick}
-                      </span>
-                    {/if}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <VotingOptionCard
+            {index}
+            {stat}
+            {serverCounts}
+            {isWinner}
+            showWinnerBadge={true}
+          />
         {/each}
       </div>
 
@@ -417,26 +284,22 @@
         <div
           class="flex max-h-[250px] flex-col gap-3 overflow-y-auto rounded-2xl border border-border/50 bg-card/25 p-6 shadow-sm backdrop-blur-xs"
         >
-          {#each [...votingStore.votes.values()]
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .slice(0, 10) as vote (vote.userId)}
+          {#each [...votingStore.votes.values()].sort((a, b) => b.timestamp - a.timestamp).slice(0, 10) as vote (vote.userId)}
             <div
               class="flex items-center justify-between gap-3 border-b border-border/10 pb-2 text-sm leading-relaxed last:border-0 last:pb-0"
             >
               <div>
                 <span class="font-bold text-primary">{vote.username}</span>
                 <span class="text-muted-foreground/80"> проголосовал за </span>
-                <span class="font-bold text-foreground">Вариант {vote.optionIndex + 1}</span>
+                <span class="font-bold text-foreground">
+                  {votingStore.options[vote.optionIndex]?.text || `Вариант ${vote.optionIndex + 1}`}
+                </span>
               </div>
-              <span
-                class="max-w-[200px] truncate text-xs font-semibold text-muted-foreground italic"
-              >
-                {votingStore.options[vote.optionIndex]?.text || `Вариант ${vote.optionIndex + 1}`}
-              </span>
             </div>
           {/each}
         </div>
       </div>
     {/if}
+    <div class="mt-50"></div>
   </div>
 </div>
