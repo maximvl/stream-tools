@@ -74,6 +74,9 @@ export class VotingStore {
     this.votes = new SvelteMap()
     this.votingState = 'voting'
 
+    // remove empty voting options
+    this.optionsStore.value = this.optionsStore.value.filter((option) => option.text.trim() !== '')
+
     const duration = this.durationStore.value
     if (duration > 0) {
       this.timer.limitMs = duration * 1000

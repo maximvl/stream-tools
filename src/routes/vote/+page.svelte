@@ -8,8 +8,7 @@
   import { untrack } from 'svelte'
   import OptionInput from '$lib/components/voting/OptionInput.svelte'
   import VotingOptionCard from '$lib/components/voting/VotingOptionCard.svelte'
-  import UserBadges from '$lib/components/loto/UserBadges.svelte'
-  import PlayerName from '$lib/components/loto/PlayerName.svelte'
+  import VotingLog from '$lib/components/voting/VotingLog.svelte'
 
   const chatStore = getChatStore()
   const votingStore = new VotingStore()
@@ -21,6 +20,8 @@
       messages.forEach(votingStore.handleMessage)
     })
   })
+
+  let optionsContainer: HTMLDivElement | null = $state(null)
 </script>
 
 <svelte:head>
@@ -34,6 +35,26 @@
 <div class="dark flex flex-col items-center p-8">
   <Nav />
 </div>
+
+{#snippet votingOptions()}
+  <div bind:this={optionsContainer} class="flex w-full max-w-3xl flex-col gap-4">
+    {#each votingStore.optionStats as stat, index (stat.id)}
+      {@const isWinner =
+        votingStore.winners.some((w) => w.id === stat.id) && votingStore.votingState === 'ended'}
+      {@const serverCounts = votingStore.votesPerServerPerOption[index]}
+      <VotingOptionCard {index} {stat} {serverCounts} {isWinner} showWinnerBadge={true} />
+    {/each}
+  </div>
+{/snippet}
+
+{#snippet votingLog()}
+  <div
+    class="flex w-full max-w-xl flex-col gap-4 overflow-auto"
+    style={`height:${optionsContainer?.offsetHeight ?? 0}px`}
+  >
+    <VotingLog />
+  </div>
+{/snippet}
 
 <div class="dark relative flex min-h-screen flex-col overflow-hidden p-6 pt-0">
   <!-- Animated Background Gradients -->
@@ -168,9 +189,9 @@
               ></span>
               <span class="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
             </span>
-            <span class="text-sm font-bold text-muted-foreground"
-              >Всего голосов: {votingStore.totalVotes}</span
-            >
+            <span class="text-sm font-bold text-muted-foreground">
+              Всего голосов: {votingStore.totalVotes}
+            </span>
           </div>
 
           {#if votingStore.durationStore.value > 0}
@@ -192,17 +213,9 @@
         </div>
       </div>
 
-      <div class="flex w-full max-w-3xl flex-col gap-4">
-        {#each votingStore.optionStats as stat, index (stat.id)}
-          {@const serverCounts = votingStore.votesPerServerPerOption[index]}
-          <VotingOptionCard
-            {index}
-            {stat}
-            {serverCounts}
-            isWinner={false}
-            showWinnerBadge={false}
-          />
-        {/each}
+      <div class="flex h-full w-full gap-10 justify-center">
+        {@render votingLog()}
+        {@render votingOptions()}
       </div>
 
       <div class="mt-8 flex justify-center gap-4">
@@ -253,13 +266,7 @@
         </p>
       </div>
 
-      <div class="flex w-full max-w-3xl flex-col gap-4">
-        {#each votingStore.optionStats as stat, index (stat.id)}
-          {@const isWinner = votingStore.winners.some((w) => w.id === stat.id)}
-          {@const serverCounts = votingStore.votesPerServerPerOption[index]}
-          <VotingOptionCard {index} {stat} {serverCounts} {isWinner} showWinnerBadge={true} />
-        {/each}
-      </div>
+      {@render votingOptions()}
 
       <div class="mt-8 flex justify-center gap-4">
         <Button
@@ -268,47 +275,6 @@
         >
           Новое голосование
         </Button>
-      </div>
-    {/if}
-
-    <!-- Live Recipient / Feed of Recent Votes -->
-    {#if votingStore.votingState !== 'idle'}
-      <div class="mt-8 flex w-full max-w-xl flex-col gap-4">
-        <h2 class="text-center text-lg font-bold tracking-wide text-muted-foreground uppercase">
-          Лог голосования
-        </h2>
-        <div
-          class="flex max-h-[450px] flex-col gap-3 overflow-y-auto rounded-2xl border border-border/50 bg-card/25 p-6 shadow-sm backdrop-blur-xs"
-        >
-          {#each [...votingStore.votes.values()].sort((a, b) => b.timestamp - a.timestamp) as vote (vote.userId)}
-            {@const user = chatStore.usersById.get(vote.userId)!}
-            {@const voteChange = vote.previousOptionIndex !== undefined && vote.previousOptionIndex !== vote.optionIndex}
-            {@const previousOptionText = vote.previousOptionIndex !== undefined ? votingStore.options[vote.previousOptionIndex]?.text : null}
-            {@const voteText = votingStore.options[vote.optionIndex]?.text || `Вариант ${vote.optionIndex + 1}`}
-            <div
-              class="flex items-center justify-between gap-3 border-b border-border/10 pb-2 text-sm leading-relaxed last:border-0 last:pb-0"
-            >
-              <div class="flex gap-2">
-                <span
-                  >{new Date(vote.timestamp).toLocaleTimeString('ru-RU', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}</span
-                >
-                <UserBadges {user} />
-                <PlayerName {user} name={user.username} class="truncate" />
-                {#if voteChange}
-                  <span class="text-muted-foreground/80"> переобувается с <span class="font-bold text-foreground">{previousOptionText}</span> на </span>
-                {:else}
-                  <span class="text-muted-foreground/80"> голосует за </span>
-                {/if}
-                <span class="font-bold text-foreground">
-                  {voteText}
-                </span>
-              </div>
-            </div>
-          {/each}
-        </div>
       </div>
     {/if}
     <div class="mt-50"></div>

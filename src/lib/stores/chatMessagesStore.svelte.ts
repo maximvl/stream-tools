@@ -1,6 +1,6 @@
 import { createQueries } from '@tanstack/svelte-query'
 import { LocalStore } from './localStore.svelte'
-import type { ChatConnection, ChatMessage, ChatServer, UserId } from '../types'
+import type { ChatConnection, ChatMessage, ChatServer, UserId, ChatUser } from '../types'
 import { chatConnect, fetchMessages } from '../api'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 import { untrack } from 'svelte'
