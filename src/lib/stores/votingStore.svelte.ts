@@ -15,6 +15,7 @@ export type Vote = {
   optionIndex: number
   timestamp: number
   server: ChatServer
+  previousOptionIndex?: number
 }
 
 export type VotingState = 'idle' | 'voting' | 'ended'
@@ -101,12 +102,19 @@ export class VotingStore {
 
     // Check if the message is exactly the number of one of the options
     if (!isNaN(num) && num >= 1 && num <= this.options.length) {
+      let previousOptionIndex: number | undefined
+      const prevVote = this.votes.get(msg.user.id)
+      if (prevVote) {
+        previousOptionIndex = prevVote.optionIndex
+      }
+
       this.votes.set(msg.user.id, {
         userId: msg.user.id,
         username: msg.user.username,
         optionIndex: num - 1,
         timestamp: msg.ts,
         server: msg.source.server,
+        previousOptionIndex,
       })
     }
   }

@@ -45,6 +45,14 @@ export class ChatMessagesStore {
     return byUser
   })
 
+  usersById = $derived.by(() => {
+    const users = new SvelteMap<UserId, ChatUser>()
+    this.messages.forEach((msg) => {
+      users.set(msg.user.id, msg.user)
+    })
+    return users
+  })
+
   connectionQueries = createQueries(() => {
     // console.log('creating connection queries for:', this.disconnectedConnections)
     return {
