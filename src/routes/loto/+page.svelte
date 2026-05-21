@@ -274,7 +274,7 @@
 
     <SuperGame />
 
-    <div class="z-50 ml-50 flex flex-wrap justify-center gap-4">
+    <div class="z-50 ml-70 flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
         {@const user = lotoStore.usersById.get(ticket.owner_id)!}
         <div class="inline-grid gap-2" animate:flip={{ duration: 700 }} in:fade>
@@ -310,7 +310,7 @@
             >
               <div class="flex max-w-full flex-col gap-2 text-left">
                 {#each sortedMessages as msg (msg.id)}
-                  <div class="text-sm">
+                  <div>
                     {new Date(msg.ts).toLocaleTimeString('ru-RU', {
                       hour: '2-digit',
                       minute: '2-digit',
@@ -326,7 +326,6 @@
                     <Button
                       variant="destructive"
                       size="sm"
-                      class="text-xs"
                       onclick={() => {
                         lotoStore.deleteTicket(ticket.id)
                       }}

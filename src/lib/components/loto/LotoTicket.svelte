@@ -135,7 +135,7 @@
   )}
 >
   <div class="flex items-center justify-between gap-4">
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 ">
       <UserBadges {user} />
       <PlayerName {user} name={ticket.owner_name} class="truncate" />
     </div>
@@ -190,14 +190,14 @@
     {#each ticket.value as num, id (id)}
       <div
         class={cn(
-          'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 text-sm font-black transition-all duration-300',
+          'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 text-base font-black transition-all duration-300',
           isWinnerMatch(num)
-            ? 'scale-110 border-green-500 bg-green-500 text-green-950 shadow-[0_0_15px_rgba(34,197,94,0.7)]'
+            ? 'scale-110 border-green-500 bg-green-500 text-green-950'
             : isLastRolledMatch(num)
-              ? 'scale-110 border-orange-500 bg-orange-500 text-orange-950 shadow-[0_0_15px_rgba(249,115,22,0.7)]'
+              ? 'scale-110 border-orange-500 bg-orange-500 text-orange-950'
               : isMatched(num)
-                ? 'scale-105 border-yellow-400 bg-yellow-400 text-yellow-950 shadow-[0_0_10px_rgba(250,204,21,0.5)]'
-                : 'border-white/40 bg-white/10 text-white/90',
+                ? 'scale-105 border-yellow-400 bg-yellow-400 text-yellow-950'
+                : 'border-white/40 bg-white/10 text-white',
         )}
       >
         {num}

@@ -51,7 +51,7 @@
   aria-label="Прошлые победители"
 >
   <div>Прошлые победители</div>
-  <div class="mt-4 max-h-screen overflow-y-auto">
+  <div class="mt-4 max-h-screen overflow-y-auto pr-4">
     {#each lotoStore.winnersFlatSorted as winner (`${winner.id}-${winner.created_at}-${winner.stream_channel}`)}
       {@const server = winner.stream_channel.split('/')[0] as ChatServer}
       <div class="flex items-center gap-2">
