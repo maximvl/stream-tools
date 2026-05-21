@@ -25,11 +25,9 @@
 </script>
 
 <svelte:head>
-  <title
-    >Голосование: {votingStore.votingState === 'voting'
-      ? `${votingStore.totalVotes} голосов`
-      : 'Настройка'}</title
-  >
+  <title>
+    {votingStore.votingState === 'voting' ? `${votingStore.totalVotes} голосов` : 'Голосование'}
+  </title>
 </svelte:head>
 
 <div class="dark flex flex-col items-center p-8">
@@ -88,7 +86,7 @@
       <ConnectionDialog />
     </div>
     <div class="flex-1 text-center">
-      <h1 class="text-4xl font-extrabold tracking-tight">Голосование</h1>
+      <h1 class="text-4xl font-extrabold tracking-tight">Голосование чата</h1>
     </div>
     <div class="w-[250px]"></div>
   </div>
@@ -213,7 +211,7 @@
         </div>
       </div>
 
-      <div class="flex h-full w-full gap-10 justify-center">
+      <div class="flex h-full w-full justify-center gap-10">
         {@render votingLog()}
         {@render votingOptions()}
       </div>
