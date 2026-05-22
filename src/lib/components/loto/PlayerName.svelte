@@ -18,6 +18,9 @@
     if (user?.vk_fields?.nickColor !== undefined) {
       return VkColorsMap[user.vk_fields.nickColor] || '#D66E34'
     }
+    if (user?.kick_fields?.username_color) {
+      return user.kick_fields.username_color
+    }
     return '#D66E34'
   }
 

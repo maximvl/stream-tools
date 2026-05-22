@@ -44,6 +44,16 @@ type TwitchUserFields = {
   highlighted?: boolean
 }
 
+type KickBadge = {
+  type: string
+  text: string
+}
+
+type KickUserFields = {
+  badges: KickBadge[]
+  username_color: string
+}
+
 export type UserId = string & { readonly __brand: 'UserId' }
 
 export type ChatUser = {
@@ -51,6 +61,7 @@ export type ChatUser = {
   username: string
   vk_fields?: VkUserFields
   twitch_fields?: TwitchUserFields
+  kick_fields?: KickUserFields
 }
 
 export type ChatUserWithSource = ChatUser & {
@@ -87,12 +98,4 @@ export type VkRole = {
   description: string
   bgColor: number
   price: number
-}
-
-type VkRolesResponse = {
-  roles: {
-    data: {
-      rewards: VkRole[]
-    }
-  }
 }

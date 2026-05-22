@@ -288,10 +288,7 @@ export class LotoStore {
 
     const ticket = makeTicket({ chatMessage: msg, pool: this.drawPool, config: this.config.value })
     const user: ChatUser = {
-      id: msg.user.id,
-      username: msg.user.username,
-      twitch_fields: msg.user.twitch_fields,
-      vk_fields: msg.user.vk_fields,
+      ...msg.user,
     }
 
     if (isMessageFromVkBot(msg)) {

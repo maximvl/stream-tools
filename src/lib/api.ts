@@ -97,11 +97,20 @@ export async function fetchMessages({
       return makeMessage()
     })
 
-    // messages.forEach((m) => {
-    //   m.message = sample(['1', '2', '3', '4', '5'])
-    // })
+    messages.forEach((m) => {
+      // m.message = sample(['1', '2', '3', '4', '5'])
+      m.user.kick_fields = {
+        badges: [
+          {
+            type: 'moderator',
+            text: 'Moderator',
+          },
+        ],
+        username_color: '#00FFFF',
+      }
+    })
 
-    // console.log({ messages })
+    console.log({ messages })
 
     return { chat_messages: messages }
   }
