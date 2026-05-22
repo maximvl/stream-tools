@@ -140,7 +140,7 @@
     <div class="flex items-center gap-2">
       {#if ticket.type === 'points'}
         <span
-          class="shrink-0 rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-black tracking-wider text-yellow-600 uppercase"
+          class="shrink-0 rounded-full bg-black/70 px-2 py-0.5 text-[10px] font-black tracking-wider text-yellow-600 uppercase"
         >
           Бонус
         </span>
@@ -176,7 +176,7 @@
       <ServerIcon
         server={ticket.source.server}
         channel={ticket.source.channel}
-        class="h-4 w-4 shrink-0 opacity-70 transition-opacity hover:opacity-100"
+        class="h-4 w-4 shrink-0 transition-opacity hover:opacity-100"
       />
     </div>
   </div>
@@ -200,7 +200,7 @@
     {/each}
   </div>
   {#if showTimestamp}
-    <div class="text-sm text-white/60">
+    <div class="text-sm text-white">
       Выдан {new Date(ticket.created_at).toLocaleString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
