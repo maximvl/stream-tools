@@ -1,4 +1,4 @@
-import type { ChatMessage, ChatUser, UserId, VkMention, VkRole, VkRoleId } from '$lib/types'
+import type { ChatMessageWithSource, ChatUser, UserId, VkMention, VkRole, VkRoleId } from '$lib/types'
 import sampleSize from 'lodash/sampleSize'
 import uniq from 'lodash/uniq'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
@@ -264,7 +264,7 @@ export class LotoStore {
     return wins
   })
 
-  handleMessage = (msg: ChatMessage) => {
+  handleMessage = (msg: ChatMessageWithSource) => {
     if (this.winner && msg.user.id === this.winner.owner_id) {
       const numbers = parseSuperGameNumbers(msg.message, this.config.value)
       if (numbers.length > 0) {
@@ -289,7 +289,6 @@ export class LotoStore {
     const ticket = makeTicket({ chatMessage: msg, pool: this.drawPool, config: this.config.value })
     const user: ChatUser = {
       id: msg.user.id,
-      source: msg.source,
       username: msg.user.username,
       twitch_fields: msg.user.twitch_fields,
       vk_fields: msg.user.vk_fields,
@@ -390,7 +389,7 @@ function getTicketMatch(ticket: LotoTicket, drawnSet: SvelteSet<string>) {
 }
 
 function makeTicket(params: {
-  chatMessage: ChatMessage
+  chatMessage: ChatMessageWithSource
   pool: string[]
   config: LotoConfig
 }): LotoTicket {
@@ -443,11 +442,11 @@ function genTicketNumber(params: { text: string; pool: string[]; config: LotoCon
 
 const VK_CHAT_BOT_NAME = 'ChatBot'
 
-function isMessageFromVkBot(msg: ChatMessage) {
+function isMessageFromVkBot(msg: ChatMessageWithSource) {
   return msg.source.server === 'vkvideo' && msg.user.username === VK_CHAT_BOT_NAME
 }
 
-function isMessageHighlightedOnTwitch(msg: ChatMessage) {
+function isMessageHighlightedOnTwitch(msg: ChatMessageWithSource) {
   return msg.source.server === 'twitch' && Boolean(msg.user.twitch_fields?.highlighted)
 }
 

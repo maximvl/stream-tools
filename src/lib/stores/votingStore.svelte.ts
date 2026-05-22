@@ -1,6 +1,6 @@
 import { SvelteMap } from 'svelte/reactivity'
 import { LocalStore } from './localStore.svelte'
-import type { ChatMessage, UserId, ChatServer } from '$lib/types'
+import type { UserId, ChatServer, ChatMessageWithSource } from '$lib/types'
 import { createContext, untrack } from 'svelte'
 import { TimerStore } from './timerStore.svelte'
 
@@ -97,7 +97,7 @@ export class VotingStore {
     this.timer.stop()
   }
 
-  handleMessage = (msg: ChatMessage) => {
+  handleMessage = (msg: ChatMessageWithSource) => {
     if (this.votingState !== 'voting') return
 
     const messageText = msg.message.trim()
@@ -150,19 +150,31 @@ export class VotingStore {
 
   votesPerServerPerOption = $derived.by(() => {
     const counts = this.options.map(() => {
-      const serverCounts: Record<ChatServer, number> = {
-        twitch: 0,
-        vkvideo: 0,
-        kick: 0,
+      const serverCounts: Record<ChatServer, number | undefined> = {
+        twitch: undefined,
+        vkvideo: undefined,
+        kick: undefined,
       }
       return serverCounts
     })
 
+    let hasTwitchVotes = false
+    let hasVkvideoVotes = false
+    let hasKickVotes = false
+
     this.votes.forEach((vote) => {
       if (vote.optionIndex >= 0 && vote.optionIndex < this.options.length) {
-        counts[vote.optionIndex][vote.server]++
+        counts[vote.optionIndex][vote.server] = (counts[vote.optionIndex][vote.server] || 0) + 1
+        if (vote.server === 'twitch') hasTwitchVotes = true
+        if (vote.server === 'vkvideo') hasVkvideoVotes = true
+        if (vote.server === 'kick') hasKickVotes = true
       }
     })
+
+    // Only show servers that have votes
+    if (hasTwitchVotes) counts.forEach((c) => { if (c.twitch === undefined) c.twitch = 0 })
+    if (hasVkvideoVotes) counts.forEach((c) => { if (c.vkvideo === undefined) c.vkvideo = 0 })
+    if (hasKickVotes) counts.forEach((c) => { if (c.kick === undefined) c.kick = 0 })
 
     return counts
   })

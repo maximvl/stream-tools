@@ -3,7 +3,7 @@
   import { getVotingStore } from '$lib/stores/votingStore.svelte'
   import UserBadges from '$lib/components/loto/UserBadges.svelte'
   import PlayerName from '$lib/components/loto/PlayerName.svelte'
-  import { ServerIcons } from '$lib/constants'
+    import ServerIcon from '../common/ServerIcon.svelte'
 
   const chatStore = getChatStore()
   const votingStore = getVotingStore()
@@ -33,7 +33,7 @@
               minute: '2-digit',
             })}</span
           >
-          <img src={ServerIcons[user.source.server]} alt="Server" class="h-4 w-4" />
+          <ServerIcon server={user.source.server} channel={user.source.channel} />
           <UserBadges {user} />
           <PlayerName {user} name={user.username} />
         </div>

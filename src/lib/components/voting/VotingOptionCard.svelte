@@ -1,10 +1,10 @@
 <script lang="ts">
-  import ServerIconsDisplay from './ServerIconsDisplay.svelte'
+  import ServerIcon from '../common/ServerIcon.svelte'
 
   type Props = {
     index: number
     stat: { text: string; count: number; percentage: number }
-    serverCounts: { twitch: number; vkvideo: number; kick: number }
+    serverCounts: { twitch?: number; vkvideo?: number; kick?: number }
     isWinner: boolean
     showWinnerBadge: boolean
   }
@@ -51,18 +51,33 @@
         Победитель!
       </div>
     {/if}
-    <div class="text-right">
-      <div class="flex gap-10 text-2xl font-black {isWinner ? 'text-yellow-500' : 'text-primary'}">
-        <div>{stat.count}</div>
-        <div>{stat.percentage}%</div>
-      </div>
-      <div class="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-        <ServerIconsDisplay
-          twitchVotes={serverCounts.twitch}
-          vkvideoVotes={serverCounts.vkvideo}
-          kickVotes={serverCounts.kick}
-        />
-      </div>
+    <div
+      class="flex gap-10 text-right text-2xl font-black {isWinner
+        ? 'text-yellow-500'
+        : 'text-primary'}"
+    >
+      <div>{stat.count}</div>
+      <div>{stat.percentage}%</div>
     </div>
+  </div>
+  <div class="absolute right-0 bottom-0 flex h-6 gap-0">
+    {#if serverCounts.twitch !== undefined}
+      <div class="flex items-center justify-center h-full w-15 bg-purple-500/30 gap-1">
+        <ServerIcon server="twitch" />
+        {serverCounts.twitch}
+      </div>
+    {/if}
+    {#if serverCounts.vkvideo !== undefined}
+      <div class="flex items-center justify-center h-full w-15 bg-red-500/30 gap-1">
+        <ServerIcon server="vkvideo" />
+        {serverCounts.vkvideo}
+      </div>
+    {/if}
+    {#if serverCounts.kick !== undefined}
+      <div class="flex items-center justify-center h-full w-15 bg-green-500/30 gap-1">
+        <ServerIcon server="kick" />
+        {serverCounts.kick}
+      </div>
+    {/if}
   </div>
 </div>

@@ -40,6 +40,7 @@
       {@const isWinner =
         votingStore.winners.some((w) => w.id === stat.id) && votingStore.votingState === 'ended'}
       {@const serverCounts = votingStore.votesPerServerPerOption[index]}
+      {@debug serverCounts}
       <VotingOptionCard {index} {stat} {serverCounts} {isWinner} showWinnerBadge={true} />
     {/each}
   </div>
@@ -264,7 +265,7 @@
         </p>
       </div>
 
-     <div class="flex h-full w-full justify-center gap-10">
+      <div class="flex h-full w-full justify-center gap-10">
         {@render votingLog()}
         {@render votingOptions()}
       </div>

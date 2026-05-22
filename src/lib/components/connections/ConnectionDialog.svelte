@@ -6,10 +6,8 @@
   import { Button } from '$lib/components/ui/button'
   import { Separator } from '$lib/components/ui/separator'
   import { Plus } from '@lucide/svelte'
-  import { ServerIcons } from '$lib/constants'
-  import { cn } from '$lib/utils'
   import { connToKey } from '$lib/stores/chatMessagesStore.svelte'
-  import * as Tooltip from '$lib/components/ui/tooltip'
+  import ServerIcon from '../common/ServerIcon.svelte'
 
   const store = getChatStore()
 
@@ -47,22 +45,12 @@
       <span class="font-medium">Подключение чатов</span>
       <div class="mt-1 flex gap-1.5">
         {#each activeConnections as connection (connToKey(connection))}
-          <Tooltip.Root delayDuration={0}>
-            <Tooltip.Trigger>
-              <img
-                src={ServerIcons[connection.server]}
-                alt={connection.server}
-                class={cn(
-                  'h-6 w-6 shrink-0',
-                  store.connectionsStatuses[connToKey(connection)] !== 'connected' &&
-                    'opacity-30 grayscale',
-                )}
-              />
-            </Tooltip.Trigger>
-            <Tooltip.Content>
-              <p>{connToKey(connection)}</p>
-            </Tooltip.Content>
-          </Tooltip.Root>
+          <ServerIcon
+            server={connection.server}
+            channel={connection.channel}
+            inactive={store.connectionsStatuses[connToKey(connection)] !== 'connected'}
+            class="h-6 w-6"
+          />
         {/each}
       </div>
     </Button>
@@ -86,10 +74,3 @@
     </div>
   </Dialog.Content>
 </Dialog.Root>
-
-<style>
-  /* Optional: prevent icons from being too small on narrow screens */
-  img {
-    min-width: 0.875rem;
-  }
-</style>

@@ -3,11 +3,11 @@
   import { cn } from '$lib/utils'
   import PlayerName from './PlayerName.svelte'
   import UserBadges from './UserBadges.svelte'
-  import { ServerIcons } from '$lib/constants'
   import * as Tooltip from '$lib/components/ui/tooltip'
   import type { LotoTicket } from './types'
   import { TrophyIcon } from '@lucide/svelte'
   import { getLotoStore } from '$lib/stores/lotoStore.svelte'
+  import ServerIcon from '../common/ServerIcon.svelte'
 
   type Props = {
     ticket: LotoTicket
@@ -36,8 +36,6 @@
   const lotoStore = getLotoStore()
 
   const userWinsTimestamps = $derived(lotoStore.winsByUser[ticket.owner_name] || [])
-
-  const ticketSource = $derived(`${ticket.source.server}/${ticket.source.channel}`)
 
   // Hash function to convert username to a number
   function hashString(str: string): number {
@@ -135,7 +133,7 @@
   )}
 >
   <div class="flex items-center justify-between gap-4">
-    <div class="flex items-center gap-2 ">
+    <div class="flex items-center gap-2">
       <UserBadges {user} />
       <PlayerName {user} name={ticket.owner_name} class="truncate" />
     </div>
@@ -161,28 +159,25 @@
             <div class="flex flex-col gap-2">
               <p>Выигрывал {userWinsTimestamps.length} раз</p>
               {#each userWinsTimestamps as winner (winner.id)}
-                {@const server = winner.stream_channel.split('/')[0]}
+                {@const [server, channel] = winner.stream_channel.split('/')}
                 <div class="flex items-center gap-2">
                   <div>{formatTime(winner.created_at)}</div>
-                  <img src={ServerIcons[server as ChatServer]} alt={server} class="h-4 w-4" />
+                  <ServerIcon
+                    server={server as ChatServer}
+                    {channel}
+                    class="h-4 w-4"
+                  />
                 </div>
               {/each}
             </div>
           </Tooltip.Content>
         </Tooltip.Root>
       {/if}
-      <Tooltip.Root>
-        <Tooltip.Trigger>
-          <img
-            src={ServerIcons[ticket.source.server]}
-            alt={ticket.source.server}
-            class="h-4 w-4 shrink-0 opacity-70 transition-opacity hover:opacity-100"
-          />
-        </Tooltip.Trigger>
-        <Tooltip.Content>
-          <p>{ticketSource}</p>
-        </Tooltip.Content>
-      </Tooltip.Root>
+      <ServerIcon
+        server={ticket.source.server}
+        channel={ticket.source.channel}
+        class="h-4 w-4 shrink-0 opacity-70 transition-opacity hover:opacity-100"
+      />
     </div>
   </div>
 

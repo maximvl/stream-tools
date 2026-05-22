@@ -1,11 +1,12 @@
 <script lang="ts">
   import { fetchLotoWinners } from '$lib/api'
-  import { EZ_SMILE_IMG, GAGA_SMILE_IMG, ServerIcons } from '$lib/constants'
+  import { EZ_SMILE_IMG, GAGA_SMILE_IMG } from '$lib/constants'
   import { getChatStore } from '$lib/context'
   import { type ChatServer } from '$lib/types'
   import { createQueries } from '@tanstack/svelte-query'
   import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
   import { getLotoStore } from '$lib/stores/lotoStore.svelte'
+  import ServerIcon from '../common/ServerIcon.svelte'
 
   const messagesStore = getChatStore()
   const lotoStore = getLotoStore()
@@ -33,7 +34,6 @@
 
   function formatTime(timestamp: number) {
     const formatter = new Intl.DateTimeFormat('ru-RU', {
-      year: 'numeric',
       month: 'short',
       day: 'numeric',
     })
@@ -53,15 +53,16 @@
   <div>Прошлые победители</div>
   <div class="mt-4 max-h-screen overflow-y-auto pr-4">
     {#each lotoStore.winnersFlatSorted as winner (`${winner.id}-${winner.created_at}-${winner.stream_channel}`)}
-      {@const server = winner.stream_channel.split('/')[0] as ChatServer}
+      {@const [server, channel] = winner.stream_channel.split('/')}
       <div class="flex items-center gap-2">
-        <span class="text-sm text-muted-foreground">{formatTime(winner.created_at)}</span>
-        <span class="text-lg font-bold">{winner.username}</span>
-        <img
-          src={ServerIcons[server]}
-          alt={server}
+        <ServerIcon
+          server={server as ChatServer}
+          {channel}
           class="h-4 w-4 shrink-0 opacity-70 transition-opacity hover:opacity-100"
         />
+        <span class="text-sm text-muted-foreground">{formatTime(winner.created_at)}</span>
+        <span class="text-lg font-bold truncate">{winner.username}</span>
+
         <Tooltip>
           <TooltipTrigger>
             {#if winner.super_game_status === 'win'}
