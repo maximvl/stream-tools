@@ -25,8 +25,8 @@
     <div
       class="flex items-center justify-between gap-3 border-b border-border/10 pb-2 text-sm leading-relaxed last:border-0 last:pb-0"
     >
-      <div class="flex items-start gap-2">
-        <div class="flex items-center gap-2">
+      <div class="flex items-start gap-0">
+        <div class="flex items-center gap-2 shrink-0">
           <span
             >{new Date(vote.timestamp).toLocaleTimeString('ru-RU', {
               hour: '2-digit',
@@ -37,16 +37,22 @@
           <UserBadges {user} />
           <PlayerName {user} name={user.username} />
         </div>
+        <div>
         {#if voteChange}
           <span class="text-muted-foreground/80">
             переобувается с <span class="font-bold text-foreground">{previousOptionText}</span> на
+            <span class="font-bold wrap-break-word text-foreground">
+              {voteText}
+            </span>
           </span>
         {:else}
-          <span class="text-nowrap text-muted-foreground/80"> голосует за </span>
+          <span class="text-nowrap text-muted-foreground/80">
+            голосует за <span class="font-bold wrap-break-word text-foreground">
+              {voteText}
+            </span>
+          </span>
         {/if}
-        <span class="font-bold wrap-break-word text-foreground">
-          {voteText}
-        </span>
+        </div>
       </div>
     </div>
   {/each}

@@ -264,7 +264,10 @@
         </p>
       </div>
 
-      {@render votingOptions()}
+     <div class="flex h-full w-full justify-center gap-10">
+        {@render votingLog()}
+        {@render votingOptions()}
+      </div>
 
       <div class="mt-8 flex justify-center gap-4">
         <Button
