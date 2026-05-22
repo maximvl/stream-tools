@@ -51,6 +51,9 @@ export type ChatUser = {
   username: string
   vk_fields?: VkUserFields
   twitch_fields?: TwitchUserFields
+}
+
+export type ChatUserWithSource = ChatUser & {
   source: ChatConnection
 }
 
@@ -69,6 +72,9 @@ export type ChatMessage = {
   message: string
   user: ChatUser
   vk_fields?: VkChatFields
+}
+
+export type ChatMessageWithSource = ChatMessage & {
   source: ChatConnection
 }
 

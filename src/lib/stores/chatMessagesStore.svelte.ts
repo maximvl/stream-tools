@@ -1,6 +1,6 @@
 import { createQueries } from '@tanstack/svelte-query'
 import { LocalStore } from './localStore.svelte'
-import type { ChatConnection, ChatMessage, ChatServer, UserId, ChatUser } from '../types'
+import type { ChatConnection, ChatServer, UserId, ChatUserWithSource, ChatMessageWithSource } from '../types'
 import { chatConnect, fetchMessages } from '../api'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 import { untrack } from 'svelte'
@@ -29,12 +29,12 @@ export class ChatMessagesStore {
     }) as ConnKey[]
   })
 
-  messages = $state<ChatMessage[]>([])
-  newMessages = $state<ChatMessage[]>([])
-  lastMessageReceivedPerConnection = $state<Record<ConnKey, ChatMessage>>({})
+  messages = $state<ChatMessageWithSource[]>([])
+  newMessages = $state<ChatMessageWithSource[]>([])
+  lastMessageReceivedPerConnection = $state<Record<ConnKey, ChatMessageWithSource>>({})
 
   messagesByUser = $derived.by(() => {
-    const byUser = new SvelteMap<UserId, ChatMessage[]>()
+    const byUser = new SvelteMap<UserId, ChatMessageWithSource[]>()
     this.messages.forEach((msg) => {
       const userId = msg.user.id
       if (!byUser.has(userId)) {
@@ -46,9 +46,9 @@ export class ChatMessagesStore {
   })
 
   usersById = $derived.by(() => {
-    const users = new SvelteMap<UserId, ChatUser>()
+    const users = new SvelteMap<UserId, ChatUserWithSource>()
     this.messages.forEach((msg) => {
-      users.set(msg.user.id, msg.user)
+      users.set(msg.user.id, { ...msg.user, source: msg.source })
     })
     return users
   })
@@ -128,7 +128,7 @@ export class ChatMessagesStore {
             return
           }
 
-          const newMessages = (res.data?.chat_messages || [])
+          const newMessages: ChatMessageWithSource[] = (res.data?.chat_messages || [])
             .filter((msg) => !messagesIds.has(msg.id))
             .map((msg) => ({
               ...msg,
@@ -145,12 +145,19 @@ export class ChatMessagesStore {
 
           if (res.data?.chat_messages) {
             const lastMsg = res.data.chat_messages[res.data.chat_messages.length - 1]
+            const lastMsgWithSource: ChatMessageWithSource = {
+              ...lastMsg,
+              source: {
+                server: key.split('/')[0] as ChatServer,
+                channel: key.split('/')[1],
+              },
+            }
             if (this.lastMessageReceivedPerConnection[key]) {
               if (lastMsg && lastMsg.ts > this.lastMessageReceivedPerConnection[key].ts) {
-                this.lastMessageReceivedPerConnection[key] = lastMsg
+                this.lastMessageReceivedPerConnection[key] = lastMsgWithSource
               }
             } else if (lastMsg) {
-              this.lastMessageReceivedPerConnection[key] = lastMsg
+              this.lastMessageReceivedPerConnection[key] = lastMsgWithSource
             }
           }
         })

@@ -73,12 +73,14 @@ export async function fetchMessages({
     // console.log('fetching messages', channel, ts, textFilter, platform)
 
     if (MocksManager.chatMessages && MocksManager.chatMessages.length > 0) {
-      const result: ChatMessagesResponse = { chat_messages: MocksManager.chatMessages as ChatMessage[] }
+      const result: ChatMessagesResponse = {
+        chat_messages: MocksManager.chatMessages as ChatMessage[],
+      }
       MocksManager.chatMessages = []
       return result
     }
 
-    return { chat_messages: [] }
+    // return { chat_messages: [] }
 
     // const gameMessages = [makeGameMessage(), makeGameMessage()]
     // return { chat_messages: [makeSuperGameMessage()] }
@@ -92,7 +94,11 @@ export async function fetchMessages({
     }
 
     const messages = Array.from({ length: mocksPerRequest }, () => {
-      return makeMessage(platform, channel)
+      return makeMessage()
+    })
+
+    messages.forEach((m) => {
+      m.message = sample(['1', '2', '3', '4', '5'])
     })
 
     // console.log({ messages })
@@ -146,10 +152,7 @@ type VkRolesResponse = {
   }
 }
 
-export async function fetchVkRoles(
-  server: ChatServer,
-  channel: string
-): Promise<VkRolesResponse> {
+export async function fetchVkRoles(server: ChatServer, channel: string): Promise<VkRolesResponse> {
   const params = new URLSearchParams()
   params.set('platform', server)
   params.set('channel', channel)
@@ -165,7 +168,8 @@ export async function fetchVkRoles(
             {
               id: '1' as VkRoleId,
               name: 'Role 1',
-              largeUrl: 'https://images.live.vkvideo.ru/smile/09868612-8082-4316-8df9-25bd147ebbd0/icon/size/small?change_time=1686325477',
+              largeUrl:
+                'https://images.live.vkvideo.ru/smile/09868612-8082-4316-8df9-25bd147ebbd0/icon/size/small?change_time=1686325477',
               description: '',
               bgColor: 0,
               price: 0,
@@ -173,7 +177,8 @@ export async function fetchVkRoles(
             {
               id: '2' as VkRoleId,
               name: 'Role 2',
-              largeUrl: 'https://images.live.vkvideo.ru/smile/1fe2bca1-d6d5-4063-9860-f6a1d8e3816e/icon/size/small?change_time=1759944303',
+              largeUrl:
+                'https://images.live.vkvideo.ru/smile/1fe2bca1-d6d5-4063-9860-f6a1d8e3816e/icon/size/small?change_time=1759944303',
               description: '',
               bgColor: 0,
               price: 0,
@@ -207,12 +212,11 @@ type FetchLotoWinnersResponse = {
   winners: LotoWinner[]
 }
 
-
 let id = 0
 
 export async function fetchLotoWinners(
   server: string,
-  channel: string
+  channel: string,
 ): Promise<FetchLotoWinnersResponse> {
   const url = `${URL_PREFIX}/turnir-api/loto_winners?server=${server}&channel=${channel}`
 
@@ -223,7 +227,7 @@ export async function fetchLotoWinners(
       id++
       return {
         id,
-        username: `mapcar`,
+        username: `mapcar-very-long-name-test`,
         super_game_status: sample(['win', 'lose', 'skip']) as SuperGameStatus,
         created_at: Date.now() / 1000 - random(0, 1000000),
         stream_channel: sample(['twitch/lasqa', 'vkvideo/lasqa', 'kick/lasqa']),
@@ -231,7 +235,7 @@ export async function fetchLotoWinners(
     }
 
     return {
-      winners: Array.from({ length: 4 }, makeWinner),
+      winners: Array.from({ length: 40 }, makeWinner),
     }
   }
 

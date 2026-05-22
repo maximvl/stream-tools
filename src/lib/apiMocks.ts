@@ -17,7 +17,7 @@ const makeBadge = () => {
   }
 }
 
-export const makeMessage = (server: ChatServer, channel: string, user_id?: string): ChatMessage => {
+export const makeMessage = (user_id?: string): ChatMessage => {
   const userId = user_id || random(1, 10000).toString()
   const colors = [
     '#0000FF',
@@ -41,10 +41,6 @@ export const makeMessage = (server: ChatServer, channel: string, user_id?: strin
 
   return {
     id: `${user_id}-${randomUUID}`,
-    source: {
-      server,
-      channel: 'tmp',
-    },
     message: sample(['+лото']),
     ts: new Date().getTime(),
     // Math.round(
@@ -54,7 +50,6 @@ export const makeMessage = (server: ChatServer, channel: string, user_id?: strin
     user: {
       id: userId as UserId,
       username: userId,
-      source: { server, channel },
       // vk_fields: {
       //   nickColor: 0,
       //   isChatModerator: false,
