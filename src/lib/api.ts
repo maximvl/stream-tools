@@ -84,7 +84,7 @@ export async function fetchMessages({
 
     // const gameMessages = [makeGameMessage(), makeGameMessage()]
     // return { chat_messages: [makeSuperGameMessage()] }
-    const mocksPerRequest = 3
+    const mocksPerRequest = 1
     const mocksLeft = mockedMessagesAmount - mocksPerRequest
 
     // console.log({ mocksLeft, mockedMessagesAmount, mocksPerRequest })
@@ -97,9 +97,9 @@ export async function fetchMessages({
       return makeMessage()
     })
 
-    messages.forEach((m) => {
-      m.message = sample(['1', '2', '3', '4', '5'])
-    })
+    // messages.forEach((m) => {
+    //   m.message = sample(['1', '2', '3', '4', '5'])
+    // })
 
     // console.log({ messages })
 
@@ -227,7 +227,7 @@ export async function fetchLotoWinners(
       id++
       return {
         id,
-        username: `mapcar-very-long-name-test`,
+        username: `mapcar`,
         super_game_status: sample(['win', 'lose', 'skip']) as SuperGameStatus,
         created_at: Date.now() / 1000 - random(0, 1000000),
         stream_channel: sample(['twitch/lasqa', 'vkvideo/lasqa', 'kick/lasqa']),

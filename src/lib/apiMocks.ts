@@ -1,6 +1,6 @@
 import random from 'lodash/random'
 import sample from 'lodash/sample'
-import type { ChatMessage, ChatServer, UserId } from './types'
+import type { ChatMessage, UserId } from './types'
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -115,7 +115,7 @@ const makeSuperGameMessage = () => {
 export const MocksManager = {
   chatMessages: [] as ChatMessage[],
   sendMessage(user_id: string, msg: string) {
-    const obj = makeMessage('twitch', 'tmp', user_id)
+    const obj = makeMessage(user_id)
     obj.message = msg
     obj.ts = new Date().getTime()
     this.chatMessages.push(obj)
