@@ -9,6 +9,7 @@
   const revealAll = $derived(lotoStore.superGameState === 'finished')
 </script>
 
+<div class="bg-slate-800 p-4 rounded-xl">
 {#if lotoStore.superGameState === 'not_started'}
   <Animation4 />
 {:else}
@@ -45,6 +46,7 @@
     {/each}
   </div>
 {/if}
+</div>
 
 <style>
   :global(.round-container) {

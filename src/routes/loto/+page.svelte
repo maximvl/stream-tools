@@ -104,23 +104,29 @@
   <div class="fixed inset-0 -z-10 bg-slate-900"></div>
 
   <div class="fixed top-6 left-6 z-10 flex flex-col gap-4">
-    <ConnectionDialog />
-    <LotoSettingsDialog />
+    <div class="w-fit rounded-xl bg-card">
+      <ConnectionDialog />
+    </div>
+    <div class="w-fit rounded-xl bg-card">
+      <LotoSettingsDialog />
+    </div>
     {#if lotoStore.gameState === 'registration'}
-      <div class="text-center">Таймер</div>
-      <div class="flex flex-col gap-2">
-        <Button
-          class="h-auto rounded-xl bg-blue-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-blue-500 active:scale-95"
-          onclick={() => addTime(60)}
-        >
-          +1 мин
-        </Button>
-        <Button
-          class="h-auto rounded-xl bg-purple-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-purple-500 active:scale-95"
-          onclick={() => addTime(30)}
-        >
-          +30 сек
-        </Button>
+      <div class="flex flex-col gap-2 rounded-xl bg-card p-2">
+        <div class="text-center">Таймер</div>
+        <div class="flex flex-col gap-2">
+          <Button
+            class="h-auto rounded-xl bg-blue-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-blue-500 active:scale-95"
+            onclick={() => addTime(60)}
+          >
+            +1 мин
+          </Button>
+          <Button
+            class="h-auto rounded-xl bg-purple-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-purple-500 active:scale-95"
+            onclick={() => addTime(30)}
+          >
+            +30 сек
+          </Button>
+        </div>
       </div>
     {:else}
       <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
@@ -130,7 +136,7 @@
 
   <div class="absolute top-30 right-20 w-fit">
     {#if lotoStore.streamerTickets.length === 0}
-      <div>Стример пока не зарегался</div>
+      <div class="rounded-xl border border-primary/60 bg-card p-4">Стример пока не зарегался</div>
     {:else if streamerUser}
       {#each lotoStore.streamerTickets as ticket (ticket.id)}
         <LotoTicket
@@ -240,7 +246,7 @@
 
       {#if lotoStore.drawnNumbers.length > 0}
         <div
-          class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/80 bg-muted/60 p-4 shadow-inner"
+          class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/80 bg-card p-4 shadow-inner"
         >
           <div class="flex items-center justify-center px-2">
             <h2 class="text-xs font-black tracking-[0.3em] text-muted-foreground uppercase">
@@ -253,7 +259,7 @@
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg border {isWinnerMatch
                   ? 'border-green-500/80 bg-green-500/40 text-green-500 shadow-lg shadow-green-500/40'
-                  : 'border-primary/40 bg-background text-primary'} text-sm font-black shadow-sm"
+                  : 'border-primary/40 bg-background text-primary'} font-black shadow-sm"
                 in:fade={{ duration: 300 }}
               >
                 {num}
@@ -261,6 +267,8 @@
             {/each}
           </div>
         </div>
+      {:else}
+        <div class="h-10"></div>
       {/if}
     {/if}
 

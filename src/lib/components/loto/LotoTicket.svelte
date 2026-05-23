@@ -53,58 +53,58 @@
     {
       // Style 0: Purple solid
       border: 'border-purple-500',
-      bg: 'bg-purple-900/60',
-      shadow: 'shadow-purple-500/60',
-      glow: 'hover:shadow-purple-500/70',
+      bg: 'bg-purple-900',
+      shadow: 'shadow-purple-500',
+      glow: 'hover:shadow-purple-500',
     },
     {
       // Style 1: Blue solid
       border: 'border-blue-500',
-      bg: 'bg-blue-900/60',
-      shadow: 'shadow-blue-500/60',
-      glow: 'hover:shadow-blue-500/70',
+      bg: 'bg-blue-900',
+      shadow: 'shadow-blue-500',
+      glow: 'hover:shadow-blue-500',
     },
     {
       // Style 2: Pink solid
       border: 'border-pink-500',
-      bg: 'bg-pink-900/60',
-      shadow: 'shadow-pink-500/60',
-      glow: 'hover:shadow-pink-500/70',
+      bg: 'bg-pink-900',
+      shadow: 'shadow-pink-500',
+      glow: 'hover:shadow-pink-500',
     },
     {
       // Style 3: Green solid
       border: 'border-green-500',
-      bg: 'bg-green-900/60',
-      shadow: 'shadow-green-500/60',
-      glow: 'hover:shadow-green-500/70',
+      bg: 'bg-green-900',
+      shadow: 'shadow-green-500',
+      glow: 'hover:shadow-green-500',
     },
     {
       // Style 4: Orange solid
       border: 'border-orange-500',
-      bg: 'bg-orange-900/60',
-      shadow: 'shadow-orange-500/60',
-      glow: 'hover:shadow-orange-500/70',
+      bg: 'bg-orange-900',
+      shadow: 'shadow-orange-500',
+      glow: 'hover:shadow-orange-500',
     },
     {
       // Style 5: Cyan solid
       border: 'border-cyan-500',
-      bg: 'bg-cyan-900/60',
-      shadow: 'shadow-cyan-500/60',
-      glow: 'hover:shadow-cyan-500/70',
+      bg: 'bg-cyan-900',
+      shadow: 'shadow-cyan-500',
+      glow: 'hover:shadow-cyan-500',
     },
     {
       // Style 6: Rose solid
       border: 'border-rose-500',
-      bg: 'bg-rose-900/60',
-      shadow: 'shadow-rose-500/60',
-      glow: 'hover:shadow-rose-500/70',
+      bg: 'bg-rose-900',
+      shadow: 'shadow-rose-500',
+      glow: 'hover:shadow-rose-500',
     },
     {
       // Style 7: Indigo solid
       border: 'border-indigo-500',
-      bg: 'bg-indigo-900/60',
-      shadow: 'shadow-indigo-500/60',
-      glow: 'hover:shadow-indigo-500/70',
+      bg: 'bg-indigo-900',
+      shadow: 'shadow-indigo-500',
+      glow: 'hover:shadow-indigo-500',
     },
   ]
 
@@ -140,7 +140,7 @@
     <div class="flex items-center gap-2">
       {#if ticket.type === 'points'}
         <span
-          class="shrink-0 rounded-full bg-black/70 px-2 py-0.5 text-[10px] font-black tracking-wider text-yellow-600 uppercase"
+          class="shrink-0 rounded-full bg-black px-2 py-0.5 text-[10px] font-black tracking-wider text-yellow-600 uppercase"
         >
           Бонус
         </span>
@@ -149,7 +149,7 @@
         <Tooltip.Root>
           <Tooltip.Trigger>
             <div
-              class="inline-flex items-center gap-2 rounded-full border border-yellow-500/60 bg-yellow-900/50 px-3 py-1 text-yellow-200 shadow"
+              class="inline-flex items-center gap-2 rounded-full border border-yellow-500 bg-yellow-900 px-3 py-1 text-yellow-200 shadow"
             >
               <TrophyIcon class="h-4 w-4" />
               <span class="font-bold">{userWinsTimestamps.length}</span>
@@ -192,7 +192,7 @@
               ? 'scale-110 border-orange-500 bg-orange-500 text-orange-950'
               : isMatched(num)
                 ? 'scale-105 border-yellow-400 bg-yellow-400 text-yellow-950'
-                : 'border-white/60 bg-white/30 text-white',
+                : 'border-white bg-white text-slate-900',
         )}
       >
         {num}
