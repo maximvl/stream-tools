@@ -136,7 +136,7 @@
 
   <div class="absolute top-30 right-20 w-fit">
     {#if lotoStore.streamerTickets.length === 0}
-      <div class="rounded-xl border border-primary/60 bg-card p-4">Стример пока не зарегался</div>
+      <div class="rounded-xl text-xl border border-primary/60 bg-card p-4">Стример пока не зарегался</div>
     {:else if streamerUser}
       {#each lotoStore.streamerTickets as ticket (ticket.id)}
         <LotoTicket
@@ -164,10 +164,11 @@
         <div
           class="rounded-xl border border-primary/60 bg-card px-6 py-3 shadow-lg ring-1 ring-primary/40"
         >
-          <p class="text-base font-medium text-primary">
+          <p class="text-xl font-medium text-primary">
             +лото в чат чтобы зарегаться
             <br />можно писать свои числа после +лото
           </p>
+          <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
         </div>
         <div class="flex items-center gap-6">
           <Button
@@ -197,12 +198,6 @@
             </div>
           {/if}
         </div>
-        <div
-          class="hidden animate-pulse text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase"
-        >
-          Раздача билетов {lotoStore.ticketsOrdered.length}
-        </div>
-        <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
       </div>
     {:else}
       {#if lotoStore.winner}
