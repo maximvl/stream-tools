@@ -86,30 +86,7 @@
   <Nav />
 </div>
 <div class="dark relative flex min-h-screen flex-col overflow-hidden p-6">
-  <div class="fixed inset-0 -z-10">
-    <div
-      class="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900"
-    ></div>
-    <div
-      class="absolute top-0 left-1/4 h-96 w-96 animate-pulse rounded-full bg-purple-500/20 blur-3xl"
-    ></div>
-    <div
-      class="absolute top-1/4 right-1/4 h-80 w-80 animate-pulse rounded-full bg-pink-500/20 blur-3xl"
-      style="animation-delay: 1s;"
-    ></div>
-    <div
-      class="absolute bottom-1/4 left-1/3 h-72 w-72 animate-pulse rounded-full bg-blue-500/20 blur-3xl"
-      style="animation-delay: 2s;"
-    ></div>
-    <div
-      class="absolute right-1/3 bottom-0 h-64 w-64 animate-pulse rounded-full bg-orange-500/20 blur-3xl"
-      style="animation-delay: 3s;"
-    ></div>
-    <div
-      class="absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 blur-3xl"
-      style="animation-duration: 20s;"
-    ></div>
-  </div>
+  <div class="fixed inset-0 -z-10 bg-slate-900"></div>
 
   <div class="fixed top-6 left-6 z-10 flex flex-col gap-4">
     <ConnectionDialog />
@@ -164,7 +141,7 @@
     {#if lotoStore.gameState === 'registration'}
       <div class="flex flex-col items-center gap-4">
         <div
-          class="rounded-xl border border-primary/20 bg-card px-6 py-3 shadow-lg ring-1 ring-primary/5"
+          class="rounded-xl border border-primary/60 bg-card px-6 py-3 shadow-lg ring-1 ring-primary/40"
         >
           <p class="text-base font-medium text-primary">
             +лото в чат чтобы зарегаться
@@ -184,8 +161,8 @@
             <div
               class="flex h-16 items-center justify-center rounded-2xl border-2 px-6 shadow-lg ring-1 transition-all {countdownTimer.remainingSeconds <=
               30
-                ? 'animate-pulse border-red-500/50 bg-red-500/10 ring-red-500/20'
-                : 'border-primary/20 bg-card ring-primary/5'}"
+                ? 'animate-pulse border-red-500/80 bg-red-500/30 ring-red-500/50'
+                : 'border-primary/60 bg-card ring-primary/40'}"
             >
               <div class="flex items-center gap-2">
                 <div
@@ -215,7 +192,7 @@
         <div class="flex flex-col items-center gap-6">
           <div class="flex flex-col items-center gap-4 md:flex-row">
             <div
-              class="flex flex-col items-center justify-center rounded-2xl border-2 border-primary/20 bg-card p-4 shadow-lg ring-1 ring-primary/5"
+              class="flex flex-col items-center justify-center rounded-2xl border-2 border-primary/60 bg-card p-4 shadow-lg ring-1 ring-primary/40"
             >
               <div class="flex gap-1">
                 <SlotDigit
@@ -248,7 +225,7 @@
 
       {#if lotoStore.drawnNumbers.length > 0}
         <div
-          class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/50 bg-muted/20 p-4 shadow-inner"
+          class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/80 bg-muted/60 p-4 shadow-inner"
         >
           <div class="flex items-center justify-center px-2">
             <h2 class="text-xs font-black tracking-[0.3em] text-muted-foreground uppercase">
@@ -260,8 +237,8 @@
               {@const isWinnerMatch = lotoStore.winnerMatchedNumbers.includes(num)}
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-lg border {isWinnerMatch
-                  ? 'border-green-500/50 bg-green-500/20 text-green-500 shadow-lg shadow-green-500/20'
-                  : 'border-primary/10 bg-background text-primary'} text-sm font-black shadow-sm"
+                  ? 'border-green-500/80 bg-green-500/40 text-green-500 shadow-lg shadow-green-500/40'
+                  : 'border-primary/40 bg-background text-primary'} text-sm font-black shadow-sm"
                 in:fade={{ duration: 300 }}
               >
                 {num}
@@ -306,7 +283,7 @@
             {@const userMessages = store.messagesByUser.get(ticket.owner_id) || []}
             {@const sortedMessages = userMessages.toSorted((a, b) => a.ts - b.ts)}
             <div
-              class="col-start-1 row-start-2 max-h-40 w-0 min-w-full overflow-y-auto rounded-xl border border-border/50 bg-card p-3 wrap-break-word shadow-inner"
+              class="col-start-1 row-start-2 max-h-40 w-0 min-w-full overflow-y-auto rounded-xl border border-border/80 bg-card p-3 wrap-break-word shadow-inner"
             >
               <div class="flex max-w-full flex-col gap-2 text-left">
                 {#each sortedMessages as msg (msg.id)}

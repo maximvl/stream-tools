@@ -65,7 +65,7 @@
   </div>
 
   <div
-    class="relative z-10 flex flex-col items-center justify-center rounded-3xl border-2 border-yellow-500/50 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 p-8 shadow-2xl ring-4 ring-yellow-500/30"
+    class="relative z-10 flex flex-col items-center justify-center rounded-3xl border-2 border-yellow-500 bg-yellow-900/60 p-8 shadow-2xl ring-4 ring-yellow-500/50"
     in:fly={{ y: -50, duration: 800, easing: (t) => t * (2 - t) }}
   >
     <div

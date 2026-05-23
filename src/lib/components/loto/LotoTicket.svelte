@@ -51,60 +51,60 @@
   // Ticket style options
   const ticketStyles = [
     {
-      // Style 0: Purple gradient
-      border: 'border-purple-500/50',
-      bg: 'bg-gradient-to-br from-purple-500/25 to-purple-900/25',
-      shadow: 'shadow-purple-500/40',
-      glow: 'hover:shadow-purple-500/50',
+      // Style 0: Purple solid
+      border: 'border-purple-500',
+      bg: 'bg-purple-900/60',
+      shadow: 'shadow-purple-500/60',
+      glow: 'hover:shadow-purple-500/70',
     },
     {
-      // Style 1: Blue gradient
-      border: 'border-blue-500/50',
-      bg: 'bg-gradient-to-br from-blue-500/25 to-blue-900/25',
-      shadow: 'shadow-blue-500/40',
-      glow: 'hover:shadow-blue-500/50',
+      // Style 1: Blue solid
+      border: 'border-blue-500',
+      bg: 'bg-blue-900/60',
+      shadow: 'shadow-blue-500/60',
+      glow: 'hover:shadow-blue-500/70',
     },
     {
-      // Style 2: Pink gradient
-      border: 'border-pink-500/50',
-      bg: 'bg-gradient-to-br from-pink-500/25 to-pink-900/25',
-      shadow: 'shadow-pink-500/40',
-      glow: 'hover:shadow-pink-500/50',
+      // Style 2: Pink solid
+      border: 'border-pink-500',
+      bg: 'bg-pink-900/60',
+      shadow: 'shadow-pink-500/60',
+      glow: 'hover:shadow-pink-500/70',
     },
     {
-      // Style 3: Green gradient
-      border: 'border-green-500/50',
-      bg: 'bg-gradient-to-br from-green-500/25 to-green-900/25',
-      shadow: 'shadow-green-500/40',
-      glow: 'hover:shadow-green-500/50',
+      // Style 3: Green solid
+      border: 'border-green-500',
+      bg: 'bg-green-900/60',
+      shadow: 'shadow-green-500/60',
+      glow: 'hover:shadow-green-500/70',
     },
     {
-      // Style 4: Orange gradient
-      border: 'border-orange-500/50',
-      bg: 'bg-gradient-to-br from-orange-500/25 to-orange-900/25',
-      shadow: 'shadow-orange-500/40',
-      glow: 'hover:shadow-orange-500/50',
+      // Style 4: Orange solid
+      border: 'border-orange-500',
+      bg: 'bg-orange-900/60',
+      shadow: 'shadow-orange-500/60',
+      glow: 'hover:shadow-orange-500/70',
     },
     {
-      // Style 5: Cyan gradient
-      border: 'border-cyan-500/50',
-      bg: 'bg-gradient-to-br from-cyan-500/25 to-cyan-900/25',
-      shadow: 'shadow-cyan-500/40',
-      glow: 'hover:shadow-cyan-500/50',
+      // Style 5: Cyan solid
+      border: 'border-cyan-500',
+      bg: 'bg-cyan-900/60',
+      shadow: 'shadow-cyan-500/60',
+      glow: 'hover:shadow-cyan-500/70',
     },
     {
-      // Style 6: Rose gradient
-      border: 'border-rose-500/50',
-      bg: 'bg-gradient-to-br from-rose-500/25 to-rose-900/25',
-      shadow: 'shadow-rose-500/40',
-      glow: 'hover:shadow-rose-500/50',
+      // Style 6: Rose solid
+      border: 'border-rose-500',
+      bg: 'bg-rose-900/60',
+      shadow: 'shadow-rose-500/60',
+      glow: 'hover:shadow-rose-500/70',
     },
     {
-      // Style 7: Indigo gradient
-      border: 'border-indigo-500/50',
-      bg: 'bg-gradient-to-br from-indigo-500/25 to-indigo-900/25',
-      shadow: 'shadow-indigo-500/40',
-      glow: 'hover:shadow-indigo-500/50',
+      // Style 7: Indigo solid
+      border: 'border-indigo-500',
+      bg: 'bg-indigo-900/60',
+      shadow: 'shadow-indigo-500/60',
+      glow: 'hover:shadow-indigo-500/70',
     },
   ]
 
@@ -149,7 +149,7 @@
         <Tooltip.Root>
           <Tooltip.Trigger>
             <div
-              class="inline-flex items-center gap-2 rounded-full border border-yellow-500/20 bg-gradient-to-b from-yellow-500/20 to-yellow-700/10 px-3 py-1 text-yellow-200 shadow"
+              class="inline-flex items-center gap-2 rounded-full border border-yellow-500/60 bg-yellow-900/50 px-3 py-1 text-yellow-200 shadow"
             >
               <TrophyIcon class="h-4 w-4" />
               <span class="font-bold">{userWinsTimestamps.length}</span>
@@ -192,7 +192,7 @@
               ? 'scale-110 border-orange-500 bg-orange-500 text-orange-950'
               : isMatched(num)
                 ? 'scale-105 border-yellow-400 bg-yellow-400 text-yellow-950'
-                : 'border-white/40 bg-white/10 text-white',
+                : 'border-white/60 bg-white/30 text-white',
         )}
       >
         {num}
