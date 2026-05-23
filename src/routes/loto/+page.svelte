@@ -233,6 +233,7 @@
               </div>
             </div>
 
+            <div class="bg-card">
             <Button
               class="h-auto rounded-2xl px-8 py-8 text-xl font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
               onclick={() => lotoStore.rollNextNumber()}
@@ -240,6 +241,7 @@
             >
               Ролл
             </Button>
+          </div>
           </div>
         </div>
       {/if}
