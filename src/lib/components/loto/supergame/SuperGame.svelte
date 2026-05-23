@@ -1,7 +1,8 @@
 <script lang="ts">
   import { getLotoStore } from '$lib/stores/lotoStore.svelte'
-    import { cn } from '$lib/utils'
+  import { cn } from '$lib/utils'
   import PlayerName from '../PlayerName.svelte'
+  import UserBadges from '../UserBadges.svelte'
   import SuperGameBox from './SuperGameBox.svelte'
 
   const lotoStore = getLotoStore()
@@ -36,16 +37,17 @@
       </div>
     {:else}
       <div class="flex flex-col gap-4">
-        <div
-          class="text-center text-4xl font-black tracking-wide text-white"
-        >
-          Супер-игра с
-          <PlayerName {user} name={lotoStore.winner.owner_name} />
+        <div class="flex gap-2 text-center text-4xl font-black tracking-wide text-white items-center">
+          <div>Супер-игра с</div>
+          <div class="flex gap-1 items-center">
+            <PlayerName {user} name={lotoStore.winner.owner_name} />
+            {#if user}
+              <UserBadges {user} />
+            {/if}
+          </div>
         </div>
 
-        <div
-          class="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/3 p-5 backdrop-blur-sm"
-        >
+        <div class="flex flex-col gap-4 rounded-2xl border border-white/10 bg-card p-5">
           <!-- SCORE -->
           <div
             class="flex items-center justify-center gap-2 text-center text-2xl font-bold text-white"
@@ -53,8 +55,9 @@
             <span class="opacity-80">Очки</span>
 
             <div
-              class={cn("rounded-full border border-yellow-300/20 bg-yellow-300/10 px-4 py-1", {
-                "bg-green-500/30": lotoStore.superGameScore >= lotoStore.config.value.super_game_win_score
+              class={cn('rounded-full border border-yellow-300/20 bg-yellow-300/10 px-4 py-1', {
+                'bg-green-500/30':
+                  lotoStore.superGameScore >= lotoStore.config.value.super_game_win_score,
               })}
             >
               <span>
@@ -81,7 +84,7 @@
                   status === 'hidden' && 'bg-white/5',
                   status === 'score' && 'bg-green-500/30',
                   status === 'empty' && 'bg-yellow-500/30',
-                  status === 'bomb' && 'bg-red-500/50'
+                  status === 'bomb' && 'bg-red-500/50',
                 )}
               >
                 {(guess ?? '__').toString().padStart(2, '0')}

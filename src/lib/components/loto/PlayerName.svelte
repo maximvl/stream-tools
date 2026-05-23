@@ -27,6 +27,6 @@
   const userColor = $derived(getUserColor())
 </script>
 
-<span class={cn('font-bold bg-black rounded-sm px-1', className)} style="color: {userColor}">
+<span class={cn('font-bold bg-slate-800 rounded-sm px-1', className)} style="color: {userColor}">
   {name}
 </span>

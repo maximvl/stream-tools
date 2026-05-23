@@ -140,7 +140,7 @@
     <div class="flex items-center gap-2">
       {#if ticket.type === 'points'}
         <span
-          class="shrink-0 rounded-full bg-black px-2 py-0.5 text-[10px] font-black tracking-wider text-yellow-600 uppercase"
+          class="shrink-0 rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-black tracking-wider text-yellow-600 uppercase"
         >
           Бонус
         </span>
@@ -192,7 +192,7 @@
               ? 'scale-110 border-orange-500 bg-orange-500 text-orange-950'
               : isMatched(num)
                 ? 'scale-105 border-yellow-400 bg-yellow-400 text-yellow-950'
-                : 'border-white bg-white text-slate-900',
+                : 'border-slate-700 bg-slate-800 text-slate-300', // <- changed
         )}
       >
         {num}

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ChatUser } from '$lib/types'
   import * as Tooltip from '$lib/components/ui/tooltip'
-    import KickModeratorIcon from './KickModeratorIcon.svelte'
+  import KickModeratorIcon from './KickModeratorIcon.svelte'
 
   type Props = {
     user: ChatUser
