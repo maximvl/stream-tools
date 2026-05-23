@@ -2,8 +2,8 @@
   import { page } from '$app/state'
 </script>
 
-<nav class="mb-8">
-  <ul class="flex gap-6 text-sm font-medium">
+<nav class="mb-8 rounded-xl bg-card py-2 px-4">
+  <ul class="flex gap-6 font-medium">
     <li>
       <a
         href="/"
@@ -17,7 +17,7 @@
     <li>
       <a
         href="/turnir"
-        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/turnir/')
+        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/turnir')
           ? 'text-primary'
           : 'opacity-60'}"
       >
@@ -27,7 +27,7 @@
     <li>
       <a
         href="/loto"
-        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/loto/')
+        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/loto')
           ? 'text-primary'
           : 'opacity-60'}"
       >
