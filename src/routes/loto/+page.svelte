@@ -22,6 +22,9 @@
   import { createQueries } from '@tanstack/svelte-query'
   import { fetchVkRoles } from '$lib/api'
   import type { ChatServer } from '$lib/types'
+  import { BackgroundImages } from '$lib/constants'
+
+  import BgPattern5 from '$lib/components/common/BgPattern5.svelte'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -29,7 +32,9 @@
   const store = getChatStore()
   const countdownTimer = new TimerStore()
 
-  const vkConnections = $derived(store.connectedConnections.filter((connKey) => connKey.toLowerCase().startsWith('vkvideo')))
+  const vkConnections = $derived(
+    store.connectedConnections.filter((connKey) => connKey.toLowerCase().startsWith('vkvideo')),
+  )
 
   createQueries(() => {
     return {
@@ -81,6 +86,16 @@
 <svelte:head>
   <title>Лото: {lotoStore.ticketsOrdered.length} билетов зарегано</title>
 </svelte:head>
+
+<BgPattern5
+  images={BackgroundImages}
+  gap={40}
+  staggered
+  tileSize={50}
+  polaroidChance={0}
+  maxRotation={18}
+  tapeChance={0}
+/>
 
 <div class="dark flex flex-col items-center p-8">
   <Nav />
