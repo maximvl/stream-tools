@@ -46,7 +46,7 @@
 </script>
 
 <div
-  class="flex max-w-70 flex-col gap-2 rounded-lg bg-card p-2"
+  class="flex max-w-70 flex-col gap-2 rounded-lg bg-card2 p-2"
   role="region"
   aria-label="Прошлые победители"
 >

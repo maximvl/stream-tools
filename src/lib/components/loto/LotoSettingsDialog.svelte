@@ -7,6 +7,7 @@
   import { DefaultConfig, getLotoConfigStore, getLotoStore } from '$lib/stores/lotoStore.svelte'
   import { type VkRoleId } from '$lib/types'
   import { SuperGameIcons } from '$lib/constants'
+  import { Slider } from 'bits-ui'
 
   const configStore = getLotoConfigStore()
   let open = $state(false)
@@ -22,16 +23,18 @@
   <Dialog.Trigger>
     <Button variant="outline" class="w-full">Настройки</Button>
   </Dialog.Trigger>
-  <Dialog.Content>
+  <Dialog.Content class="bg-card2">
     <Dialog.Header>Настройки лото</Dialog.Header>
-    <div class="flex max-h-[70vh] flex-col gap-8 overflow-y-auto pr-2">
+    <div class="flex max-h-[70vh] flex-col gap-8 overflow-y-auto pr-6">
       <div class="flex flex-col gap-4">
-        <Button variant="destructive" size="sm" class="w-full" onclick={resetConfig}
+        <Button variant="destructive" class="w-full" onclick={resetConfig}
           >Сбросить настройки</Button
         >
-        <h3 class="font-semibold text-muted-foreground">Основные настройки</h3>
-        <div class="flex flex-col gap-2">
-          <Label for="win-matches-amount">Количество совпадений для победы</Label>
+        <div class="text-2xl font-semibold text-muted-foreground">Основные настройки</div>
+        <div class="flex gap-2">
+          <Label for="win-matches-amount" class="w-full"
+            >Количество совпадений в билете для победы</Label
+          >
           <Input
             id="win-matches-amount"
             type="number"
@@ -40,21 +43,20 @@
             max="10"
           />
         </div>
-        <div class="flex flex-col gap-2">
-          <Label for="ticket-size">Размер билета: {configStore.value.ticket_size}</Label>
+        <div class="flex gap-2">
+          <Label for="ticket-size" class="w-full">Размер билета</Label>
           <Input
             id="ticket-size"
-            type="range"
+            type="number"
             bind:value={configStore.value.ticket_size}
             min="1"
             max="10"
-            step="1"
           />
         </div>
       </div>
 
       <div class="flex flex-col gap-4">
-        <h3 class="font-semibold text-muted-foreground">Билеты</h3>
+        <div class="text-2xl font-semibold text-muted-foreground">Билеты</div>
         <div class="flex items-center gap-2">
           <Checkbox id="enable-chat-tickets" bind:checked={configStore.value.enable_chat_tickets} />
           <Label for="enable-chat-tickets" class="cursor-pointer">Билеты из чата</Label>
@@ -73,7 +75,7 @@
       </div>
 
       <div class="flex flex-col gap-4">
-        <h3 class="font-semibold text-muted-foreground">Игра</h3>
+        <div class="text-2xl font-semibold text-muted-foreground">Игра</div>
         <div class="flex items-center gap-2">
           <Checkbox id="manual-draw-enabled" bind:checked={configStore.value.manual_draw_enabled} />
           <Label for="manual-draw-enabled" class="cursor-pointer">Ручной ввод</Label>
@@ -96,8 +98,8 @@
             Добавлять билеты после старта
           </Label>
         </div>
-        <div class="flex flex-col gap-2">
-          <Label for="max-number">Максимальное число</Label>
+        <div class="flex gap-2">
+          <Label for="max-number" class="w-full">Максимальное число</Label>
           <Input
             id="max-number"
             type="number"
@@ -106,8 +108,8 @@
             max="999"
           />
         </div>
-        <div class="flex flex-col gap-2">
-          <Label for="roll-animation-time">Время анимации (мс)</Label>
+        <div class="flex gap-2">
+          <Label for="roll-animation-time" class="w-full">Время анимации ролла (мс)</Label>
           <Input
             id="roll-animation-time"
             type="number"
@@ -120,8 +122,10 @@
       </div>
 
       <div class="flex flex-col gap-4">
-        <h3 class="font-semibold text-muted-foreground">Супер игра</h3>
-        <div>Шанс победы: {Math.round(lotoStore.superGameWinChance * 100)}%</div>
+        <div class="text-2xl font-semibold text-muted-foreground">Супер игра</div>
+        <div class="rounded-xl bg-card p-2 text-center">
+          Примерный шанс победы: {Math.round(lotoStore.superGameWinChance * 100)}%
+        </div>
         <div class="flex items-center gap-2">
           <Checkbox
             id="super-game-bonus-guesses-enabled"
@@ -131,8 +135,8 @@
             Бонусные попытки за открытия
           </Label>
         </div>
-        <div class="flex flex-col gap-2">
-          <Label for="super-game-options-amount">Количество ячеек</Label>
+        <div class="flex gap-2">
+          <Label for="super-game-options-amount" class="w-full">Количество ячеек</Label>
           <Input
             id="super-game-options-amount"
             type="number"
@@ -141,8 +145,8 @@
             max="20"
           />
         </div>
-        <div class="flex flex-col gap-2">
-          <Label for="super-game-guesses-amount">Количество попыток</Label>
+        <div class="flex gap-2">
+          <Label for="super-game-guesses-amount" class="w-full">Количество попыток</Label>
           <Input
             id="super-game-guesses-amount"
             type="number"
@@ -151,8 +155,8 @@
             max="10"
           />
         </div>
-        <div class="flex flex-col gap-2">
-          <Label for="super-game-win-score">Количество очков для победы</Label>
+        <div class="flex gap-2">
+          <Label for="super-game-win-score" class="w-full">Количество очков для победы</Label>
           <Input
             id="super-game-win-score"
             type="number"
@@ -161,9 +165,9 @@
             max="100"
           />
         </div>
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center gap-2">
-            <Label for="super-game-1-pointers">Ячеек за 1 очко</Label>
+        <div class="flex gap-2">
+          <div class="flex w-full items-center gap-2">
+            <Label for="super-game-1-pointers" class="w-full">Ячеек за 1 очко</Label>
             <img src={SuperGameIcons['x1']} class="h-6 w-6" alt="x1" />
           </div>
           <Input
@@ -174,9 +178,9 @@
             max="10"
           />
         </div>
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center gap-2">
-            <Label for="super-game-2-pointers">Ячеек за 2 очка</Label>
+        <div class="flex gap-2">
+          <div class="flex w-full items-center gap-2">
+            <Label for="super-game-2-pointers" class="w-full">Ячеек за 2 очка</Label>
             <img src={SuperGameIcons['x2']} class="h-6 w-6" alt="x2" />
           </div>
           <Input
@@ -187,9 +191,9 @@
             max="10"
           />
         </div>
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center gap-2">
-            <Label for="super-game-3-pointers">Ячеек за 3 очка</Label>
+        <div class="flex gap-2">
+          <div class="flex w-full items-center gap-2">
+            <Label for="super-game-3-pointers" class="w-full">Ячеек за 3 очка</Label>
             <img src={SuperGameIcons['x3']} class="h-6 w-6" alt="x3" />
           </div>
           <Input
@@ -200,9 +204,9 @@
             max="10"
           />
         </div>
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center gap-2">
-            <Label for="super-game-bombs">Количество бомб (-1 очко)</Label>
+        <div class="flex gap-2">
+          <div class="flex w-full items-center gap-2">
+            <Label for="super-game-bombs" class="w-full">Количество бомб (-1 очко)</Label>
             <img src={SuperGameIcons['bomb']} class="h-6 w-6" alt="bomb" />
           </div>
           <Input

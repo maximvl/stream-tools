@@ -2,7 +2,7 @@
   import { page } from '$app/state'
 </script>
 
-<nav class="mb-8 rounded-xl bg-card py-2 px-4">
+<nav class="mb-8 rounded-xl bg-card2 text-xl py-2 px-4">
   <ul class="flex gap-6 font-medium">
     <li>
       <a
