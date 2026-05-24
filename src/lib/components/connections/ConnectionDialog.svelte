@@ -41,21 +41,23 @@
 
 <Dialog.Root bind:open>
   <Dialog.Trigger>
-    <Button variant="outline" size="sm" class="flex h-auto flex-col px-3 py-1.5">
-      <span class="font-medium">Подключение чатов</span>
-      <div class="mt-1 flex gap-1.5">
-        {#each activeConnections as connection (connToKey(connection))}
-          <ServerIcon
-            server={connection.server}
-            channel={connection.channel}
-            inactive={store.connectionsStatuses[connToKey(connection)] !== 'connected'}
-            class="h-6 w-6"
-          />
-        {/each}
-      </div>
-    </Button>
+    <div class="bg-card2 rounded-lg w-full">
+      <Button variant="outline" class="flex h-auto w-full flex-col px-3 py-1.5">
+        <div class="font-medium">Подключение чатов</div>
+        <div class="mt-1 flex gap-1.5">
+          {#each activeConnections as connection (connToKey(connection))}
+            <ServerIcon
+              server={connection.server}
+              channel={connection.channel}
+              inactive={store.connectionsStatuses[connToKey(connection)] !== 'connected'}
+              class="h-6 w-6"
+            />
+          {/each}
+        </div>
+      </Button>
+    </div>
   </Dialog.Trigger>
-  <Dialog.Content>
+  <Dialog.Content class="bg-card2">
     <Dialog.Header>Подключение чатов</Dialog.Header>
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
