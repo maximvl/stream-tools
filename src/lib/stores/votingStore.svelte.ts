@@ -33,8 +33,10 @@ export class VotingStore {
       { id: crypto.randomUUID(), text: 'Вариант 2' },
     ])
 
+    this.timer.limitMs = this.durationStore.value * 1000
+
     $effect(() => {
-      if (this.timer.state === 'finished' && this.votingState === 'voting') {
+      if (this.timer.limitMs > 0 && this.timer.state === 'finished' && this.votingState === 'voting') {
         untrack(() => {
           this.endVoting()
         })
@@ -77,13 +79,8 @@ export class VotingStore {
     // remove empty voting options
     this.optionsStore.value = this.optionsStore.value.filter((option) => option.text.trim() !== '')
 
-    const duration = this.durationStore.value
-    if (duration > 0) {
-      this.timer.limitMs = duration * 1000
-      this.timer.start()
-    } else {
-      this.timer.stop()
-    }
+    this.durationStore.value = this.timer.remainingSeconds
+    this.timer.start()
   }
 
   endVoting() {

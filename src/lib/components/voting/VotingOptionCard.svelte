@@ -14,14 +14,14 @@
 
 <div
   class="relative overflow-hidden rounded-2xl border p-5 transition-all {isWinner
-    ? 'border-yellow-500/50 bg-yellow-500/5 shadow-lg ring-1 shadow-yellow-500/5 ring-yellow-500/20'
-    : 'border-border/50 bg-card/40'}"
+    ? 'border-yellow-500 bg-card2 border-2 shadow-lg ring-1 shadow-yellow-500/5 ring-yellow-500/20'
+    : 'border-border/50 bg-card2'}"
 >
   <!-- Animated Progress Bar -->
   <div
     class="absolute inset-y-0 left-0 -z-10 transition-all duration-500 ease-out {isWinner
-      ? 'bg-yellow-500/15'
-      : 'bg-primary/15'}"
+      ? 'bg-yellow-500/5'
+      : 'bg-primary/5'}"
     style="width: {stat.percentage}%"
   ></div>
 

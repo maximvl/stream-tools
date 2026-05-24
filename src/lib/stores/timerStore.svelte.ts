@@ -9,22 +9,40 @@ export class TimerStore {
   startTs = 0
 
   passedMs = $state(0)
-  passedSeconds = $derived(Math.round(this.passedMs / 1000))
-  passedMinutes = $derived(Math.round(this.passedSeconds / 60))
-  passedHours = $derived(Math.round(this.passedMinutes / 60))
-  passedDays = $derived(Math.round(this.passedHours / 24))
-  passedWeeks = $derived(Math.round(Math.round(this.passedDays / 7)))
+  passedSeconds = $derived(Math.floor(this.passedMs / 1000))
+  passedSecondsPart = $derived(this.passedSeconds % 60)
+
+  passedMinutes = $derived(Math.floor(this.passedSeconds / 60))
+  passedMinutesPart = $derived(this.passedMinutes % 60)
+
+  passedHours = $derived(Math.floor(this.passedMinutes / 60))
+  passedHoursPart = $derived(this.passedHours % 24)
+
+  passedDays = $derived(Math.floor(this.passedHours / 24))
+  passedDaysPart = $derived(this.passedDays % 7)
+
+  passedWeeks = $derived(Math.floor(this.passedDays / 7))
+  passedWeeksPart = $derived(this.passedWeeks % 7)
 
   currentMs = $derived(this.startMs + this.passedMs + this.startTs)
   currentDate = $derived(new SvelteDate(this.currentMs))
 
   limitMs = $state(0)
   remainingMs = $derived(this.limitMs - this.passedMs)
-  remainingSeconds = $derived(Math.round(this.remainingMs / 1000))
-  remainingMinutes = $derived(Math.round(this.remainingSeconds / 60))
-  remainingHours = $derived(Math.round(this.remainingMinutes / 60))
-  remainingDays = $derived(Math.round(this.remainingHours / 24))
-  remainingWeeks = $derived(Math.round(this.remainingDays / 7))
+  remainingSeconds = $derived(Math.floor(this.remainingMs / 1000))
+  remainingSecondsPart = $derived(this.remainingSeconds % 60)
+  
+  remainingMinutes = $derived(Math.floor(this.remainingSeconds / 60))
+  remainingMinutesPart = $derived(this.remainingMinutes % 60)
+  
+  remainingHours = $derived(Math.floor(this.remainingMinutes / 60))
+  remainingHoursPart = $derived(this.remainingHours % 24)
+  
+  remainingDays = $derived(Math.floor(this.remainingHours / 24))
+  remainingDaysPart = $derived(this.remainingDays % 7)
+  
+  remainingWeeks = $derived(Math.floor(this.remainingDays / 7))
+  remainingWeeksPart = $derived(this.remainingWeeks % 7)
 
   _interval: ReturnType<typeof setInterval> | undefined = undefined
 
@@ -36,7 +54,7 @@ export class TimerStore {
 
   constructor() {
     $effect(() => {
-      if (this.passedMs >= this.limitMs && this.state !== 'paused') {
+      if (this.passedMs >= this.limitMs && this.state !== 'paused' && this.limitMs > 0) {
         this.state = 'finished'
       }
     })

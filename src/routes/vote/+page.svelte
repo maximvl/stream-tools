@@ -1,7 +1,6 @@
 <script lang="ts">
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
   import Nav from '$lib/components/layout/Nav.svelte'
-  import { Input } from '$lib/components/ui/input'
   import { Button } from '$lib/components/ui/button'
   import { getChatStore } from '$lib/context'
   import { VotingStore, setVotingStore } from '$lib/stores/votingStore.svelte'
@@ -9,6 +8,8 @@
   import OptionInput from '$lib/components/voting/OptionInput.svelte'
   import VotingOptionCard from '$lib/components/voting/VotingOptionCard.svelte'
   import VotingLog from '$lib/components/voting/VotingLog.svelte'
+  import BgPattern5 from '$lib/components/common/BgPattern5.svelte'
+  import { BackgroundImages } from '$lib/constants'
 
   const chatStore = getChatStore()
   const votingStore = new VotingStore()
@@ -22,6 +23,14 @@
   })
 
   let optionsContainer: HTMLDivElement | null = $state(null)
+
+  const isTimerSet = $derived(votingStore.timer.limitMs > 0)
+
+  const timerValue = $derived(
+    isTimerSet
+      ? `${votingStore.timer.remainingMinutesPart.toString().padStart(2, '0')}:${votingStore.timer.remainingSecondsPart.toString().padStart(2, '0')}`
+      : `${votingStore.timer.passedMinutesPart.toString().padStart(2, '0')}:${votingStore.timer.passedSecondsPart.toString().padStart(2, '0')}`,
+  )
 </script>
 
 <svelte:head>
@@ -34,13 +43,22 @@
   <Nav />
 </div>
 
+<BgPattern5
+  images={BackgroundImages}
+  gap={40}
+  staggered
+  tileSize={50}
+  polaroidChance={0}
+  maxRotation={18}
+  tapeChance={0}
+/>
+
 {#snippet votingOptions()}
-  <div bind:this={optionsContainer} class="flex w-full max-w-3xl flex-col gap-4">
+  <div bind:this={optionsContainer} class="flex w-full max-w-3xl flex-col gap-4 rounded-xl">
     {#each votingStore.optionStats as stat, index (stat.id)}
       {@const isWinner =
         votingStore.winners.some((w) => w.id === stat.id) && votingStore.votingState === 'ended'}
       {@const serverCounts = votingStore.votesPerServerPerOption[index]}
-      {@debug serverCounts}
       <VotingOptionCard {index} {stat} {serverCounts} {isWinner} showWinnerBadge={true} />
     {/each}
   </div>
@@ -48,7 +66,7 @@
 
 {#snippet votingLog()}
   <div
-    class="flex w-full max-w-xl flex-col gap-4 overflow-auto"
+    class="bg-card2 flex w-full max-w-xl flex-col gap-4 overflow-auto rounded-xl"
     style={`height:${optionsContainer?.offsetHeight ?? 0}px`}
   >
     <VotingLog />
@@ -56,32 +74,6 @@
 {/snippet}
 
 <div class="dark relative flex min-h-screen flex-col overflow-hidden p-6 pt-0">
-  <!-- Animated Background Gradients -->
-  <div class="fixed inset-0 -z-10">
-    <div
-      class="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900"
-    ></div>
-    <div
-      class="absolute top-0 left-1/4 h-96 w-96 animate-pulse rounded-full bg-purple-500/20 blur-3xl"
-    ></div>
-    <div
-      class="absolute top-1/4 right-1/4 h-80 w-80 animate-pulse rounded-full bg-pink-500/20 blur-3xl"
-      style="animation-delay: 1s;"
-    ></div>
-    <div
-      class="absolute bottom-1/4 left-1/3 h-72 w-72 animate-pulse rounded-full bg-blue-500/20 blur-3xl"
-      style="animation-delay: 2s;"
-    ></div>
-    <div
-      class="absolute right-1/3 bottom-0 h-64 w-64 animate-pulse rounded-full bg-orange-500/20 blur-3xl"
-      style="animation-delay: 3s;"
-    ></div>
-    <div
-      class="absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 blur-3xl"
-      style="animation-duration: 20s;"
-    ></div>
-  </div>
-
   <div class="mb-12 flex w-full max-w-6xl items-center self-center">
     <div class="w-[250px]">
       <ConnectionDialog />
@@ -96,39 +88,13 @@
     {#if votingStore.votingState === 'idle'}
       <!-- IDLE / CONFIGURATION STATE -->
       <div
-        class="w-full max-w-xl rounded-3xl border border-primary/20 bg-card p-8 shadow-2xl backdrop-blur-md"
+        class="bg-card2 w-full max-w-xl rounded-3xl border border-primary/20 p-8 shadow-2xl backdrop-blur-md"
       >
-        <h2 class="mb-2 text-2xl font-black text-primary uppercase">Настройка вариантов</h2>
+        <h2 class="mb-2 text-2xl font-black text-primary uppercase">Варианты</h2>
         <p class="mb-6 text-sm text-muted-foreground">
           Укажите варианты ответа. Во время голосования зрители смогут отправлять в чат порядковый
           номер варианта (1, 2, 3...) для участия.
         </p>
-
-        <!-- Voting Duration Configuration -->
-        <div class="mb-6 flex flex-col gap-2">
-          <label
-            class="text-xs font-black tracking-wide text-muted-foreground uppercase"
-            for="duration-input"
-          >
-            Время голосования (сек)
-          </label>
-          <div class="flex items-center gap-3">
-            <Input
-              id="duration-input"
-              type="number"
-              min="0"
-              placeholder="0 (без лимита)"
-              value={votingStore.durationStore.value}
-              oninput={(e: Event) => {
-                const val = parseInt((e.currentTarget as HTMLInputElement).value, 10)
-                votingStore.durationStore.value = isNaN(val) ? 0 : val
-              }}
-              class="w-32"
-            />
-            <span class="text-sm font-semibold text-muted-foreground">сек (0 = без лимита)</span>
-          </div>
-        </div>
-
         <div class="flex flex-col gap-3">
           {#each votingStore.options as option, index (option.id)}
             <OptionInput
@@ -160,6 +126,52 @@
           Добавить вариант
         </Button>
 
+        <div class="mt-4 text-lg">Таймер</div>
+        <div class="mt-4 flex items-center gap-2">
+          <div class="flex flex-col">
+            <div
+              class="flex h-16 items-center justify-center rounded-2xl border-2 px-6 shadow-lg ring-1 transition-all {votingStore
+                .timer.remainingSeconds <= 30 && isTimerSet
+                ? 'animate-pulse border-red-500/80 bg-red-500/30 ring-red-500/50'
+                : 'border-primary/60 bg-card ring-primary/40'}"
+            >
+              <div class="flex items-center gap-2">
+                <div
+                  class="text-3xl font-black {votingStore.timer.remainingSeconds <= 30 && isTimerSet
+                    ? 'text-red-500'
+                    : 'text-primary'}"
+                >
+                  {#if !isTimerSet}
+                    --
+                  {:else}
+                    {timerValue}
+                  {/if}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex w-full gap-2">
+            <Button
+              class="h-auto flex-1 rounded-xl bg-blue-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-blue-500 active:scale-95"
+              onclick={() => (votingStore.timer.limitMs += 60 * 1000)}
+            >
+              +1 мин
+            </Button>
+            <Button
+              class="h-auto flex-1 rounded-xl bg-purple-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-purple-500 active:scale-95"
+              onclick={() => (votingStore.timer.limitMs += 30 * 1000)}
+            >
+              +30 сек
+            </Button>
+            <Button
+              class="h-auto flex-1 rounded-xl bg-orange-600 px-4 py-2 text-sm font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 hover:bg-orange-500 active:scale-95"
+              onclick={() => (votingStore.timer.limitMs = 0)}
+            >
+              Сбросить
+            </Button>
+          </div>
+        </div>
+
         <Button
           class="mt-8 w-full rounded-2xl bg-green-600 py-6 text-lg font-black shadow-xl transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
           onclick={() => votingStore.startVoting()}
@@ -170,7 +182,7 @@
     {:else if votingStore.votingState === 'voting'}
       <!-- VOTING IN PROGRESS STATE -->
       <div
-        class="mb-8 w-full max-w-xl rounded-2xl border border-primary/20 bg-card/60 px-8 py-6 text-center shadow-lg ring-1 ring-primary/5 backdrop-blur-md"
+        class="bg-card2 mb-8 w-full max-w-xl rounded-2xl border border-primary/20 px-8 py-6 text-center shadow-lg ring-1 ring-primary/5"
       >
         <p class="text-xl font-extrabold tracking-wide text-primary uppercase">Идет голосование!</p>
         <p class="mt-2 text-sm text-muted-foreground">
@@ -180,35 +192,29 @@
           > чтобы отдать свой голос
         </p>
 
-        <div class="mt-4 flex flex-wrap items-center justify-center gap-4">
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-8">
           <div class="flex items-center gap-2">
-            <span class="relative flex h-3 w-3">
-              <span
-                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"
-              ></span>
-              <span class="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
-            </span>
             <span class="text-sm font-bold text-muted-foreground">
               Всего голосов: {votingStore.totalVotes}
             </span>
           </div>
 
-          {#if votingStore.durationStore.value > 0}
-            <div
-              class="flex h-9 items-center justify-center rounded-xl border px-3 py-1 shadow-sm ring-1 transition-all {votingStore
-                .timer.remainingSeconds <= 10
-                ? 'animate-pulse border-red-500/50 bg-red-500/10 text-red-500 ring-red-500/20'
-                : 'border-primary/20 bg-card/85 text-primary ring-primary/5'}"
-            >
-              <span class="mr-1.5 text-[10px] font-black tracking-wider uppercase opacity-80">
-                Времени осталось:
-              </span>
-              <span class="text-base font-black">
-                {Math.max(0, votingStore.timer.remainingSeconds)}
-              </span>
-              <span class="ml-0.5 text-[10px] opacity-80">сек</span>
+          <div
+            class="flex h-16 items-center justify-center rounded-2xl border-2 px-6 shadow-lg ring-1 transition-all {votingStore
+              .timer.remainingSeconds <= 30 && isTimerSet
+              ? 'animate-pulse border-red-500/80 bg-red-500/30 ring-red-500/50'
+              : 'border-primary/60 bg-card ring-primary/40'}"
+          >
+            <div class="flex items-center gap-2">
+              <div
+                class="text-3xl font-black {votingStore.timer.remainingSeconds <= 30 && isTimerSet
+                  ? 'text-red-500'
+                  : 'text-primary'}"
+              >
+                {timerValue}
+              </div>
             </div>
-          {/if}
+          </div>
         </div>
       </div>
 
@@ -219,13 +225,14 @@
 
       <div class="mt-8 flex justify-center gap-4">
         <Button
-          variant="outline"
-          class="rounded-xl border-destructive/30 px-8 py-5 text-sm font-semibold text-destructive hover:bg-destructive/10"
+          variant="destructive"
+          class="rounded-xl bg-red-700! px-8 py-5 text-sm font-semibold transition-all hover:scale-105"
           onclick={() => votingStore.resetVoting()}
         >
           Сбросить
         </Button>
         <Button
+          variant="default"
           class="rounded-xl bg-purple-600 px-10 py-5 text-sm font-bold shadow-lg transition-all hover:scale-105 hover:bg-purple-500 active:scale-95"
           onclick={() => votingStore.endVoting()}
         >
@@ -235,33 +242,18 @@
     {:else if votingStore.votingState === 'ended'}
       <!-- VOTING ENDED / RESULTS STATE -->
       <div
-        class="mb-8 flex w-full max-w-xl flex-col items-center rounded-2xl border border-yellow-500/20 bg-yellow-500/5 px-8 py-6 text-center shadow-lg backdrop-blur-md"
+        class="bg-card2 mb-8 flex w-full max-w-xl flex-col items-center rounded-2xl border border-yellow-500/20 px-6 py-4 text-center shadow-lg"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="mb-3 animate-bounce text-yellow-500"
-        >
-          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-          <path d="M4 22h16" />
-          <path d="M10 22V18" />
-          <path d="M14 22V18" />
-          <path d="M18 4H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z" />
-          <path d="M12 11V18" />
-        </svg>
-        <p class="text-xl font-extrabold tracking-wide text-yellow-500 uppercase">
-          Результаты голосования
+        <p class="text-xl">Победитель</p>
+        <p class="text-2xl font-extrabold text-yellow-500 uppercase">
+          {#if votingStore.winners.length > 1}
+            Уравнители
+          {:else}
+            {votingStore.winners[0]?.text || 'Нет данных'}
+          {/if}
         </p>
-        <p class="mt-1 text-sm text-muted-foreground">
-          Голосование завершено. Всего собрано голосов: {votingStore.totalVotes}
+        <p class="mt-1">
+          Всего голосов: {votingStore.totalVotes}
         </p>
       </div>
 
