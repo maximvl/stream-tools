@@ -2,7 +2,7 @@
   import { page } from '$app/state'
 </script>
 
-<nav class="mb-8 rounded-xl bg-card2 text-xl py-2 px-4">
+<nav class="bg-card2 mb-8 rounded-xl px-4 py-2 text-xl">
   <ul class="flex gap-6 font-medium">
     <li>
       <a
@@ -12,16 +12,6 @@
           : 'opacity-60'}"
       >
         Главная
-      </a>
-    </li>
-    <li>
-      <a
-        href="/turnir"
-        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/turnir')
-          ? 'text-primary'
-          : 'opacity-60'}"
-      >
-        Турнир
       </a>
     </li>
     <li>
@@ -36,22 +26,42 @@
     </li>
     <li>
       <a
-        href="/word"
-        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/word')
-          ? 'text-primary'
-          : 'opacity-60'}"
-      >
-        Угадай слово
-      </a>
-    </li>
-    <li>
-      <a
         href="/vote"
         class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/vote')
           ? 'text-primary'
           : 'opacity-60'}"
       >
         Голосование
+      </a>
+    </li>
+    <li>
+      <a
+        href="/whenis"
+        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/whenis')
+          ? 'text-primary'
+          : 'opacity-60'}"
+      >
+        Ивенты
+      </a>
+    </li>
+    <li>
+      <a
+        href="/turnir"
+        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/turnir')
+          ? 'text-primary'
+          : 'opacity-60'}"
+      >
+        Турнир
+      </a>
+    </li>
+    <li>
+      <a
+        href="/word"
+        class="transition-opacity hover:opacity-100 {page.url.pathname.startsWith('/word')
+          ? 'text-primary'
+          : 'opacity-60'}"
+      >
+        Угадай слово
       </a>
     </li>
   </ul>
