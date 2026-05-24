@@ -19,9 +19,9 @@
 >
   <!-- Animated Progress Bar -->
   <div
-    class="absolute inset-y-0 left-0 -z-10 transition-all duration-500 ease-out {isWinner
-      ? 'bg-yellow-500/5'
-      : 'bg-primary/5'}"
+    class="absolute inset-y-0 left-0 transition-all duration-500 ease-out {isWinner
+      ? 'bg-yellow-500/25'
+      : 'bg-primary/25'}"
     style="width: {stat.percentage}%"
   ></div>
 
