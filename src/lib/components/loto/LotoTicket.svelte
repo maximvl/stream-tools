@@ -240,7 +240,7 @@
     {#each ticket.value as num, id (id)}
       <div
         class={cn(
-          'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 text-2xl font-black transition-all duration-300',
+          'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 text-2xl font-normal transition-all duration-300',
           isWinnerMatch(num)
             ? 'scale-110 border-green-500 bg-green-500 text-green-950'
             : isLastRolledMatch(num)

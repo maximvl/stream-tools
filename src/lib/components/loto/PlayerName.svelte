@@ -2,6 +2,7 @@
   import type { ChatUser } from '$lib/types'
   import { VkColorsMap } from '$lib/constants'
   import { cn } from '$lib/utils'
+    import { isBrightColorOld } from '$lib/utils/color'
 
   type Props = {
     user?: ChatUser
@@ -25,8 +26,10 @@
   }
 
   const userColor = $derived(getUserColor())
+
+  const isBright = $derived(isBrightColorOld(userColor))
 </script>
 
-<span class={cn('font-bold bg-slate-800 rounded-sm px-1', className)} style="color: {userColor}">
+<span class={cn('font-bold data-[bright=true]:bg-slate-800 data-[bright=false]:bg-slate-300 rounded-sm px-1', className)} data-bright={isBright} style="color: {userColor}">
   {name}
 </span>
