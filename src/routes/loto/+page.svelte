@@ -107,11 +107,11 @@
 <div class="dark relative flex min-h-screen flex-col overflow-hidden p-6">
   <div class="fixed top-6 left-6 z-10 flex flex-col gap-4">
     <ConnectionDialog />
-    <div class="w-fit rounded-lg bg-card2">
+    <div class="bg-card2 w-fit rounded-lg">
       <LotoSettingsDialog />
-    </div>  
+    </div>
     {#if lotoStore.gameState === 'registration'}
-      <div class="flex flex-col gap-2 rounded-xl bg-card2 p-2">
+      <div class="bg-card2 flex flex-col gap-2 rounded-xl p-2">
         <div class="text-center">Таймер</div>
         <div class="flex flex-col gap-2">
           <Button
@@ -129,16 +129,18 @@
         </div>
       </div>
     {:else}
-    <div class="bg-card2 p-1 rounded-xl">
-      <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
-    </div>
+      <div class="bg-card2 rounded-xl p-1">
+        <PlatformTicketCounts tickets={lotoStore.ticketsOrdered} />
+      </div>
     {/if}
     <LotoWinners />
   </div>
 
   <div class="absolute top-30 right-20 w-fit">
     {#if lotoStore.streamerTickets.length === 0}
-      <div class="rounded-xl text-xl border border-primary/60 bg-card2 p-4">Стример пока не зарегался</div>
+      <div class="bg-card2 rounded-xl border border-primary/60 p-4 text-xl">
+        Стример пока не зарегался
+      </div>
     {:else if streamerUser}
       {#each lotoStore.streamerTickets as ticket (ticket.id)}
         <LotoTicket
@@ -164,7 +166,7 @@
     {#if lotoStore.gameState === 'registration'}
       <div class="flex flex-col items-center gap-4">
         <div
-          class="rounded-xl border border-primary/60 bg-card2 px-6 py-3 shadow-lg ring-1 ring-primary/40"
+          class="bg-card2 rounded-xl border border-primary/60 px-6 py-3 shadow-lg ring-1 ring-primary/40"
         >
           <p class="text-xl font-medium text-primary">
             +лото в чат чтобы зарегаться
@@ -182,24 +184,24 @@
             Начать
           </Button>
           {#if countdownTimer.limitMs > 0}
-          <div class="bg-card">
-            <div
-              class="flex h-16 items-center justify-center rounded-2xl border-2 px-6 shadow-lg ring-1 transition-all {countdownTimer.remainingSeconds <=
-              30
-                ? 'animate-pulse border-red-500/80 bg-red-900 ring-red-500/50'
-                : 'border-primary/60 bg-card ring-primary/40'}"
-            >
-              <div class="flex items-center gap-2">
-                <div
-                  class="text-3xl font-black {countdownTimer.remainingSeconds <= 30
-                    ? 'text-red-500'
-                    : 'text-primary'}"
-                >
-                  {timerText}
+            <div class="bg-card">
+              <div
+                class="flex h-16 items-center justify-center rounded-2xl border-2 px-6 shadow-lg ring-1 transition-all {countdownTimer.remainingSeconds <=
+                30
+                  ? 'animate-pulse border-red-500/80 bg-red-900 ring-red-500/50'
+                  : 'border-primary/60 bg-card ring-primary/40'}"
+              >
+                <div class="flex items-center gap-2">
+                  <div
+                    class="text-3xl font-black {countdownTimer.remainingSeconds <= 30
+                      ? 'text-red-500'
+                      : 'text-primary'}"
+                  >
+                    {timerText}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           {/if}
         </div>
       </div>
@@ -212,7 +214,7 @@
         <div class="flex flex-col items-center gap-6">
           <div class="flex flex-col items-center gap-4 md:flex-row">
             <div
-              class="flex flex-col items-center justify-center rounded-2xl border-2 border-primary/60 bg-card2 p-4 shadow-lg ring-1 ring-primary/40"
+              class="bg-card2 flex flex-col items-center justify-center rounded-2xl border-2 border-primary/60 p-4 shadow-lg ring-1 ring-primary/40"
             >
               <div class="flex gap-1">
                 <SlotDigit
@@ -233,21 +235,21 @@
             </div>
 
             <div class="bg-card2">
-            <Button
-              class="h-auto rounded-2xl px-8 py-8 text-xl font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
-              onclick={() => lotoStore.rollNextNumber()}
-              disabled={lotoStore.drawPool.length === 0 || lotoStore.isRolling}
-            >
-              Ролл
-            </Button>
-          </div>
+              <Button
+                class="h-auto rounded-2xl px-8 py-8 text-xl font-black tracking-tighter uppercase shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
+                onclick={() => lotoStore.rollNextNumber()}
+                disabled={lotoStore.drawPool.length === 0 || lotoStore.isRolling}
+              >
+                Ролл
+              </Button>
+            </div>
           </div>
         </div>
       {/if}
 
       {#if lotoStore.drawnNumbers.length > 0}
         <div
-          class="flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/80 bg-card2 p-4 shadow-inner"
+          class="bg-card2 flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/80 p-4 shadow-inner"
         >
           <div class="flex items-center justify-center px-2">
             <h2 class="text-xs font-black tracking-[0.3em] text-muted-foreground uppercase">
@@ -307,7 +309,7 @@
             {@const userMessages = store.messagesByUser.get(ticket.owner_id) || []}
             {@const sortedMessages = userMessages.toSorted((a, b) => a.ts - b.ts)}
             <div
-              class="col-start-1 row-start-2 max-h-40 w-0 min-w-full overflow-y-auto rounded-xl border border-border/80 bg-card2 p-3 wrap-break-word shadow-inner"
+              class="bg-card2 col-start-1 row-start-2 max-h-40 w-0 min-w-full overflow-y-auto rounded-xl border border-border/80 p-3 wrap-break-word shadow-inner"
             >
               <div class="flex max-w-full flex-col gap-2 text-left">
                 {#each sortedMessages as msg (msg.id)}
