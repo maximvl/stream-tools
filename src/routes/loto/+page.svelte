@@ -81,6 +81,10 @@
   const streamerUser = $derived(
     streamerFirstTicket ? lotoStore.usersById.get(streamerFirstTicket.owner_id) : undefined,
   )
+
+  const timerText = $derived(
+    `${countdownTimer.remainingMinutesPart.toString().padStart(2, '0')}:${countdownTimer.remainingSecondsPart.toString().padStart(2, '0')}`,
+  )
 </script>
 
 <svelte:head>
@@ -190,7 +194,7 @@
                     ? 'text-red-500'
                     : 'text-primary'}"
                 >
-                  {Math.max(0, countdownTimer.remainingSeconds).toString().padStart(2, '0')}
+                  {timerText}
                 </div>
               </div>
             </div>
