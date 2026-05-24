@@ -182,10 +182,11 @@
             Начать
           </Button>
           {#if countdownTimer.limitMs > 0}
+          <div class="bg-card">
             <div
               class="flex h-16 items-center justify-center rounded-2xl border-2 px-6 shadow-lg ring-1 transition-all {countdownTimer.remainingSeconds <=
               30
-                ? 'animate-pulse border-red-500/80 bg-red-500/30 ring-red-500/50'
+                ? 'animate-pulse border-red-500/80 bg-red-900 ring-red-500/50'
                 : 'border-primary/60 bg-card ring-primary/40'}"
             >
               <div class="flex items-center gap-2">
@@ -198,6 +199,7 @@
                 </div>
               </div>
             </div>
+          </div>
           {/if}
         </div>
       </div>
