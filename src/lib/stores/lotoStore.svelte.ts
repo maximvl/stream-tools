@@ -1,4 +1,11 @@
-import type { ChatMessageWithSource, ChatUser, UserId, VkMention, VkRole, VkRoleId } from '$lib/types'
+import type {
+  ChatMessageWithSource,
+  ChatUser,
+  UserId,
+  VkMention,
+  VkRole,
+  VkRoleId,
+} from '$lib/types'
 import sampleSize from 'lodash/sampleSize'
 import uniq from 'lodash/uniq'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
@@ -9,10 +16,10 @@ import type {
   SuperGameReward,
   VkRewards,
 } from '$lib/components/loto/types'
-import { createContext } from 'svelte'
+import { createContext, untrack } from 'svelte'
 import shuffle from 'lodash/shuffle'
-import type { LotoWinner } from '$lib/api'
-
+import { createLotoWinner, updateLotoWinner, type LotoWinner } from '$lib/api'
+import { createMutation } from '@tanstack/svelte-query'
 
 type GameState = 'registration' | 'playing'
 type SuperGameState = 'not_started' | 'in_progress' | 'finished'
@@ -90,8 +97,7 @@ export class LotoStore {
     if (this.config.value.super_game_bonus_guesses_enabled) {
       const revealedNonEmpty = this.superGameRevealedIds.filter(
         (id) =>
-          this.superGameValues[id].kind !== 'empty' &&
-          this.superGameValues[id].kind !== 'bomb',
+          this.superGameValues[id].kind !== 'empty' && this.superGameValues[id].kind !== 'bomb',
       )
       return base + revealedNonEmpty.length
     }
@@ -116,16 +122,31 @@ export class LotoStore {
 
   superGameResult = $derived.by(() => {
     if (this.superGameScore >= this.config.value.super_game_win_score) {
-      return 'win'
+      return 'win' as const
     }
     if (this.superGameState === 'finished') {
-      return 'lose'
+      return 'lose' as const
     }
-    return 'in_progress'
+    return 'in_progress' as const
   })
 
   usersById = $state<SvelteMap<string, ChatUser>>(new SvelteMap())
   openedChats = $state<Set<LotoTicketId>>(new SvelteSet())
+
+  savedWinnerIds = $state<SvelteMap<string, number>>(new SvelteMap())
+
+  saveLotoWinnerQuery = createMutation(() => ({
+    mutationFn: createLotoWinner,
+    onSuccess: (data) => {
+      Object.entries(data.ids).forEach(([username, drawNumber]) => {
+        this.savedWinnerIds.set(username, drawNumber)
+      })
+    },
+  }))
+
+  updateLotoWinnerQuery = createMutation(() => ({
+    mutationFn: updateLotoWinner,
+  }))
 
   constructor(config: LocalStore<LotoConfig>) {
     this.config = config
@@ -141,8 +162,37 @@ export class LotoStore {
     })
 
     $effect(() => {
-      if (this.winner) {
-        this.openedChats.add(this.winner.id)
+      const winner = this.winner
+      if (winner) {
+        untrack(() => {
+          this.openedChats.add(winner.id)
+          this.saveLotoWinnerQuery.mutate({
+            server: winner.source.server,
+            channel: winner.source.channel,
+            winner: {
+              super_game_status: 'skip',
+              username: winner.owner_name,
+            },
+          })
+        })
+      }
+    })
+
+    $effect(() => {
+      const winner = this.winner
+      const superGameResult = this.superGameResult
+      if (this.superGameState === 'finished' && winner && superGameResult !== 'in_progress') {
+        untrack(() => {
+          const winnerId = this.savedWinnerIds.get(winner.owner_name)
+          if (!winnerId) return
+
+          this.updateLotoWinnerQuery.mutate({
+            id: winnerId,
+            super_game_status: superGameResult,
+            server: winner.source.server,
+            channel: winner.source.channel,
+          })
+        })
       }
     })
   }
@@ -251,7 +301,9 @@ export class LotoStore {
 
   winnersHistory = $state<Record<string, LotoWinner[]>>({})
   winnersFlatSorted = $derived.by(() => {
-    return Object.values(this.winnersHistory).flat().sort((a, b) => b.created_at - a.created_at)
+    return Object.values(this.winnersHistory)
+      .flat()
+      .sort((a, b) => b.created_at - a.created_at)
   })
   winsByUser = $derived.by(() => {
     const wins: Record<string, LotoWinner[]> = {}
@@ -534,79 +586,51 @@ function parseSuperGameNumbers(message: string, config: LotoConfig): number[] {
 }
 
 function approximateWinChance(cfg: LotoConfig): number {
-const N = cfg.super_game_options_amount;
-  const k = cfg.super_game_guesses_amount;
+  const N = cfg.super_game_options_amount
+  const k = cfg.super_game_guesses_amount
 
-  const A1 = cfg.super_game_1_pointers;
-  const A2 = cfg.super_game_2_pointers;
-  const A3 = cfg.super_game_3_pointers;
+  const A1 = cfg.super_game_1_pointers
+  const A2 = cfg.super_game_2_pointers
+  const A3 = cfg.super_game_3_pointers
 
-  const B = cfg.super_game_bombs;
+  const B = cfg.super_game_bombs
 
-  const p1 = A1 / N;
-  const p2 = A2 / N;
-  const p3 = A3 / N;
-  const pb = B / N;
+  const p1 = A1 / N
+  const p2 = A2 / N
+  const p3 = A3 / N
+  const pb = B / N
 
   // expected score per draw
-  const meanPerDraw =
-    1 * p1 +
-    2 * p2 +
-    3 * p3 -
-    1 * pb;
+  const meanPerDraw = 1 * p1 + 2 * p2 + 3 * p3 - 1 * pb
 
   // E[X²]
-  const secondMoment =
-    1 * 1 * p1 +
-    2 * 2 * p2 +
-    3 * 3 * p3 +
-    1 * 1 * pb;
+  const secondMoment = 1 * 1 * p1 + 2 * 2 * p2 + 3 * 3 * p3 + 1 * 1 * pb
 
   // Var(X) = E[X²] - E[X]²
-  const variancePerDraw =
-    secondMoment -
-    meanPerDraw * meanPerDraw;
+  const variancePerDraw = secondMoment - meanPerDraw * meanPerDraw
 
-  const mean =
-    k * meanPerDraw;
+  const mean = k * meanPerDraw
 
-  const variance =
-    k * variancePerDraw;
+  const variance = k * variancePerDraw
 
-  const stdDev = Math.sqrt(
-    Math.max(variance, 1e-9)
-  );
+  const stdDev = Math.sqrt(Math.max(variance, 1e-9))
 
-  const z =
-    (cfg.super_game_win_score - mean) /
-    stdDev;
+  const z = (cfg.super_game_win_score - mean) / stdDev
 
-  return 1 - normalCDF(z);
+  return 1 - normalCDF(z)
 }
 
 function normalCDF(x: number): number {
-  const t =
-    1 / (1 + 0.2316419 * Math.abs(x));
+  const t = 1 / (1 + 0.2316419 * Math.abs(x))
 
-  const d =
-    0.3989423 *
-    Math.exp((-x * x) / 2);
+  const d = 0.3989423 * Math.exp((-x * x) / 2)
 
   let prob =
-    d *
-    t *
-    (0.3193815 +
-      t *
-        (-0.3565638 +
-          t *
-            (1.781478 +
-              t *
-                (-1.821256 +
-                  t * 1.330274))));
+    d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))))
 
   if (x > 0) {
-    prob = 1 - prob;
+    prob = 1 - prob
   }
 
-  return prob;
+  return prob
 }

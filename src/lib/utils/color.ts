@@ -35,11 +35,10 @@ export function isBrightColorOld(hexColor: string): boolean {
   // Calculate luminance
   const luminance = 0.2126 * rNorm + 0.7152 * gNorm + 0.0722 * bNorm
 
-  console.log(hexColor, luminance)
-
   return luminance > 0.2
 }
 
+// @ts-expect-error window is global
 window.isBright = isBrightColorOld
 
 function hexToRgb(hex: string): [number, number, number] {

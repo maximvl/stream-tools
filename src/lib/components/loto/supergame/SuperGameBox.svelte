@@ -19,8 +19,8 @@
       {#snippet hidden()}
         <div
           class={cn(
-            'cell flex h-12 w-12 items-center justify-center',
-            active ? 'cell-highlight' : '',
+            'cell flex h-12 w-12 items-center justify-center', 
+            active ? 'cell-highlight' : ''
           )}
         >
           <span class="cell-text">{(idx + 1).toString().padStart(2, '0')}</span>
@@ -36,7 +36,8 @@
       {/snippet}
       <Flipper
         oneShot
-        class={cn('h-12 w-12', active ? '' : 'pointer-events-none')}
+        disabled={!active}
+        class="h-12 w-12"
         hidden={revealAll ? revealed : hidden}
         {revealed}
         onFlip={() => {

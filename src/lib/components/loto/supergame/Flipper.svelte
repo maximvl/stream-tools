@@ -11,9 +11,10 @@
     revealed?: Snippet
     oneShot?: boolean
     onFlip?: () => void
+    disabled?: boolean
   }
 
-  let { class: className = '', hidden, revealed, oneShot = false, onFlip }: Props = $props()
+  let { class: className = '', hidden, revealed, oneShot = false, onFlip, disabled = false }: Props = $props()
 
   function toggle() {
     if (oneShot && flipped) {
@@ -26,7 +27,11 @@
   }
 </script>
 
-<Button class={cn(className, 'flipper bg-transparent hover:bg-transparent', flipped ? 'flipped' : '')} onclick={toggle}>
+<Button
+  class={cn('flipper bg-transparent hover:bg-transparent', flipped ? 'flipped' : '', className, disabled ? 'cursor-default!' : '')}
+  onclick={toggle}
+  disabled={disabled}
+>
   <div class="inner">
     <div class="face front">
       {@render hidden?.()}
@@ -37,7 +42,6 @@
     </div>
   </div>
 </Button>
-
 
 <style>
   :global(.flipper) {

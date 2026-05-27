@@ -110,7 +110,7 @@ export async function fetchMessages({
       }
     })
 
-    console.log({ messages })
+    // console.log({ messages })
 
     return { chat_messages: messages }
   }
@@ -224,7 +224,7 @@ type FetchLotoWinnersResponse = {
 let id = 0
 
 export async function fetchLotoWinners(
-  server: string,
+  server: ChatServer,
   channel: string,
 ): Promise<FetchLotoWinnersResponse> {
   const url = `${URL_PREFIX}/turnir-api/loto_winners?server=${server}&channel=${channel}`
@@ -249,4 +249,74 @@ export async function fetchLotoWinners(
   }
 
   return fetch(url).then((res) => res.json())
+}
+
+export type LotoWinnerData = {
+  username: string
+  super_game_status: 'skip' | 'win' | 'lose'
+}
+
+export async function createLotoWinner({
+  server,
+  channel,
+  winner,
+}: {
+  server: ChatServer
+  channel: string
+  winner: LotoWinnerData
+}): Promise<{ ids: Record<string, number> }> {
+  const url = `${URL_PREFIX}/turnir-api/loto_winners`
+  const body = JSON.stringify({
+    winners: [winner],
+    channel,
+    server,
+  })
+
+  if (MOCK_API) {
+    console.log(`POST ${url}`)
+    console.log(body)
+    return {
+      ids: {
+        [winner.username]: random(1, 10000),
+      },
+    }
+  }
+
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body,
+  }).then((res) => res.json())
+}
+
+export async function updateLotoWinner({
+  id, super_game_status, server, channel
+}: {
+  id: number
+  super_game_status: 'skip' | 'win' | 'lose'
+  server: ChatServer
+  channel: string
+}) {
+  const url = `${URL_PREFIX}/turnir-api/loto_winners/${id}`
+  const body = JSON.stringify({
+    super_game_status,
+    channel,
+    server,
+  })
+
+  if (MOCK_API) {
+    console.log(`POST ${url}`)
+    console.log(body)
+    return {}
+  }
+
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body,
+  }).then((res) => res.json())
 }
