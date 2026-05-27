@@ -25,6 +25,7 @@
   import { BackgroundImages } from '$lib/constants'
 
   import BgPattern5 from '$lib/components/common/BgPattern5.svelte'
+    import { NumberToFancyName } from '$lib/components/loto/utils'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -248,9 +249,16 @@
       {/if}
 
       {#if lotoStore.drawnNumbers.length > 0}
+        {@const fancyName =
+          NumberToFancyName[lotoStore.drawnNumbers[lotoStore.drawnNumbers.length - 1]]}
         <div
           class="bg-card2 flex max-w-2xl flex-col gap-3 rounded-2xl border border-border/80 p-4 shadow-inner"
         >
+          {#if fancyName}
+            <div class="flex items-center justify-center px-2">
+              <h2 class="text-lg tracking-[0.3em] font-semibold uppercase">{fancyName}</h2>
+            </div>
+          {/if}
           <div class="flex items-center justify-center px-2">
             <h2 class="text-xs font-black tracking-[0.3em] text-muted-foreground uppercase">
               Открыто {lotoStore.drawnNumbers.length}
