@@ -271,7 +271,7 @@
           </div>
         </div>
       {:else}
-        <div class="h-10"></div>
+        <div class="h-20"></div>
       {/if}
     {/if}
 
