@@ -16,7 +16,6 @@
   import { flip } from 'svelte/animate'
   import { fade } from 'svelte/transition'
   import Nav from '$lib/components/layout/Nav.svelte'
-  import * as Tooltip from '$lib/components/ui/tooltip'
   import SuperGame from '$lib/components/loto/supergame/SuperGame.svelte'
   import LotoWinners from '$lib/components/loto/LotoWinners.svelte'
   import { createQueries } from '@tanstack/svelte-query'
@@ -25,7 +24,8 @@
   import { BackgroundImages } from '$lib/constants'
 
   import BgPattern5 from '$lib/components/common/BgPattern5.svelte'
-    import { NumberToFancyName } from '$lib/components/loto/utils'
+  import { NumberToFancyName } from '$lib/components/loto/utils'
+  import TicketPanel from '$lib/components/loto/TicketPanel.svelte'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -256,7 +256,7 @@
         >
           {#if fancyName}
             <div class="flex items-center justify-center px-2">
-              <h2 class="text-lg tracking-[0.3em] font-semibold uppercase">{fancyName}</h2>
+              <h2 class="text-lg font-semibold tracking-[0.3em] uppercase">{fancyName}</h2>
             </div>
           {/if}
           <div class="flex items-center justify-center px-2">
@@ -314,42 +314,7 @@
             </button>
           </div>
           {#if lotoStore.openedChats.has(ticket.id)}
-            {@const userMessages = store.messagesByUser.get(ticket.owner_id) || []}
-            {@const sortedMessages = userMessages.toSorted((a, b) => a.ts - b.ts)}
-            <div
-              class="bg-card2 col-start-1 row-start-2 max-h-40 w-0 min-w-full overflow-y-auto rounded-xl border border-border/80 p-3 wrap-break-word shadow-inner"
-            >
-              <div class="flex max-w-full flex-col gap-2 text-left">
-                {#each sortedMessages as msg (msg.id)}
-                  <div>
-                    {new Date(msg.ts).toLocaleTimeString('ru-RU', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: false,
-                    })}
-                    :&nbsp;{msg.message}
-                  </div>
-                {/each}
-              </div>
-              <div class="mt-4 flex justify-end">
-                <Tooltip.Root>
-                  <Tooltip.Trigger>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onclick={() => {
-                        lotoStore.deleteTicket(ticket.id)
-                      }}
-                    >
-                      Удалить билет
-                    </Button>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    <p>Лото продолжится без этого билета</p>
-                  </Tooltip.Content>
-                </Tooltip.Root>
-              </div>
-            </div>
+            <TicketPanel {ticket} />
           {/if}
         </div>
       {/each}
