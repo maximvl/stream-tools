@@ -65,7 +65,7 @@ export const NumberToFancyName: Record<string, string> = {
   '64': 'Саратов',
   '65': 'Сахалин',
   '66': 'Валенки',
-  '67': 'Смоленск',
+  '67': 'six-seven',
   '68': 'Тамбов',
   '69': 'MHMM',
   '70': 'Топор в озере',
