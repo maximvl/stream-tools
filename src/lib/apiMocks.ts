@@ -41,15 +41,15 @@ export const makeMessage = (user_id?: string): ChatMessage => {
 
   return {
     id: `${user_id}-${randomUUID}`,
-    message: sample(['+лото']),
-    ts: new Date().getTime(),
+    text: sample(['+лото']),
+    timestampMs: new Date().getTime(),
     // Math.round(
     // new Date().getTime()
     // fixed date based on user id for testing
     //user_id % 2 === 0 ? '2024-10-01T12:00:00Z' : '2024-10-02T12:00:00Z'
     user: {
       id: userId as UserId,
-      username: userId,
+      displayName: userId,
       // vk_fields: {
       //   nickColor: 0,
       //   isChatModerator: false,
@@ -57,10 +57,13 @@ export const makeMessage = (user_id?: string): ChatMessage => {
       //   badges: [makeBadge(), makeBadge(), makeBadge()],
       //   roles: [],
       // },
-      twitch_fields: {
-        color: sample(colors),
-        badges: [],
+      twitchFields: {
+        color: sample(colors) ?? '',
         highlighted: true,
+        mod: false,
+        subscriber: false,
+        turbo: false,
+        badges: [],
       },
     },
   }
@@ -116,8 +119,8 @@ export const MocksManager = {
   chatMessages: [] as ChatMessage[],
   sendMessage(user_id: string, msg: string) {
     const obj = makeMessage(user_id)
-    obj.message = msg
-    obj.ts = new Date().getTime()
+    obj.text = msg
+    obj.timestampMs = new Date().getTime()
     this.chatMessages.push(obj)
   },
 }

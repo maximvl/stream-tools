@@ -17,7 +17,7 @@
         const [server, channel] = connKey.split('/')
         return {
           queryKey: ['loto-winners', server, channel],
-          queryFn: async () => fetchLotoWinners(server, channel),
+          queryFn: async () => fetchLotoWinners(server as ChatServer, channel),
         }
       }),
       combine: (results) => {

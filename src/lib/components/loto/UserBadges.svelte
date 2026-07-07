@@ -10,15 +10,15 @@
   let { user }: Props = $props()
 
   const twitchBadges = $derived.by(() => {
-    const b = user.twitch_fields?.badges || []
+    const b = user.twitchFields?.badges || []
     // if (b.length > 1) {
     //   console.log('twitchBadges', b)
     // }
     return b
   })
-  const vkRoles = $derived(user.vk_fields?.roles || [])
-  const vkBadges = $derived(user.vk_fields?.badges || [])
-  const kickBadges = $derived(user.kick_fields?.badges || [])
+  const vkRoles = $derived(user.vkFields?.roles || [])
+  const vkBadges = $derived(user.vkFields?.badges || [])
+  const kickBadges = $derived(user.kickFields?.badges || [])
 
   const highestPriorityVkRole = $derived.by(() => {
     if (vkRoles.length === 0) return null
@@ -81,7 +81,7 @@
           <KickModeratorIcon />
         </Tooltip.Trigger>
         <Tooltip.Content>
-          <p>{badge.text}</p>
+          <p>{badge.name}</p>
         </Tooltip.Content>
       </Tooltip.Root>
     {/if}

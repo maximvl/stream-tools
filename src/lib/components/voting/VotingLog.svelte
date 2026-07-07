@@ -35,7 +35,7 @@
           >
           <ServerIcon server={user.source.server} channel={user.source.channel} />
           <UserBadges {user} />
-          <PlayerName {user} name={user.username} />
+          <PlayerName {user} name={user.displayName} />
         </div>
         <div>
         {#if voteChange}

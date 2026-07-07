@@ -39,29 +39,34 @@ type TwitchBadge = {
 }
 
 type TwitchUserFields = {
-  color?: string
   badges: TwitchBadge[]
-  highlighted?: boolean
+  color: string
+  highlighted: boolean
+  mod: boolean
+  subscriber: boolean
+  turbo: boolean
 }
 
 type KickBadge = {
   type: string
-  text: string
+  name: string
+  imageUrl?: string
+  selected: boolean
 }
 
 type KickUserFields = {
   badges: KickBadge[]
-  username_color: string
+  color: string
 }
 
 export type UserId = string & { readonly __brand: 'UserId' }
 
 export type ChatUser = {
   id: UserId
-  username: string
-  vk_fields?: VkUserFields
-  twitch_fields?: TwitchUserFields
-  kick_fields?: KickUserFields
+  displayName: string
+  vkFields?: VkUserFields
+  twitchFields?: TwitchUserFields
+  kickFields?: KickUserFields
 }
 
 export type ChatUserWithSource = ChatUser & {
@@ -79,10 +84,10 @@ type VkChatFields = {
 
 export type ChatMessage = {
   id: string
-  ts: number
-  message: string
+  timestampMs: number
+  text: string
   user: ChatUser
-  vk_fields?: VkChatFields
+  vkFields?: VkChatFields
 }
 
 export type ChatMessageWithSource = ChatMessage & {

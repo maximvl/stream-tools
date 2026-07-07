@@ -318,7 +318,7 @@ export class LotoStore {
 
   handleMessage = (msg: ChatMessageWithSource) => {
     if (this.winner && msg.user.id === this.winner.owner_id) {
-      const numbers = parseSuperGameNumbers(msg.message, this.config.value)
+      const numbers = parseSuperGameNumbers(msg.text, this.config.value)
       if (numbers.length > 0) {
         if (this.superGameGuesses.length < this.superGameTotalGuessesAmount) {
           this.superGameGuesses = uniq([...this.superGameGuesses, ...numbers]).slice(
@@ -330,7 +330,7 @@ export class LotoStore {
       }
     }
 
-    if (!msg.message.toLowerCase().includes(LOTO_MATCH)) {
+    if (!msg.text.toLowerCase().includes(LOTO_MATCH)) {
       return
     }
 
@@ -344,13 +344,13 @@ export class LotoStore {
     }
 
     if (isMessageFromVkBot(msg)) {
-      const mention = msg.vk_fields?.mentions[0] as VkMention
+      const mention = msg.vkFields?.mentions[0] as VkMention
       if (mention) {
         user.id = mention.id.toString() as UserId
-        user.username = mention.displayName
+        user.displayName = mention.displayName
         const existingUser = this.usersById.get(user.id)
         if (!existingUser) {
-          user.vk_fields = undefined
+          user.vkFields = undefined
           this.usersById.set(user.id, user)
         }
 
@@ -358,7 +358,7 @@ export class LotoStore {
 
         ticket.type = 'points'
         ticket.owner_id = user.id
-        ticket.owner_name = user.username
+        ticket.owner_name = user.displayName
         this.ticketsFromPoints.push(ticket)
       }
       return
@@ -445,20 +445,20 @@ function makeTicket(params: {
   const { chatMessage, pool, config } = params
 
   const ticketNumber = genTicketNumber({
-    text: chatMessage.message,
+    text: chatMessage.text,
     pool,
     config,
   })
   return {
     id: crypto.randomUUID() as LotoTicketId,
     owner_id: chatMessage.user.id,
-    owner_name: chatMessage.user.username,
+    owner_name: chatMessage.user.displayName,
     value: ticketNumber,
     color: 'random',
     variant: 1,
     type: 'chat',
     source: chatMessage.source,
-    created_at: chatMessage.ts,
+    created_at: chatMessage.timestampMs,
     isLatecomer: false,
   }
 }
@@ -492,11 +492,11 @@ function genTicketNumber(params: { text: string; pool: string[]; config: LotoCon
 const VK_CHAT_BOT_NAME = 'ChatBot'
 
 function isMessageFromVkBot(msg: ChatMessageWithSource) {
-  return msg.source.server === 'vkvideo' && msg.user.username === VK_CHAT_BOT_NAME
+  return msg.source.server === 'vkvideo' && msg.user.displayName === VK_CHAT_BOT_NAME
 }
 
 function isMessageHighlightedOnTwitch(msg: ChatMessageWithSource) {
-  return msg.source.server === 'twitch' && Boolean(msg.user.twitch_fields?.highlighted)
+  return msg.source.server === 'twitch' && Boolean(msg.user.twitchFields?.highlighted)
 }
 
 export function getLotoConfigStore() {

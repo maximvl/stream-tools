@@ -15,7 +15,7 @@
   const lotoStore = getLotoStore()
 
   const userMessages = $derived(chatStore.messagesByUser.get(ticket.owner_id) || [])
-  const sortedMessages = $derived(userMessages.toSorted((a, b) => a.ts - b.ts))
+  const sortedMessages = $derived(userMessages.toSorted((a, b) => a.timestampMs - b.timestampMs))
 
   const messagesAmount = $derived(sortedMessages.length)
   let messagesContainer: HTMLDivElement | null = null
@@ -37,12 +37,12 @@
   >
     {#each sortedMessages as msg (msg.id)}
       <div>
-        {new Date(msg.ts).toLocaleTimeString('ru-RU', {
+        {new Date(msg.timestampMs).toLocaleTimeString('ru-RU', {
           hour: '2-digit',
           minute: '2-digit',
           hour12: false,
         })}
-        :&nbsp;{msg.message}
+        :&nbsp;{msg.text}
       </div>
     {/each}
   </div>

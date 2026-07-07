@@ -98,7 +98,7 @@ export class ChatMessagesStore {
         return {
           queryKey: ['fetch-chat-messages', server, channel],
           queryFn: async () => {
-            const ts = untrack(() => this.lastMessageReceivedPerConnection[connKey]?.ts || nowTs) - 10 * 1000
+            const ts = untrack(() => this.lastMessageReceivedPerConnection[connKey]?.timestampMs || nowTs) - 10 * 1000
             const msgs = await fetchMessages({
               platform: server as ChatServer,
               channel,
@@ -128,7 +128,7 @@ export class ChatMessagesStore {
             return
           }
 
-          const newMessages: ChatMessageWithSource[] = (res.data?.chat_messages || [])
+          const newMessages: ChatMessageWithSource[] = (res.data?.messages || [])
             .filter((msg) => !messagesIds.has(msg.id))
             .map((msg) => ({
               ...msg,
@@ -143,8 +143,8 @@ export class ChatMessagesStore {
             this.messages.push(...newMessages)
           }
 
-          if (res.data?.chat_messages) {
-            const lastMsg = res.data.chat_messages[res.data.chat_messages.length - 1]
+          if (res.data?.messages) {
+            const lastMsg = res.data.messages[res.data.messages.length - 1]
             const lastMsgWithSource: ChatMessageWithSource = {
               ...lastMsg,
               source: {
@@ -153,7 +153,7 @@ export class ChatMessagesStore {
               },
             }
             if (this.lastMessageReceivedPerConnection[key]) {
-              if (lastMsg && lastMsg.ts > this.lastMessageReceivedPerConnection[key].ts) {
+              if (lastMsg && lastMsg.timestampMs > this.lastMessageReceivedPerConnection[key].timestampMs) {
                 this.lastMessageReceivedPerConnection[key] = lastMsgWithSource
               }
             } else if (lastMsg) {

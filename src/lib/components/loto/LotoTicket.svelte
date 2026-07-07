@@ -168,7 +168,7 @@
   ]
 
   // Select style based on username
-  const selectedStyle = $derived(ticketStyles[hashString(user.username) % ticketStyles.length])
+  const selectedStyle = $derived(ticketStyles[hashString(user.displayName) % ticketStyles.length])
 
   function formatTime(timestamp: number) {
     const formatter = new Intl.DateTimeFormat('ru-RU', {

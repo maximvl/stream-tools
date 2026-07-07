@@ -13,7 +13,7 @@
 
   const filteredMessages = $derived.by(() => {
     if (!isWordSet || word.trim() === '') return []
-    return store.messages.filter((m) => m.message.trim().length === word.trim().length)
+    return store.messages.filter((m) => m.text.trim().length === word.trim().length)
   })
 
   const winnerMessage = $derived.by(() => {
@@ -21,8 +21,8 @@
     const target = word.trim().toLowerCase()
     return (
       store.messages
-        .filter((m) => m.message.trim().toLowerCase() === target)
-        .toSorted((a, b) => a.ts - b.ts)[0] || null
+        .filter((m) => m.text.trim().toLowerCase() === target)
+        .toSorted((a, b) => a.timestampMs - b.timestampMs)[0] || null
     )
   })
 
@@ -100,9 +100,9 @@
           >
             <h3 class="mb-2 text-2xl font-black text-yellow-600 uppercase">Победитель!</h3>
             <div class="text-lg">
-              <span class="font-bold text-primary">{winnerMessage.user.username}</span>
+              <span class="font-bold text-primary">{winnerMessage.user.displayName}</span>
               угадал слово:
-              <span class="font-black text-yellow-600 uppercase">{winnerMessage.message}</span>
+              <span class="font-black text-yellow-600 uppercase">{winnerMessage.text}</span>
             </div>
           </div>
         {/if}
@@ -121,14 +121,14 @@
         {:else}
           {#each displayMessages as message (message.id)}
             {@const isWinner =
-              isWordSet && message.message.trim().toLowerCase() === word.trim().toLowerCase()}
+              isWordSet && message.text.trim().toLowerCase() === word.trim().toLowerCase()}
             <div
               class="flex gap-3 text-sm leading-relaxed transition-colors {isWinner
                 ? 'rounded-lg bg-yellow-400/20 p-2 font-bold ring-2 ring-yellow-400/50'
                 : ''}"
             >
-              <span class="font-bold text-primary">{message.user.username}:</span>
-              <span class="text-card-foreground/90">{message.message}</span>
+              <span class="font-bold text-primary">{message.user.displayName}:</span>
+              <span class="text-card-foreground/90">{message.text}</span>
             </div>
           {/each}
         {/if}

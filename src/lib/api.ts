@@ -4,7 +4,9 @@ import sample from 'lodash/sample'
 import { dev } from '$app/environment'
 import random from 'lodash/random'
 
-const URL_PREFIX = '/v2'
+const TURNIR_API = '/v2/turnir-api'
+const CHAT_API = 'https://chats.eventlab.dev/api'
+
 // const URL_PREFIX = 'http://localhost:8088/v2'
 
 // const MOCK_API = import.meta.env.MODE === 'development' && !URL_PREFIX.includes('127.0.0.1')
@@ -41,7 +43,7 @@ export type FetchMessagesParams = {
 }
 
 export type ChatMessagesResponse = {
-  chat_messages: null | ChatMessage[]
+  messages: null | ChatMessage[]
 }
 
 export async function fetchMessages({
@@ -52,12 +54,12 @@ export async function fetchMessages({
 }: FetchMessagesParams): Promise<ChatMessagesResponse> {
   const params = new URLSearchParams()
   params.set('platform', platform)
-  params.set('channel', channel)
+  params.set('server', channel)
   params.set('ts', ts.toString())
   if (textFilter && textFilter.length > 0) {
     params.set('text_filter', textFilter)
   }
-  const url = `${URL_PREFIX}/turnir-api/chat_messages?${params.toString()}`
+  const url = `${CHAT_API}/chat_messages?${params.toString()}`
 
   if (MOCK_API) {
     console.log(`GET ${url}`)
@@ -74,7 +76,7 @@ export async function fetchMessages({
 
     if (MocksManager.chatMessages && MocksManager.chatMessages.length > 0) {
       const result: ChatMessagesResponse = {
-        chat_messages: MocksManager.chatMessages as ChatMessage[],
+        messages: MocksManager.chatMessages as ChatMessage[],
       }
       MocksManager.chatMessages = []
       return result
@@ -90,7 +92,7 @@ export async function fetchMessages({
     // console.log({ mocksLeft, mockedMessagesAmount, mocksPerRequest })
 
     if (mocksLeft < 0) {
-      return { chat_messages: [] }
+      return { messages: [] }
     }
 
     const messages = Array.from({ length: mocksPerRequest }, () => {
@@ -99,20 +101,21 @@ export async function fetchMessages({
 
     messages.forEach((m) => {
       // m.message = sample(['1', '2', '3', '4', '5'])
-      m.user.kick_fields = {
+      m.user.kickFields = {
         badges: [
           {
             type: 'moderator',
-            text: 'Moderator',
+            name: 'Moderator',
+            selected: true,
           },
         ],
-        username_color: '#00FFFF',
+        color: '#00FFFF',
       }
     })
 
     // console.log({ messages })
 
-    return { chat_messages: messages }
+    return { messages: messages }
   }
 
   return fetch(url).then(async (res) => {
@@ -137,10 +140,7 @@ export async function chatConnect({
   server,
   channel,
 }: ChatConnectParams): Promise<ChatConnectResponse> {
-  const params = new URLSearchParams()
-  params.set('channel', channel)
-  params.set('platform', server)
-  const url = `${URL_PREFIX}/turnir-api/chat_connect?${params.toString()}`
+  const url = `${CHAT_API}/chat_connect`
 
   if (MOCK_API) {
     console.log(`POST ${url}`)
@@ -150,6 +150,10 @@ export async function chatConnect({
 
   return fetch(url, {
     method: 'POST',
+    body: JSON.stringify({
+      channel,
+      server
+    })
   }).then((res) => res.json())
 }
 
@@ -165,7 +169,7 @@ export async function fetchVkRoles(server: ChatServer, channel: string): Promise
   const params = new URLSearchParams()
   params.set('platform', server)
   params.set('channel', channel)
-  const url = `${URL_PREFIX}/turnir-api/stream_info?${params.toString()}`
+  const url = `${TURNIR_API}/stream_info?${params.toString()}`
 
   if (MOCK_API) {
     console.log(`GET ${url}`)
@@ -227,7 +231,7 @@ export async function fetchLotoWinners(
   server: ChatServer,
   channel: string,
 ): Promise<FetchLotoWinnersResponse> {
-  const url = `${URL_PREFIX}/turnir-api/loto_winners?server=${server}&channel=${channel}`
+  const url = `${TURNIR_API}/loto_winners?server=${server}&channel=${channel}`
 
   if (MOCK_API) {
     console.log(`GET ${url}`)
@@ -265,7 +269,7 @@ export async function createLotoWinner({
   channel: string
   winner: LotoWinnerData
 }): Promise<{ ids: Record<string, number> }> {
-  const url = `${URL_PREFIX}/turnir-api/loto_winners`
+  const url = `${TURNIR_API}/loto_winners`
   const body = JSON.stringify({
     winners: [winner],
     channel,
@@ -299,7 +303,7 @@ export async function updateLotoWinner({
   server: ChatServer
   channel: string
 }) {
-  const url = `${URL_PREFIX}/turnir-api/loto_winners/${id}`
+  const url = `${TURNIR_API}/loto_winners/${id}`
   const body = JSON.stringify({
     super_game_status,
     channel,

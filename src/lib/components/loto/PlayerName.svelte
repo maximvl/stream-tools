@@ -13,14 +13,14 @@
   let { user, name, class: className }: Props = $props()
 
   const getUserColor = (): string => {
-    if (user?.twitch_fields?.color) {
-      return user.twitch_fields.color
+    if (user?.twitchFields?.color) {
+      return user.twitchFields.color
     }
-    if (user?.vk_fields?.nickColor !== undefined) {
-      return VkColorsMap[user.vk_fields.nickColor] || '#D66E34'
+    if (user?.vkFields?.nickColor !== undefined) {
+      return VkColorsMap[user.vkFields.nickColor] || '#D66E34'
     }
-    if (user?.kick_fields?.username_color) {
-      return user.kick_fields.username_color
+    if (user?.kickFields?.color) {
+      return user.kickFields.color
     }
     return '#D66E34'
   }

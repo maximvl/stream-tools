@@ -97,7 +97,7 @@ export class VotingStore {
   handleMessage = (msg: ChatMessageWithSource) => {
     if (this.votingState !== 'voting') return
 
-    const messageText = msg.message.trim()
+    const messageText = msg.text.trim()
     const num = parseInt(messageText, 10)
 
     // Check if the message is exactly the number of one of the options
@@ -110,9 +110,9 @@ export class VotingStore {
 
       this.votes.set(msg.user.id, {
         userId: msg.user.id,
-        username: msg.user.username,
+        username: msg.user.displayName,
         optionIndex: num - 1,
-        timestamp: msg.ts,
+        timestamp: msg.timestampMs,
         server: msg.source.server,
         previousOptionIndex,
       })
