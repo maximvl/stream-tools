@@ -49,7 +49,7 @@
             <ServerIcon
               server={connection.server}
               channel={connection.channel}
-              inactive={store.connectionsStatuses[connToKey(connection)] !== 'connected'}
+              status={store.connectionsStatuses[connToKey(connection)] ?? 'disconnected'}
               class="h-6 w-6"
             />
           {/each}

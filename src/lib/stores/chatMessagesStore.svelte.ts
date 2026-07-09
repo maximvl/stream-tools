@@ -1,6 +1,6 @@
 import { createQueries } from '@tanstack/svelte-query'
 import { LocalStore } from './localStore.svelte'
-import type { ChatConnection, ChatServer, UserId, ChatUserWithSource, ChatMessageWithSource } from '../types'
+import type { ChatConnection, ChatServer, UserId, ChatUserWithSource, ChatMessageWithSource, ConnectionStatus } from '../types'
 import { chatConnect, fetchMessages } from '../api'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 import { untrack } from 'svelte'
@@ -10,8 +10,6 @@ type ConnKey = string & { readonly __brand: 'ConnKey' }
 export function connToKey(connection: ChatConnection): ConnKey {
   return `${connection.server}/${connection.channel}` as ConnKey
 }
-
-type ConnectionStatus = 'connected' | 'connecting' | 'disconnected'
 
 export class ChatMessagesStore {
   connections = new LocalStore<ChatConnection[]>('chat-connections', [])
@@ -66,6 +64,7 @@ export class ChatMessagesStore {
               channel,
             }),
           refetchInterval: 3000,
+          retry: 0
         }
       }),
       combine: (results) => {
@@ -77,8 +76,8 @@ export class ChatMessagesStore {
             this.connectionsStatuses[key] = 'connecting'
             return
           }
-          if (res.data?.stream_status) {
-            this.connectionsStatuses[key] = res.data.stream_status
+          if (res.data?.status.status) {
+            this.connectionsStatuses[key] = res.data.status.status
           } else {
             this.connectionsStatuses[key] = 'disconnected'
             console.log(`Failed to connect ${key}:`, res.error, res.data)
@@ -109,6 +108,7 @@ export class ChatMessagesStore {
             return msgs
           },
           refetchInterval: 2000,
+          retry: 0,
         }
       }),
       combine: (results) => {
