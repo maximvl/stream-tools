@@ -33,11 +33,11 @@
 <style>
   @keyframes strong-pulse {
     0%, 100% {
-      opacity: 1;
+      filter: grayscale(1);
       transform: scale(1);
     }
     50% {
-      opacity: 0.2;
+      filter: grayscale(0.7);
       transform: scale(1.08);
     }
   }
