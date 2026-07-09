@@ -104,3 +104,5 @@ export type VkRole = {
   bgColor: number
   price: number
 }
+
+export type ConnectionStatus = 'connected' | 'disconnected' | 'connecting'
