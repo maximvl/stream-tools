@@ -35,7 +35,7 @@
         <img
           src={badge.imageUrl}
           alt={badge.title}
-          class="h-4 w-4 shrink-0 transition-transform hover:scale-110"
+          class="h-6 w-6 shrink-0 transition-transform hover:scale-110"
         />
       </Tooltip.Trigger>
       <Tooltip.Content>
@@ -50,7 +50,7 @@
         <img
           src={highestPriorityVkRole.largeUrl}
           alt={highestPriorityVkRole.name}
-          class="h-4 w-4 shrink-0 transition-transform hover:scale-110"
+          class="h-6 w-6 shrink-0 transition-transform hover:scale-110"
         />
       </Tooltip.Trigger>
       <Tooltip.Content>
@@ -65,7 +65,7 @@
         <img
           src={badge.largeUrl}
           alt={badge.name}
-          class="h-4 w-4 shrink-0 transition-transform hover:scale-110"
+          class="h-6 w-6 shrink-0 transition-transform hover:scale-110"
         />
       </Tooltip.Trigger>
       <Tooltip.Content>
