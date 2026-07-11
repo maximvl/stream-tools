@@ -33,7 +33,7 @@
     <Tooltip.Root>
       <Tooltip.Trigger>
         <img
-          src={badge.image_url_4x}
+          src={badge.imageUrl}
           alt={badge.title}
           class="h-4 w-4 shrink-0 transition-transform hover:scale-110"
         />

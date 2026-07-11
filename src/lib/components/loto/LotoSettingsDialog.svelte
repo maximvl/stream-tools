@@ -7,7 +7,6 @@
   import { DefaultConfig, getLotoConfigStore, getLotoStore } from '$lib/stores/lotoStore.svelte'
   import { type VkRoleId } from '$lib/types'
   import { SuperGameIcons } from '$lib/constants'
-  import { Slider } from 'bits-ui'
 
   const configStore = getLotoConfigStore()
   let open = $state(false)

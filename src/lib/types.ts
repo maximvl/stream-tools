@@ -35,7 +35,7 @@ type VkUserFields = {
 type TwitchBadge = {
   id: string
   title: string
-  image_url_4x: string
+  imageUrl: string
 }
 
 type TwitchUserFields = {

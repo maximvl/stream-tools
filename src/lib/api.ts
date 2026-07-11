@@ -53,9 +53,9 @@ export async function fetchMessages({
   platform,
 }: FetchMessagesParams): Promise<ChatMessagesResponse> {
   const params = new URLSearchParams()
-  params.set('platform', platform)
-  params.set('server', channel)
-  params.set('ts', ts.toString())
+  params.set('server', platform)
+  params.set('channel', channel)
+  params.set('tsFrom', ts.toString())
   if (textFilter && textFilter.length > 0) {
     params.set('text_filter', textFilter)
   }
@@ -133,7 +133,9 @@ type ChatConnectParams = {
 }
 
 export type ChatConnectResponse = {
-  stream_status: 'connected' | 'disconnected' | 'connecting'
+  status: {
+    status: 'connected' | 'disconnected' | 'connecting'
+  }
 }
 
 export async function chatConnect({
@@ -145,7 +147,7 @@ export async function chatConnect({
   if (MOCK_API) {
     console.log(`POST ${url}`)
     await new Promise((resolve) => setTimeout(resolve, 3000))
-    return { stream_status: 'connected' }
+    return { status: { status: 'connected' } }
   }
 
   return fetch(url, {
