@@ -1,3 +1,4 @@
+import 'temporal-polyfill/global'
 import { SvelteDate } from 'svelte/reactivity'
 
 type CountState = 'paused' | 'active' | 'finished'
@@ -28,7 +29,7 @@ export class TimerStore {
   currentDate = $derived(new SvelteDate(this.currentMs))
 
   limitMs = $state(0)
-  remainingMs = $derived(this.limitMs - this.passedMs)
+  remainingMs = $derived(Math.max(0, this.limitMs - this.passedMs))
   remainingSeconds = $derived(Math.floor(this.remainingMs / 1000))
   remainingSecondsPart = $derived(this.remainingSeconds % 60)
   
@@ -45,10 +46,15 @@ export class TimerStore {
   remainingWeeksPart = $derived(this.remainingWeeks % 7)
 
   _interval: ReturnType<typeof setInterval> | undefined = undefined
+  _startTime: Temporal.Instant | undefined = undefined
+  _accumulatedPauseMs = $state(0)
+  _pauseStartTime: Temporal.Instant | undefined = undefined
 
   tick() {
-    if (this.state === 'active') {
-      this.passedMs += this.tickMs
+    if (this.state === 'active' && this._startTime) {
+      const now = Temporal.Now.instant()
+      const elapsed = now.since(this._startTime).total('millisecond')
+      this.passedMs = elapsed - this._accumulatedPauseMs
     }
   }
 
@@ -56,6 +62,7 @@ export class TimerStore {
     $effect(() => {
       if (this.passedMs >= this.limitMs && this.state !== 'paused' && this.limitMs > 0) {
         this.state = 'finished'
+        this.pause()
       }
     })
   }
@@ -68,6 +75,10 @@ export class TimerStore {
     const now = new SvelteDate()
     this.startTs = now.getTime()
 
+    this._startTime = Temporal.Now.instant()
+    this._accumulatedPauseMs = 0
+    this._pauseStartTime = undefined
+
     this.state = 'active'
 
     this._interval = setInterval(() => {
@@ -76,12 +87,40 @@ export class TimerStore {
   }
 
   pause() {
-    this.state = 'paused'
+    if (this.state === 'active') {
+      this.state = 'paused'
+      this._pauseStartTime = Temporal.Now.instant()
+      clearInterval(this._interval)
+      this._interval = undefined
+    }
+  }
+
+  resume() {
+    if (this.state === 'paused' && this._pauseStartTime !== undefined) {
+      const pauseDuration = Temporal.Now.instant().since(this._pauseStartTime).total('millisecond')
+      this._accumulatedPauseMs += pauseDuration
+      this._pauseStartTime = undefined
+      
+      this.state = 'active'
+      this._interval = setInterval(() => {
+        this.tick()
+      }, this.tickMs)
+    }
   }
 
   stop() {
-    clearInterval(this._interval)
+    this.destroy()
     this.state = 'paused'
     this.passedMs = 0
+    this._startTime = undefined
+    this._accumulatedPauseMs = 0
+    this._pauseStartTime = undefined
+  }
+
+  destroy() {
+    if (this._interval) {
+      clearInterval(this._interval)
+      this._interval = undefined
+    }
   }
 }
