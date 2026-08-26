@@ -18,6 +18,7 @@
     { value: 'twitch', label: 'twitch.tv' },
     { value: 'kick', label: 'kick.com' },
     { value: 'vkvideo', label: 'vkvideo.ru' },
+    { value: 'wtv', label: 'w.tv' },
   ]
 
   const triggerContent = $derived(
@@ -33,6 +34,7 @@
         <Select.Item value="twitch">twitch.tv</Select.Item>
         <Select.Item value="kick">kick.com</Select.Item>
         <Select.Item value="vkvideo">vkvideo.ru</Select.Item>
+        <Select.Item value="wtv">w.tv</Select.Item>
       </Select.Group>
     </Select.Content>
   </Select.Root>
