@@ -1,12 +1,25 @@
 <script lang="ts">
   import * as Dialog from '$lib/components/ui/dialog/index.js'
   import { ScrollTextIcon } from '@lucide/svelte'
+  import { LocalStore } from '$lib/stores/localStore.svelte'
+  import { onMount } from 'svelte'
 
   type ChangelogEntry = {
     version: string
     date: string
     changes: string[]
   }
+
+  const seenVersion = new LocalStore<string>('lastSeenVersion', '')
+  let open = $state(false)
+
+  onMount(() => {
+    const latest = changelog[0]?.version ?? ''
+    if (latest && latest !== seenVersion.value) {
+      open = true
+      seenVersion.value = latest
+    }
+  })
 
   const changelog: ChangelogEntry[] = [
     {
@@ -250,7 +263,7 @@
   ]
 </script>
 
-<Dialog.Root>
+<Dialog.Root bind:open>
   <Dialog.Trigger
     aria-label="Что нового"
     class="ml-auto flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
