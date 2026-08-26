@@ -151,6 +151,7 @@ export class VotingStore {
         twitch: undefined,
         vkvideo: undefined,
         kick: undefined,
+        wtv: undefined,
       }
       return serverCounts
     })
@@ -158,6 +159,7 @@ export class VotingStore {
     let hasTwitchVotes = false
     let hasVkvideoVotes = false
     let hasKickVotes = false
+    let hasWtvVotes = false
 
     this.votes.forEach((vote) => {
       if (vote.optionIndex >= 0 && vote.optionIndex < this.options.length) {
@@ -165,6 +167,7 @@ export class VotingStore {
         if (vote.server === 'twitch') hasTwitchVotes = true
         if (vote.server === 'vkvideo') hasVkvideoVotes = true
         if (vote.server === 'kick') hasKickVotes = true
+        if (vote.server === 'wtv') hasWtvVotes = true
       }
     })
 
@@ -172,6 +175,7 @@ export class VotingStore {
     if (hasTwitchVotes) counts.forEach((c) => { if (c.twitch === undefined) c.twitch = 0 })
     if (hasVkvideoVotes) counts.forEach((c) => { if (c.vkvideo === undefined) c.vkvideo = 0 })
     if (hasKickVotes) counts.forEach((c) => { if (c.kick === undefined) c.kick = 0 })
+    if (hasWtvVotes) counts.forEach((c) => { if (c.wtv === undefined) c.wtv = 0 })
 
     return counts
   })

@@ -22,6 +22,9 @@
     if (user?.kickFields?.color) {
       return user.kickFields.color
     }
+    if (user?.wtvFields?.nicknameColor) {
+      return user.wtvFields.nicknameColor
+    }
     return '#D66E34'
   }
 

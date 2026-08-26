@@ -1,4 +1,4 @@
-export type ChatServer = 'twitch' | 'vkvideo' | 'kick'
+export type ChatServer = 'twitch' | 'vkvideo' | 'kick' | 'wtv'
 
 export type ChatConnection = {
   server: ChatServer
@@ -59,6 +59,11 @@ type KickUserFields = {
   color: string
 }
 
+export type WtvUserFields = {
+  nicknameColor: string
+  tags: string[]
+}
+
 export type UserId = string & { readonly __brand: 'UserId' }
 
 export type ChatUser = {
@@ -67,6 +72,7 @@ export type ChatUser = {
   vkFields?: VkUserFields
   twitchFields?: TwitchUserFields
   kickFields?: KickUserFields
+  wtvFields?: WtvUserFields
 }
 
 export type ChatUserWithSource = ChatUser & {
