@@ -1,9 +1,10 @@
 <script lang="ts">
   import { page } from '$app/state'
+  import ChangelogDialog from '$lib/components/changelog/ChangelogDialog.svelte'
 </script>
 
-<nav class="bg-card2 mb-8 rounded-xl px-4 py-2 text-xl">
-  <ul class="flex gap-6 font-medium">
+<nav class="bg-card2 mb-8 flex items-center rounded-xl px-4 py-2 text-xl">
+  <ul class="flex items-center gap-6 font-medium">
     <li>
       <a
         href="/"
@@ -63,6 +64,9 @@
       >
         Угадай слово
       </a>
+    </li>
+    <li class="flex items-center">
+      <ChangelogDialog />
     </li>
   </ul>
 </nav>

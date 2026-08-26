@@ -1,7 +1,7 @@
 <script lang="ts">
   import ConnectionDialog from '$lib/components/connections/ConnectionDialog.svelte'
   import Nav from '$lib/components/layout/Nav.svelte'
-    import { HourglassIcon } from '@lucide/svelte'
+  import { HourglassIcon } from '@lucide/svelte'
 </script>
 
 <div class="dark flex min-h-screen flex-col items-center p-8">
