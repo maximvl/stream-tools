@@ -31,8 +31,8 @@
             >{new Date(vote.timestamp).toLocaleTimeString('ru-RU', {
               hour: '2-digit',
               minute: '2-digit',
-            })}</span
-          >
+            })}
+          </span>
           <ServerIcon
             server={user.source.server}
             channel={user.source.channel}

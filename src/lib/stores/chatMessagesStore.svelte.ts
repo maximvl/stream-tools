@@ -196,7 +196,11 @@ export class ChatMessagesStore {
 
   removeConnection(connection: ChatConnection) {
     const key = connToKey(connection)
-    delete this.connectionsStatuses[key]
+    const next: Record<ConnKey, ConnectionStatus> = {}
+    for (const k of Object.keys(this.connectionsStatuses) as ConnKey[]) {
+      if (k !== key) next[k] = this.connectionsStatuses[k]
+    }
+    this.connectionsStatuses = next
     this.connections.value = this.connections.value.filter((c) => c !== connection)
   }
 
