@@ -20,6 +20,9 @@ import { createContext, untrack } from 'svelte'
 import shuffle from 'lodash/shuffle'
 import { createLotoWinner, updateLotoWinner, type LotoWinner } from '$lib/api/loto'
 import { createMutation } from '@tanstack/svelte-query'
+import type { AuthStore } from './authStore.svelte'
+import type { ChatServer } from '$lib/types'
+import type { ConnKey } from './chatMessagesStore.svelte'
 
 type GameState = 'registration' | 'playing'
 type SuperGameState = 'not_started' | 'in_progress' | 'finished'
@@ -135,6 +138,18 @@ export class LotoStore {
 
   savedWinnerIds = $state<SvelteMap<string, number>>(new SvelteMap())
 
+  authStore: AuthStore | null = null
+
+  setAuthStore(store: AuthStore) {
+    this.authStore = store
+  }
+
+  private isChannelAuthed(server: ChatServer, channel: string): boolean {
+    if (!this.authStore) return true
+    const info = this.authStore.connectionInfo[`${server}/${channel}` as ConnKey]
+    return info?.authenticated ?? true
+  }
+
   saveLotoWinnerQuery = createMutation(() => ({
     mutationFn: createLotoWinner,
     onSuccess: (data) => {
@@ -166,6 +181,7 @@ export class LotoStore {
       if (winner) {
         untrack(() => {
           this.openedChats.add(winner.id)
+          if (!this.isChannelAuthed(winner.source.server, winner.source.channel)) return
           this.saveLotoWinnerQuery.mutate({
             server: winner.source.server,
             channel: winner.source.channel,
@@ -185,6 +201,7 @@ export class LotoStore {
         untrack(() => {
           const winnerId = this.savedWinnerIds.get(winner.owner_name)
           if (!winnerId) return
+          if (!this.isChannelAuthed(winner.source.server, winner.source.channel)) return
 
           this.updateLotoWinnerQuery.mutate({
             id: winnerId,

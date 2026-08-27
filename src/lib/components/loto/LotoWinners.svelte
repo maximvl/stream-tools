@@ -17,8 +17,7 @@
         const [server, channel] = connKey.split('/')
         return {
           queryKey: ['loto-winners', server, channel],
-          queryFn: async () =>
-            fetchLotoWinners({ server: server as ChatServer, channel }),
+          queryFn: async () => fetchLotoWinners({ server: server as ChatServer, channel }),
         }
       }),
       combine: (results) => {
@@ -47,7 +46,7 @@
 </script>
 
 <div
-  class="flex max-w-70 flex-col gap-2 rounded-lg bg-card2 p-2"
+  class="bg-card2 flex max-w-70 flex-col gap-2 rounded-lg p-2"
   role="region"
   aria-label="Прошлые победители"
 >
@@ -59,10 +58,11 @@
         <ServerIcon
           server={server as ChatServer}
           {channel}
+          status="connected"
           class="h-4 w-4 shrink-0 opacity-70 transition-opacity hover:opacity-100"
         />
         <span class="text-sm text-muted-foreground">{formatTime(winner.created_at)}</span>
-        <span class="text-lg font-bold truncate">{winner.username}</span>
+        <span class="truncate text-lg font-bold">{winner.username}</span>
 
         <Tooltip>
           <TooltipTrigger>

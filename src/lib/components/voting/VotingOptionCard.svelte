@@ -14,8 +14,8 @@
 
 <div
   class="relative overflow-hidden rounded-2xl border p-5 transition-all {isWinner
-    ? 'border-yellow-500 bg-card2 border-2 shadow-lg ring-1 shadow-yellow-500/5 ring-yellow-500/20'
-    : 'border-border/50 bg-card2'}"
+    ? 'bg-card2 border-2 border-yellow-500 shadow-lg ring-1 shadow-yellow-500/5 ring-yellow-500/20'
+    : 'bg-card2 border-border/50'}"
 >
   <!-- Animated Progress Bar -->
   <div
@@ -62,20 +62,20 @@
   </div>
   <div class="absolute right-0 bottom-0 flex h-6 gap-0">
     {#if serverCounts.twitch !== undefined}
-      <div class="flex items-center justify-center h-full w-15 bg-purple-500/30 gap-1">
-        <ServerIcon server="twitch" />
+      <div class="flex h-full w-15 items-center justify-center gap-1 bg-purple-500/30">
+        <ServerIcon server="twitch" status="connected" />
         {serverCounts.twitch}
       </div>
     {/if}
     {#if serverCounts.vkvideo !== undefined}
-      <div class="flex items-center justify-center h-full w-15 bg-red-500/30 gap-1">
-        <ServerIcon server="vkvideo" />
+      <div class="flex h-full w-15 items-center justify-center gap-1 bg-red-500/30">
+        <ServerIcon server="vkvideo" status="connected" />
         {serverCounts.vkvideo}
       </div>
     {/if}
     {#if serverCounts.kick !== undefined}
-      <div class="flex items-center justify-center h-full w-15 bg-green-500/30 gap-1">
-        <ServerIcon server="kick" />
+      <div class="flex h-full w-15 items-center justify-center gap-1 bg-green-500/30">
+        <ServerIcon server="kick" status="connected" />
         {serverCounts.kick}
       </div>
     {/if}

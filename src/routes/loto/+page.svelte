@@ -36,6 +36,7 @@
   const countdownTimer = new TimerStore()
 
   const authStore = new AuthStore()
+  lotoStore.setAuthStore(authStore)
 
   $effect(() => {
     untrack(() => {

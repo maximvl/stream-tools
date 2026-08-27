@@ -3,7 +3,7 @@
   import { getVotingStore } from '$lib/stores/votingStore.svelte'
   import UserBadges from '$lib/components/loto/UserBadges.svelte'
   import PlayerName from '$lib/components/loto/PlayerName.svelte'
-    import ServerIcon from '../common/ServerIcon.svelte'
+  import ServerIcon from '../common/ServerIcon.svelte'
 
   const chatStore = getChatStore()
   const votingStore = getVotingStore()
@@ -26,32 +26,36 @@
       class="flex items-center justify-between gap-3 border-b border-border/10 pb-2 text-sm leading-relaxed last:border-0 last:pb-0"
     >
       <div class="flex items-start gap-0">
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex shrink-0 items-center gap-2">
           <span
             >{new Date(vote.timestamp).toLocaleTimeString('ru-RU', {
               hour: '2-digit',
               minute: '2-digit',
             })}</span
           >
-          <ServerIcon server={user.source.server} channel={user.source.channel} />
+          <ServerIcon
+            server={user.source.server}
+            channel={user.source.channel}
+            status="connected"
+          />
           <UserBadges {user} />
           <PlayerName {user} name={user.displayName} />
         </div>
         <div>
-        {#if voteChange}
-          <span class="text-muted-foreground/80">
-            переобувается с <span class="font-bold text-foreground">{previousOptionText}</span> на
-            <span class="font-bold wrap-break-word text-foreground">
-              {voteText}
+          {#if voteChange}
+            <span class="text-muted-foreground/80">
+              переобувается с <span class="font-bold text-foreground">{previousOptionText}</span> на
+              <span class="font-bold wrap-break-word text-foreground">
+                {voteText}
+              </span>
             </span>
-          </span>
-        {:else}
-          <span class="text-nowrap text-muted-foreground/80">
-            голосует за <span class="font-bold wrap-break-word text-foreground">
-              {voteText}
+          {:else}
+            <span class="text-nowrap text-muted-foreground/80">
+              голосует за <span class="font-bold wrap-break-word text-foreground">
+                {voteText}
+              </span>
             </span>
-          </span>
-        {/if}
+          {/if}
         </div>
       </div>
     </div>
