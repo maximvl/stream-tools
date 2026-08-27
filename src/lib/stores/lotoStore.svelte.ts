@@ -18,7 +18,7 @@ import type {
 } from '$lib/components/loto/types'
 import { createContext, untrack } from 'svelte'
 import shuffle from 'lodash/shuffle'
-import { createLotoWinner, updateLotoWinner, type LotoWinner } from '$lib/api'
+import { createLotoWinner, updateLotoWinner, type LotoWinner } from '$lib/api/loto'
 import { createMutation } from '@tanstack/svelte-query'
 
 type GameState = 'registration' | 'playing'

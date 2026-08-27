@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fetchLotoWinners } from '$lib/api'
+  import { fetchLotoWinners } from '$lib/api/loto'
   import { EZ_SMILE_IMG, GAGA_SMILE_IMG } from '$lib/constants'
   import { getChatStore } from '$lib/context'
   import { type ChatServer } from '$lib/types'
@@ -17,7 +17,8 @@
         const [server, channel] = connKey.split('/')
         return {
           queryKey: ['loto-winners', server, channel],
-          queryFn: async () => fetchLotoWinners(server as ChatServer, channel),
+          queryFn: async () =>
+            fetchLotoWinners({ server: server as ChatServer, channel }),
         }
       }),
       combine: (results) => {
