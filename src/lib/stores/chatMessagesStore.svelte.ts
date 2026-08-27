@@ -5,7 +5,7 @@ import { chatConnect, fetchMessages } from '../api'
 import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 import { untrack } from 'svelte'
 
-type ConnKey = string & { readonly __brand: 'ConnKey' }
+export type ConnKey = string & { readonly __brand: 'ConnKey' }
 
 export function connToKey(connection: ChatConnection): ConnKey {
   return `${connection.server}/${connection.channel}` as ConnKey

@@ -26,12 +26,22 @@
   import BgPattern5 from '$lib/components/common/BgPattern5.svelte'
   import { NumberToFancyName } from '$lib/components/loto/utils'
   import TicketPanel from '$lib/components/loto/TicketPanel.svelte'
+  import { AuthStore } from '$lib/stores/authStore.svelte'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
   setLotoStore(lotoStore)
   const store = getChatStore()
   const countdownTimer = new TimerStore()
+
+  const authStore = new AuthStore()
+
+  $effect(() => {
+    untrack(() => (authStore.connections = []))
+    store.connections.value.forEach((c) => {
+      authStore.add(c)
+    })
+  })
 
   const vkConnections = $derived(
     store.connectedConnections.filter((connKey) => connKey.toLowerCase().startsWith('vkvideo')),
@@ -110,6 +120,11 @@
     <ConnectionDialog />
     <div class="bg-card2 w-fit rounded-lg">
       <LotoSettingsDialog />
+    </div>
+    <div>
+      <Button class="h-fit">
+        <div class="h-full max-w-40 text-wrap">Подтверди аккаунт для сохранения истории!</div>
+      </Button>
     </div>
     {#if lotoStore.gameState === 'registration'}
       <div class="bg-card2 flex flex-col gap-2 rounded-xl p-2">
