@@ -274,12 +274,9 @@
     <Dialog.Header>
       <Dialog.Title class="text-2xl">Что нового</Dialog.Title>
     </Dialog.Header>
-    <div class="relative mt-6 border-l border-border pl-6">
+    <div class="relative mt-6 pl-6">
       {#each changelog as entry (entry.version)}
         <div class="relative mb-8 last:mb-0">
-          <span
-            class="absolute top-1.5 -left-[1.95rem] h-3 w-3 rounded-full bg-primary ring-4 ring-background"
-          ></span>
           <div class="mb-2 flex flex-wrap items-center gap-3">
             <span class="rounded-full bg-primary/10 px-3 py-1 font-bold text-primary">
               v{entry.version}
@@ -288,8 +285,9 @@
           </div>
           <ul class="space-y-1.5">
             {#each entry.changes as change (change)}
-              <li class="flex gap-2 text-lg text-foreground/90">
-                <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground"></span>
+              <li class="flex items-start gap-2 text-lg text-foreground/90">
+                <span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-current" aria-hidden="true"
+                ></span>
                 <span>{change}</span>
               </li>
             {/each}
