@@ -39,8 +39,10 @@
 <Dialog.Root bind:open>
   <Dialog.Trigger>
     <div>
-      <Button class="h-fit">
-        <div class="h-full max-w-40 text-wrap">Подтверди аккаунт для сохранения истории!</div>
+      <Button class="h-fit w-full">
+        <div class="h-fit w-full max-w-50 text-wrap wrap-break-word">
+          Подтверди аккаунт для сохранения истории!
+        </div>
       </Button>
     </div>
   </Dialog.Trigger>
