@@ -27,6 +27,7 @@
   import { NumberToFancyName } from '$lib/components/loto/utils'
   import TicketPanel from '$lib/components/loto/TicketPanel.svelte'
   import { AuthStore } from '$lib/stores/authStore.svelte'
+  import AuthDialog from '$lib/components/auth/AuthDialog.svelte'
 
   const lotoConfig = getLotoConfigStore()
   const lotoStore = new LotoStore(lotoConfig)
@@ -37,9 +38,11 @@
   const authStore = new AuthStore()
 
   $effect(() => {
-    untrack(() => (authStore.connections = []))
+    untrack(() => {
+      authStore.connections.length = 0
+    })
     store.connections.value.forEach((c) => {
-      authStore.add(c)
+      untrack(() => authStore.add(c))
     })
   })
 
@@ -121,11 +124,7 @@
     <div class="bg-card2 w-fit rounded-lg">
       <LotoSettingsDialog />
     </div>
-    <div>
-      <Button class="h-fit">
-        <div class="h-full max-w-40 text-wrap">Подтверди аккаунт для сохранения истории!</div>
-      </Button>
-    </div>
+    <AuthDialog {authStore} />
     {#if lotoStore.gameState === 'registration'}
       <div class="bg-card2 flex flex-col gap-2 rounded-xl p-2">
         <div class="text-center">Таймер</div>

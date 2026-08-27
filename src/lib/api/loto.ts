@@ -13,10 +13,7 @@ export type AuthCheckResponse = {
   auth_key?: string
 }
 
-export async function authCheck({
-  server,
-  channel,
-}: AuthCheckParams): Promise<AuthCheckResponse> {
+export async function authCheck({ server, channel }: AuthCheckParams): Promise<AuthCheckResponse> {
   const params = new URLSearchParams()
   params.set('stream_channel', formatStreamChannel({ server, channel }))
   const url = `${LOTO_API}/auth_check?${params.toString()}`
@@ -24,8 +21,8 @@ export async function authCheck({
   if (MOCK_API) {
     console.log(`GET ${url}`)
     return {
-      authenticated: true,
-      auth_key: 'mock-auth-key',
+      authenticated: false,
+      auth_key: 'abc123',
     }
   }
 
@@ -42,10 +39,7 @@ export type AuthResponse = {
   authenticated: boolean
 }
 
-export async function auth({
-  server,
-  channel,
-}: AuthCheckParams): Promise<AuthResponse> {
+export async function auth({ server, channel }: AuthCheckParams): Promise<AuthResponse> {
   const url = `${LOTO_API}/auth`
   const body = JSON.stringify({
     stream_channel: formatStreamChannel({ server, channel }),

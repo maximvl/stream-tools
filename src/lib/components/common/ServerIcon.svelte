@@ -9,25 +9,34 @@
     channel?: string
     class?: string
     status: ConnectionStatus
+    disableTooltip?: boolean
   }
 
-  let { server, channel, class: className = '', status }: Props = $props()
+  let { server, channel, class: className = '', status, disableTooltip = false }: Props = $props()
   const inactive = $derived(status === 'disconnected')
   const loading = $derived(status === 'connecting')
 </script>
 
-<Tooltip delayDuration={0}>
-  <TooltipTrigger>
-    <img
-      class={cn('h-4 w-4', className, inactive && 'opacity-30 grayscale', loading && 'strong-pulse')}
-      src={ServerIcons[server]}
-      alt="{server} icon"
-    />
-  </TooltipTrigger>
-  <TooltipContent>
-    <p>{server}{channel ? `/${channel}` : ''}</p>
-  </TooltipContent>
-</Tooltip>
+{#if disableTooltip}
+  <img
+    class={cn('h-4 w-4', className, inactive && 'opacity-30 grayscale', loading && 'strong-pulse')}
+    src={ServerIcons[server]}
+    alt="{server} icon"
+  />
+{:else}
+  <Tooltip delayDuration={0}>
+    <TooltipTrigger>
+      <img
+        class={cn('h-4 w-4', className, inactive && 'opacity-30 grayscale', loading && 'strong-pulse')}
+        src={ServerIcons[server]}
+        alt="{server} icon"
+      />
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>{server}{channel ? `/${channel}` : ''}</p>
+    </TooltipContent>
+  </Tooltip>
+{/if}
 
 
 <style>

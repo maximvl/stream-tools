@@ -1,8 +1,11 @@
 import { createContext } from 'svelte'
-import { createMutation, createQueries } from '@tanstack/svelte-query'
+import { createQueries } from '@tanstack/svelte-query'
 import { auth, authCheck } from '$lib/api/loto'
 import type { ChatConnection, ChatServer } from '$lib/types'
 import { connToKey, type ConnKey } from './chatMessagesStore.svelte'
+
+const CONFIRM_INTERVAL_MS = 5000
+const CONFIRM_MAX_ATTEMPTS = 5
 
 export type AuthConnectionInfo = {
   key: ConnKey
@@ -11,7 +14,7 @@ export type AuthConnectionInfo = {
   authenticated: boolean
   authKey?: string
   isChecking: boolean
-  isAuthenticating: boolean
+  isConfirming: boolean
 }
 
 export class AuthStore {
@@ -42,7 +45,7 @@ export class AuthStore {
             channel,
             authenticated: false,
             isChecking: false,
-            isAuthenticating: false,
+            isConfirming: false,
           }
           this.connectionInfo[key] = info
         }
@@ -60,43 +63,33 @@ export class AuthStore {
     },
   }))
 
-  authMutation = createMutation(() => ({
-    mutationFn: (connKey: ConnKey) => {
-      const [server, channel] = connKey.split('/')
-      return auth({ server: server as ChatServer, channel })
-    },
-    onMutate: (connKey) => {
-      const [server, channel] = connKey.split('/')
-      let info = this.connectionInfo[connKey]
-      if (!info) {
-        info = {
-          key: connKey,
-          server: server as ChatServer,
-          channel,
-          authenticated: false,
-          isChecking: false,
-          isAuthenticating: false,
-        }
-        this.connectionInfo[connKey] = info
-      }
-      info.isAuthenticating = true
-    },
-    onSuccess: (data, connKey) => {
-      const info = this.connectionInfo[connKey]
-      if (info) {
-        info.authenticated = data.authenticated
-      }
-    },
-    onSettled: (_, __, connKey) => {
-      const info = this.connectionInfo[connKey]
-      if (info) {
-        info.isAuthenticating = false
-      }
-    },
-  }))
+  confirmAuth(connKey: ConnKey) {
+    const [server, channel] = connKey.split('/')
+    const info = this.connectionInfo[connKey]
+    if (info) info.isConfirming = true
 
-  authenticate(connKey: ConnKey) {
-    return this.authMutation.mutateAsync(connKey)
+    let attempts = 0
+    const tick = async () => {
+      attempts++
+      try {
+        const res = await auth({ server: server as ChatServer, channel })
+        const i = this.connectionInfo[connKey]
+        if (i) i.authenticated = res.authenticated
+        if (res.authenticated) {
+          if (i) i.isConfirming = false
+          return
+        }
+      } catch {
+        // ignore errors, keep polling
+      }
+      const i = this.connectionInfo[connKey]
+      if (attempts >= CONFIRM_MAX_ATTEMPTS) {
+        if (i) i.isConfirming = false
+      } else {
+        setTimeout(tick, CONFIRM_INTERVAL_MS)
+      }
+    }
+    tick()
   }
 
   add(c: ChatConnection) {
