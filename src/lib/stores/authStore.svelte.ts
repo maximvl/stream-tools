@@ -66,7 +66,7 @@ export class AuthStore {
     }
   }
 
-  confirmAuth(connKey: ConnKey) {
+  confirmAuth(connKey: ConnKey, max_attempts: number = CONFIRM_MAX_ATTEMPTS) {
     const [server, channel] = connKey.split('/')
     const info = this.connectionInfo[connKey]
     if (info) info.isConfirming = true
@@ -86,7 +86,7 @@ export class AuthStore {
         // ignore errors, keep polling
       }
       const i = this.connectionInfo[connKey]
-      if (attempts >= CONFIRM_MAX_ATTEMPTS) {
+      if (attempts >= max_attempts) {
         if (i) i.isConfirming = false
       } else {
         setTimeout(tick, CONFIRM_INTERVAL_MS)

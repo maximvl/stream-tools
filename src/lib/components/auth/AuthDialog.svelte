@@ -30,7 +30,7 @@
         for (const key of authStore.connections) {
           const conn = authStore.connectionInfo[key]
           if (conn && !conn.authenticated && conn.authKey) {
-            authStore.confirmAuth(key)
+            authStore.confirmAuth(key, 1)
           }
         }
       })
