@@ -1,4 +1,4 @@
-import { createContext } from 'svelte'
+import { createContext, untrack } from 'svelte'
 import { auth, authCheck } from '$lib/api/loto'
 import type { ChatConnection, ChatServer } from '$lib/types'
 import { connToKey, type ConnKey } from './chatMessagesStore.svelte'
@@ -25,35 +25,45 @@ export class AuthStore {
     $effect(() => {
       const keys = this.connections
       for (const key of keys) {
-        const [server, channel] = key.split('/')
-        let info = this.connectionInfo[key]
-        if (!info) {
-          this.connectionInfo[key] = {
-            key,
-            server: server as ChatServer,
-            channel,
-            authenticated: false,
-            isChecking: true,
-            isConfirming: false,
-          }
-          info = this.connectionInfo[key]
-        } else {
-          info.isChecking = true
-        }
-        authCheck({ server: server as ChatServer, channel })
-          .then((res) => {
-            const i = this.connectionInfo[key]
-            if (!i) return
-            i.isChecking = false
-            i.authenticated = res.authenticated
-            i.authKey = res.auth_key
-          })
-          .catch(() => {
-            const i = this.connectionInfo[key]
-            if (i) i.isChecking = false
-          })
+        untrack(() => this.fetchAuth(key))
       }
     })
+  }
+
+  private fetchAuth(key: ConnKey) {
+    const [server, channel] = key.split('/')
+    let info = this.connectionInfo[key]
+    if (!info) {
+      this.connectionInfo[key] = {
+        key,
+        server: server as ChatServer,
+        channel,
+        authenticated: false,
+        isChecking: true,
+        isConfirming: false,
+      }
+      info = this.connectionInfo[key]
+    } else {
+      info.isChecking = true
+    }
+    authCheck({ server: server as ChatServer, channel })
+      .then((res) => {
+        const i = this.connectionInfo[key]
+        if (!i) return
+        i.isChecking = false
+        i.authenticated = res.authenticated
+        i.authKey = res.auth_key
+      })
+      .catch(() => {
+        const i = this.connectionInfo[key]
+        if (i) i.isChecking = false
+      })
+  }
+
+  refreshAll() {
+    for (const key of this.connections) {
+      this.fetchAuth(key)
+    }
   }
 
   confirmAuth(connKey: ConnKey) {

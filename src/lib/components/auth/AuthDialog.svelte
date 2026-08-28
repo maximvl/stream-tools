@@ -4,6 +4,7 @@
   import ServerIcon from '../common/ServerIcon.svelte'
   import type { AuthStore } from '$lib/stores/authStore.svelte'
   import type { ConnKey } from '$lib/stores/chatMessagesStore.svelte'
+  import { untrack } from 'svelte'
 
   let { authStore }: { authStore: AuthStore } = $props()
 
@@ -22,6 +23,19 @@
       }
     )
   }
+
+  $effect(() => {
+    if (open) {
+      untrack(() => {
+        for (const key of authStore.connections) {
+          const conn = authStore.connectionInfo[key]
+          if (conn && !conn.authenticated && conn.authKey) {
+            authStore.confirmAuth(key)
+          }
+        }
+      })
+    }
+  })
 
   async function copyCode(key: ConnKey) {
     const conn = authStore.connectionInfo[key]
@@ -73,7 +87,7 @@
               <span class="text-sm text-muted-foreground">Проверка…</span>
             {:else if conn.authKey}
               <Button size="sm" onclick={() => copyCode(key)}>
-                {copiedKey === key ? 'Скопировано!' : `+мой ${conn.authKey}`}
+                {copiedKey === key ? 'Скопировано!' : `Скопировать ${conn.authKey}`}
               </Button>
             {:else}
               <span class="text-sm text-muted-foreground">—</span>
