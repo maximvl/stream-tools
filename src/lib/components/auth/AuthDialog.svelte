@@ -99,5 +99,14 @@
         <div class="text-center text-muted-foreground">Нет подключённых чатов</div>
       {/if}
     </div>
+    <div class="mt-4">
+      <div>Как это работает:</div>
+      <ol class="mt-3 ml-6 list-outside list-decimal space-y-1">
+        <li>Пользователь отправляет свой уникальный код в чат</li>
+        <li>Система видит в чате что код отправлен именно владельцем канала</li>
+        <li>Сессия пользователя становится подтвержденной</li>
+        <li>Разрешается сохранение истории</li>
+      </ol>
+    </div>
   </Dialog.Content>
 </Dialog.Root>
