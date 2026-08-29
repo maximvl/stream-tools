@@ -347,6 +347,10 @@ export class LotoStore {
       }
     }
 
+    if (this.winner) {
+      return
+    }
+
     if (!msg.text.toLowerCase().includes(LOTO_MATCH)) {
       return
     }
