@@ -300,7 +300,7 @@
 
     <SuperGame />
 
-    <div class="z-50 ml-70 flex flex-wrap justify-center gap-4">
+    <div class="z-50 mb-50 ml-70 flex flex-wrap justify-center gap-4">
       {#each lotoStore.ticketsOrdered as ticket (ticket.id)}
         {@const user = lotoStore.usersById.get(ticket.owner_id)!}
         <div class="inline-grid gap-2" animate:flip={{ duration: 700 }} in:fade>

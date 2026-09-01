@@ -23,6 +23,11 @@
 
   const changelog: ChangelogEntry[] = [
     {
+      version: '1.39',
+      date: '2026-08-31',
+      changes: ['Пофикшено подтверждение аккаунтов на нескольких платформах'],
+    },
+    {
       version: '1.38',
       date: '2026-08-29',
       changes: [
