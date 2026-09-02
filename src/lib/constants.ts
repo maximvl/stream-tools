@@ -42,6 +42,8 @@ export const POG_IMG = `${IMG_ROOT}/pog_smile.png`
 export const EZ_SMILE_IMG = `${IMG_ROOT}/ez_smile.avif`
 export const GAGA_SMILE_IMG = `${IMG_ROOT}/gaga_smile.avif`
 
+const RTE_PROXY = 'https://ext.rte.net.ru:8443'
+
 export const SmileIcons = {
   ez: EZ_SMILE_IMG,
   gaga: GAGA_SMILE_IMG,
@@ -50,10 +52,10 @@ export const SmileIcons = {
     'https://images.live.vkvideo.ru/smile/2ec232fd-bb31-4122-b3d1-4c8e7b721561/icon/size/medium',
   hypers:
     'https://images.live.vkvideo.ru/smile/c78b5408-e42c-4aeb-b6f5-9ca21d73c0f1/icon/size/medium',
-  taah: 'https://cdn.7tv.app/emote/01HNKT4960000EXZQWSVKBCAGF/4x.webp',
-  xdd: 'https://cdn.7tv.app/emote/01FF3R5C30000FF5VVCKV49G6J/4x.webp',
-  wires: 'https://cdn.7tv.app/emote/01G9CSQH88000CPDMWJK87X8GR/4x.webp',
-  wow: 'https://cdn.7tv.app/emote/01FW2DTC0R0003BP8VG8FC1CH1/4x.webp',
+  taah: `${RTE_PROXY}/https://cdn.7tv.app/emote/01HNKT4960000EXZQWSVKBCAGF/4x.webp`,
+  xdd: `${RTE_PROXY}/https://cdn.7tv.app/emote/01FF3R5C30000FF5VVCKV49G6J/4x.webp`,
+  wires: `${RTE_PROXY}/https://cdn.7tv.app/emote/01G9CSQH88000CPDMWJK87X8GR/4x.webp`,
+  wow: `${RTE_PROXY}/https://cdn.7tv.app/emote/01FW2DTC0R0003BP8VG8FC1CH1/4x.webp`,
   catdance: CAT_DANCE_IMG,
   suprise: 'https://cdn.betterttv.net/emote/55028cd2135896936880fdd7/2x',
   peepo_pog: 'https://cdn.betterttv.net/emote/58ae8407ff7b7276f8e594f2/2x',
