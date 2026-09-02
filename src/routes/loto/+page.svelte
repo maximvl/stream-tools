@@ -155,7 +155,7 @@
   <div class="absolute top-30 right-20 w-fit">
     {#if lotoStore.streamerTickets.length === 0}
       <div class="bg-card2 rounded-xl border border-primary/60 p-4 text-xl">
-        Стример пока не зарегался
+        Место билета стримера
       </div>
     {:else if streamerUser}
       {#each lotoStore.streamerTickets as ticket (ticket.id)}
